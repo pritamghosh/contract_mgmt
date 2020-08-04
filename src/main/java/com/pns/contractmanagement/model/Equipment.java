@@ -1,22 +1,24 @@
 package com.pns.contractmanagement.model;
 
-import org.springframework.data.annotation.Id;
+import javax.annotation.Nullable;
 
+import org.immutables.value.Value;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+@Value.Immutable
+@JsonDeserialize(builder = ImmutableEquipment.Builder.class)
+public interface Equipment {
+    @Nullable
+    @JsonProperty("_id")
+    String getId();
 
-@Builder
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonDeserialize(builder = Equipment.EquipmentBuilder.class)
-public class Equipment {
-    @Id
-    private long id;
-    
-    private String name;
+    String getModel();
+
+    @Nullable
+    String getDescription();
+
+    @Nullable
+    Long getCount();
 }

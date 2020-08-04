@@ -1,48 +1,68 @@
 package com.pns.contractmanagement.service.impl;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pns.contractmanagement.dao.CustomerDao;
+import com.pns.contractmanagement.entity.CustomerEntity;
 import com.pns.contractmanagement.exceptions.PnsError;
 import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.model.Customer;
-import com.pns.contractmanagement.repository.CustomerRepository;
+import com.pns.contractmanagement.model.ImmutableCustomer;
 
 @Service
 public class CustomerServiceImpl {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
-    
-    @Autowired CustomerRepository repository;
+    @Autowired CustomerDao dao;
 
     public Customer addCustomer(final Customer customer) throws PnsException {
-        if(!repository.findById(customer.getId()).isPresent()) {
-            return repository.save(customer);
-        }
-        throw new PnsException("Customer is already present with same details",PnsError.DUPLICTE_RECORD);
+        return map(dao.insert(map(customer)));
     }
-    
     public Customer ModifyCustomer(final Customer customer) throws PnsException {
-        getCustomerbyid(customer.getId());
-        return repository.save(customer);
+        dao.update(map(customer));
+        return getCustomerbyid(customer.getId());
     }
 
 
-    public Customer DeleteCustomerById( final long id) throws PnsException {
+    public Customer DeleteCustomerById( final String id) throws PnsException {
         final Customer deletedCustomer = getCustomerbyid(id);
-        repository.deleteById(id);
+        dao.deleteById(id);
         return deletedCustomer;
     }
 
-    public Customer getCustomerbyid( final long id) throws PnsException {
-        return repository.findById(id).orElseThrow(()->new PnsException("Customer Not Found!!",PnsError.NOT_FOUND));
+    public Customer getCustomerbyid( final String id) throws PnsException {
+        return map(dao.findById(id).orElseThrow(()->new PnsException("Customer Not Found!!",PnsError.NOT_FOUND)));
     }
-
+    
+    public List<Customer> getCustomerByRegion(final String region) {
+        return map(dao.findByRegion(region));
+    }
+    
+    public List<Customer> searchCustomerbyQuery(final String query) {
+        return map(dao.searchByQuery(query));
+    }
     public List<Customer> getAllCustomer() {
-        return repository.findAll();
+        return map(dao.findAll());
+    }
+    
+    
+    private List<Customer> map(Collection<CustomerEntity> list){
+        return list.stream().map(e->map(e)).collect(Collectors.toList());
+    }
+    
+    private CustomerEntity map(Customer customer) {
+        CustomerEntity entity = new CustomerEntity();
+        entity.setId(customer.getId());
+        entity.setName(customer.getName());
+        entity.setRegion(customer.getRegion());
+        return entity;
+    }
+    
+    private Customer map(CustomerEntity customer) {
+        return ImmutableCustomer.builder().id(customer.getId()).name(customer.getName()).region(customer.getRegion()).build();
     }
 }

@@ -8,15 +8,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
-@JsonDeserialize(builder = ImmutableCustomer.Builder.class)
-public interface Customer  {
+@JsonDeserialize(builder = ImmutableEquipmentItem.Builder.class)
+public interface EquipmentItem {
 
     @Nullable
     @JsonProperty("_id")
     String getId();
-    
-    String getName();
 
-    String getRegion();
+    Equipment getEquipment();
+
+    String getSerialNumber();
 
 }

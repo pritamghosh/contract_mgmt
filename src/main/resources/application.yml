@@ -1,0 +1,15 @@
+#server.port=9009
+#logging.config: classpath:logback.xml
+app:
+   switch:
+      index.update:
+         customer: true
+         contract: true
+         equipment: true
+         equipmentDetails: true
+   index:
+      name:
+         customer: customers
+         contract: contracts
+         equipment: equipments
+         equipmentItem: equipmentItems
