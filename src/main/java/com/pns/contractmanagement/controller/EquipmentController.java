@@ -62,7 +62,7 @@ public class EquipmentController {
 
     @GetMapping("/item/{id}")
     public EquipmentItem getEquipmentbyid(@PathVariable("id") final String id) throws PnsException {
-        return service.getEquipmentbyid(id);
+        return service.getEquipmentItemById(id);
     }
 
     @GetMapping("/item")
@@ -70,8 +70,8 @@ public class EquipmentController {
         return service.getAllEquipmentItem();
     }
     
-    @GetMapping(value = "/item/search" ,params = {"query"})
-    public List<EquipmentItem> searchEquipmentbyQuery(@RequestParam("query") final String query) throws PnsException {
+    @GetMapping(value = "/search" ,params = {"query"})
+    public List<Equipment> searchEquipmentbyQuery(@RequestParam("query") final String query) throws PnsException {
         return service.searchEquipmentbyQuery(query);
     }
 }

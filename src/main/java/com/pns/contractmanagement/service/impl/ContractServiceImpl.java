@@ -11,7 +11,11 @@ import com.pns.contractmanagement.entity.ContractEntity;
 import com.pns.contractmanagement.exceptions.PnsError;
 import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.model.Contract;
+import com.pns.contractmanagement.model.Customer;
+import com.pns.contractmanagement.model.Equipment;
+import com.pns.contractmanagement.model.EquipmentItem;
 import com.pns.contractmanagement.model.ImmutableContract;
+import com.pns.contractmanagement.model.ImmutableEquipmentItem;
 
 @Service
 public class ContractServiceImpl {
@@ -21,9 +25,24 @@ public class ContractServiceImpl {
 
     @Autowired
     EquipmentServiceImpl equipmenyService;
+    
+   @Autowired CustomerServiceImpl customerService;
+    
+    @Autowired EquipmentServiceImpl equipmentService;
 
     public Contract addContract(final Contract contract) throws PnsException {
-        return map(contractDao.insert(map(contract)));
+        Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
+        EquipmentItem equipmentItem = null;
+        if (contract.getEquipmentItem().getId() == null) {
+            Equipment equipmentbyid = equipmentService
+                .getEquipmentById(contract.getEquipmentItem().getEquipment().getId());
+            equipmentItem = equipmentService.addEquipmentItem(ImmutableEquipmentItem.builder().equipment(equipmentbyid)
+                .serialNumber(contract.getEquipmentItem().getSerialNumber()).build());
+        } else {
+            equipmentItem = equipmentService.getEquipmentItemById(contract.getEquipmentItem().getId());
+        }
+        return map(contractDao.insert(map(
+            ImmutableContract.builder().from(contract).customer(customerbyid).equipmentItem(equipmentItem).build())));
     }
 
     public Contract getContractbyId(final String id) throws PnsException {

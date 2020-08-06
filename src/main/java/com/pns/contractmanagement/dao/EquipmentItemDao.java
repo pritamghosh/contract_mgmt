@@ -55,7 +55,7 @@ public class EquipmentItemDao {
     public boolean update(final EquipmentItemEntity equipmentItem) {
 
         Bson update = combine(set("serialNumber", equipmentItem.getSerialNumber()),
-            set("equipmentDetailObjectId", equipmentItem.getEquipmentDetailObjectId()));
+            set("equipmentDetailObjectId", equipmentItem.getEquipmentObjectId()));
         UpdateResult ur = equipmentItemCollection.updateOne(and(eq("_id", equipmentItem.getOid())), update);
         return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
     }

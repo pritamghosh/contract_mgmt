@@ -21,18 +21,19 @@ import com.pns.contractmanagement.service.impl.ContractServiceImpl;
 @RequestMapping("/contract")
 public class ContractController {
 
+ 
 
     @Autowired
     ContractServiceImpl service;
 
     @PutMapping
-    public Contract addContract(@RequestBody final Contract Contract) throws PnsException {
-        return service.addContract(Contract);
+    public Contract addContract(@RequestBody final Contract contract) throws PnsException {
+        return service.addContract(contract);
     }
 
     @PostMapping
-    public Contract modifyContract(@RequestBody final Contract Contract) throws PnsException {
-        return service.modifyContract(Contract);
+    public Contract modifyContract(@RequestBody final Contract contract) throws PnsException {
+        return service.modifyContract(contract);
     }
 
     @DeleteMapping("/{id}")

@@ -45,18 +45,22 @@ public class CustomerController {
         return service.getCustomerbyid(id);
     }
     
-    @GetMapping(params = {"region"})
+    @GetMapping(params = {"region","!name"})
     public List<Customer> getCustomerbyRegion(@RequestParam("region") final String region) throws PnsException {
         return service.getCustomerByRegion(region);
     }
     
+    @GetMapping(params = {"name","!region"})
+    public List<Customer> getCustomerbyName(@RequestParam("name") final String name) throws PnsException {
+        return service.getCustomerByName(name);
+    }
     @GetMapping(value = "search" ,params = {"query"})
     public List<Customer> searchCustomerbyQuery(@RequestParam("query") final String query) throws PnsException {
         return service.searchCustomerbyQuery(query);
     }
 
 
-    @GetMapping(params = {"!region"})
+    @GetMapping(params = {"!region","!name"})
     public List<Customer> getAllCustomer() {
         return service.getAllCustomer();
     }

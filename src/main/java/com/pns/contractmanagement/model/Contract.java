@@ -2,31 +2,42 @@ package com.pns.contractmanagement.model;
 
 import java.time.LocalDate;
 
-import org.springframework.data.annotation.Id;
+import javax.annotation.Nullable;
 
+import org.immutables.value.Value;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-@Builder
-@AllArgsConstructor
-@Getter
-@Data
-@NoArgsConstructor
-@JsonDeserialize(builder = Contract.ContractBuilder.class)
-public class Contract {
-    
-    @Id
-    private long id;
-    private  Customer customer;
-    private  Equipment equipment;
-    private  LocalDate startDate;
-    private  LocalDate endDate;
-    private  double basicAmount;
-    private  double totalAmount;
-    private  double gst;
+/**
+ *
+ */
+@Value.Immutable
+@JsonDeserialize(builder = ImmutableContract.Builder.class)
+public interface Contract {
+
+    @Nullable
+    @JsonProperty("_id")
+    String getId();
+
+    LocalDate getAmcStartDate();
+
+    LocalDate getAmcEndDate();
+
+    Customer getCustomer();
+
+    EquipmentItem getEquipmentItem();
+
+    double getAmcTotalAmount();
+
+    double getAmcBasicAmount();
+
+    double getAmcTax();
+
+    @Nullable
+    String getBillingCycle();
+
+    @Nullable
+    String getNote();
 
 }

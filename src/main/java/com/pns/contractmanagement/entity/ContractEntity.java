@@ -4,10 +4,8 @@ import java.time.LocalDate;
 
 import org.bson.types.ObjectId;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.pns.contractmanagement.model.Customer;
 import com.pns.contractmanagement.model.EquipmentItem;
-import com.pns.contractmanagement.model.ImmutableCustomer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

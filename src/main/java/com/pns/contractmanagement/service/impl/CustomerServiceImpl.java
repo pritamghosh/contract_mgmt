@@ -42,6 +42,10 @@ public class CustomerServiceImpl {
         return map(dao.findByRegion(region));
     }
     
+    public List<Customer> getCustomerByName(String name) {
+        return map(dao.findByName(name));
+    }
+    
     public List<Customer> searchCustomerbyQuery(final String query) {
         return map(dao.searchByQuery(query));
     }
@@ -65,4 +69,5 @@ public class CustomerServiceImpl {
     private Customer map(CustomerEntity customer) {
         return ImmutableCustomer.builder().id(customer.getId()).name(customer.getName()).region(customer.getRegion()).build();
     }
+
 }

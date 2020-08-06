@@ -1,5 +1,6 @@
 #server.port=9009
 #logging.config: classpath:logback.xml
+server.servlet.context-path: /pns
 app:
    switch:
       index.update:

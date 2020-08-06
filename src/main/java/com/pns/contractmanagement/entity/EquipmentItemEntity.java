@@ -26,17 +26,17 @@ public class EquipmentItemEntity extends AbstractMongoEntity {
 
     @BsonProperty("equipment_id")
     @JsonIgnore
-    private ObjectId equipmentDetailObjectId;
+    private ObjectId equipmentObjectId;
 
     private String serialNumber;
 
     public void setEquipmentId(final String equipmentDetailId) {
         this.equipmentId = equipmentDetailId;
-        equipmentDetailObjectId = new ObjectId(equipmentDetailId);
+        equipmentObjectId = new ObjectId(equipmentDetailId);
     }
 
     public void setEquipmentObjectId(final ObjectId equipmentDetailObjectId) {
-        this.equipmentDetailObjectId = equipmentDetailObjectId;
+        this.equipmentObjectId = equipmentDetailObjectId;
         equipmentId = equipmentDetailObjectId.toHexString();
     }
 }

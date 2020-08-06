@@ -56,6 +56,8 @@ public class ContractDao {
     }
 
     public ContractEntity insert(final ContractEntity contract) {
+        contract.setCustomerOid(new ObjectId(contract.getCustomer().getId()));
+        contract.setEquipmnetOid(new ObjectId(contract.getEquipmentItem().getEquipment().getId()));
         final InsertOneResult insertOne = contractCollection.insertOne(contract);
         contract.setOid(insertOne.getInsertedId().asObjectId().getValue());
         return contract;

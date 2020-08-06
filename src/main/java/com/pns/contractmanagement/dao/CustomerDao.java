@@ -7,6 +7,7 @@ import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,6 +81,15 @@ public class CustomerDao {
     public List<CustomerEntity> searchByQuery(final String query) {
         final List<CustomerEntity> customers = new ArrayList<>();
         customerCollection.find(text(query)).iterator().forEachRemaining(customers::add);
+        return customers;
+    }
+
+    public Collection<CustomerEntity> findByName(String name) {
+        Document regQuery = new Document();
+        regQuery.append("$regex", "^(?)" + name);
+        regQuery.append("$options", "i");
+        final List<CustomerEntity> customers = new ArrayList<>();
+        customerCollection.find(new Document("name", name)).iterator().forEachRemaining(customers::add);
         return customers;
     }
 }

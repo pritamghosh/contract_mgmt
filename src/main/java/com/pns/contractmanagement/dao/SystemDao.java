@@ -21,12 +21,16 @@ public class SystemDao {
 
     @Value("${app.switch.index.update.customer:false}")
     private boolean isCutomerIndexUpdateAllowed;
+    @Value("${app.switch.index.update.equipment:false}")
+    private boolean isEquipmentIndexUpdateAllowed;
     @Value("${app.switch.index.update.contract:false}")
     private boolean isContractIndexUpdateAllowed;
     @Value("${app.index.name.customer:customers}")
     private String customerIndexName;
     @Value("${app.index.name.contract:contracts}")
     private String contractIndexName;
+    @Value("${app.index.name.equipment:equipments}")
+    private String equipmentIndexName;
 
     @Autowired
     public SystemDao(final MongoCollectionUtil util) {
@@ -45,6 +49,12 @@ public class SystemDao {
             dropExistingTextIndex(collection);
             collection.createIndex(Indexes.compoundIndex(Indexes.text("customer.name"), Indexes.text("customer.region"),
                 Indexes.text("equipmentItem.serialNumber"), Indexes.text("billingCycle")));
+        }
+        
+        if(isEquipmentIndexUpdateAllowed) {
+            MongoCollection<Document> collection = databese.getCollection(equipmentIndexName);
+            dropExistingTextIndex(collection);
+            collection.createIndex(Indexes.compoundIndex(Indexes.text("model")));
         }
     }
 
