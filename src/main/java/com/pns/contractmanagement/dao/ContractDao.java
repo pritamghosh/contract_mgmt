@@ -131,6 +131,9 @@ public class ContractDao {
             .note(document.getString("note"))
             .customer(customer)
             .equipmentItem(equipment)
+            .contractDate(Instant.ofEpochMilli(document.getDate("contractDate").getTime()).atZone(ZoneId.systemDefault()).toLocalDate())
+            .proposalNo(document.getString("proposalNo"))
+            .amcTaxAmount(document.getDouble("amcTaxAmount"))
             .build();
         // @formatter:on
             entity.setOid(document.getObjectId("_id"));

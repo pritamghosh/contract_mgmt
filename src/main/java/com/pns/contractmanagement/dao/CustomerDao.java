@@ -30,13 +30,13 @@ import com.pns.contractmanagement.entity.CustomerEntity;
 @Repository
 public class CustomerDao {
     private final MongoCollection<CustomerEntity> customerCollection;
-    
 
     /**
      * 
      */
     @Autowired
-    public CustomerDao(final MongoCollectionUtil util ,final @Value("${app.index.name.customer:customers}") String customerIndexName) {
+    public CustomerDao(final MongoCollectionUtil util,
+        final @Value("${app.index.name.customer:customers}") String customerIndexName) {
         customerCollection = util.getCollection(customerIndexName, CustomerEntity.class);
     }
 
@@ -45,18 +45,26 @@ public class CustomerDao {
         customer.setOid(insertOne.getInsertedId().asObjectId().getValue());
         return customer;
     }
-    
+
     public boolean update(final CustomerEntity customer) {
-        
-        Bson update = combine(set("name", customer.getName()), set("region",  customer.getRegion()));
-        UpdateResult ur = customerCollection.updateOne(and(eq("_id", customer.getOid())),update);
+
+        Bson update = combine(
+            // @formatter:off
+            set("name", customer.getName()), 
+            set("region", customer.getRegion()),
+            set("address", customer.getAddress()), 
+            set("gstinNo", customer.getGstinNo()), 
+            set("pan", customer.getPan())
+            // @formatter:on
+            );
+        UpdateResult ur = customerCollection.updateOne(and(eq("_id", customer.getOid())), update);
         return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
     }
 
     public Optional<CustomerEntity> findById(final String id) {
         return Optional.ofNullable(customerCollection.find(new Document("_id", new ObjectId(id))).first());
     }
-    
+
     public List<CustomerEntity> findByRegion(final String region) {
         Document regQuery = new Document();
         regQuery.append("$regex", "^(?)" + region);
@@ -65,11 +73,11 @@ public class CustomerDao {
         customerCollection.find(new Document("region", region)).iterator().forEachRemaining(customers::add);
         return customers;
     }
-    
+
     public boolean deleteById(final String id) {
 
         DeleteResult deleteOne = customerCollection.deleteOne(and(eq("_id", new ObjectId(id))));
-        return deleteOne.getDeletedCount()>0;
+        return deleteOne.getDeletedCount() > 0;
     }
 
     public List<CustomerEntity> findAll() {
@@ -77,7 +85,7 @@ public class CustomerDao {
         customerCollection.find().iterator().forEachRemaining(customers::add);
         return customers;
     }
-    
+
     public List<CustomerEntity> searchByQuery(final String query) {
         final List<CustomerEntity> customers = new ArrayList<>();
         customerCollection.find(text(query)).iterator().forEachRemaining(customers::add);

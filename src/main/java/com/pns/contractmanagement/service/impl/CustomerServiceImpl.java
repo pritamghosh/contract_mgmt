@@ -59,15 +59,20 @@ public class CustomerServiceImpl {
     }
     
     private CustomerEntity map(Customer customer) {
-        CustomerEntity entity = new CustomerEntity();
+        CustomerEntity entity = CustomerEntity.builder()
+        .name(customer.getName())
+        .region(customer.getRegion())
+        .gstinNo(customer.getGstinNo())
+        .address(customer.getAddress())
+        .pan(customer.getPan())
+        .build();
         entity.setId(customer.getId());
-        entity.setName(customer.getName());
-        entity.setRegion(customer.getRegion());
         return entity;
     }
     
     private Customer map(CustomerEntity customer) {
-        return ImmutableCustomer.builder().id(customer.getId()).name(customer.getName()).region(customer.getRegion()).build();
+        return ImmutableCustomer.builder().id(customer.getId()).name(customer.getName()).region(customer.getRegion())
+            .gstinNo(customer.getGstinNo()).address(customer.getAddress()).pan(customer.getPan()).build();
     }
 
 }

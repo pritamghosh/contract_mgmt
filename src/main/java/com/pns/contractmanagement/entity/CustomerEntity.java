@@ -16,5 +16,11 @@ public class CustomerEntity extends AbstractMongoEntity {
     private String name;
 
     private String region;
+    
+    private String address;
+    
+    private String gstinNo;
+    
+    private String pan;
 
 }

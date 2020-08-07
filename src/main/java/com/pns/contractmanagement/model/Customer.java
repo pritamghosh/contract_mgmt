@@ -18,5 +18,11 @@ public interface Customer  {
     String getName();
 
     String getRegion();
+    
+    String getAddress();
+    
+    String getGstinNo();
+    
+    String getPan();
 
 }

@@ -1,36 +1,45 @@
 package com.pns.contractmanagement.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.pns.contractmanagement.dao.ContractDao;
 import com.pns.contractmanagement.entity.ContractEntity;
 import com.pns.contractmanagement.exceptions.PnsError;
 import com.pns.contractmanagement.exceptions.PnsException;
+import com.pns.contractmanagement.helper.impl.ContractInvoiceHelperImpl;
 import com.pns.contractmanagement.model.Contract;
 import com.pns.contractmanagement.model.Customer;
 import com.pns.contractmanagement.model.Equipment;
 import com.pns.contractmanagement.model.EquipmentItem;
 import com.pns.contractmanagement.model.ImmutableContract;
 import com.pns.contractmanagement.model.ImmutableEquipmentItem;
+import com.pns.contractmanagement.model.Report;
 
 @Service
 public class ContractServiceImpl {
 
-    @Autowired
-    ContractDao contractDao;
+    @Value("${app.gst.value:18}")
+    private double tax;
 
     @Autowired
-    EquipmentServiceImpl equipmenyService;
-    
-   @Autowired CustomerServiceImpl customerService;
-    
-    @Autowired EquipmentServiceImpl equipmentService;
+    private ContractDao contractDao;
 
-    public Contract addContract(final Contract contract) throws PnsException {
+    @Autowired
+    private CustomerServiceImpl customerService;
+
+    @Autowired
+    private EquipmentServiceImpl equipmentService;
+
+    @Autowired
+    private ContractInvoiceHelperImpl invoiceHelper;
+
+    public Report addContract(final Contract contract) throws PnsException {
         Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
         EquipmentItem equipmentItem = null;
         if (contract.getEquipmentItem().getId() == null) {
@@ -41,22 +50,32 @@ public class ContractServiceImpl {
         } else {
             equipmentItem = equipmentService.getEquipmentItemById(contract.getEquipmentItem().getId());
         }
-        return map(contractDao.insert(map(
-            ImmutableContract.builder().from(contract).customer(customerbyid).equipmentItem(equipmentItem).build())));
+        LocalDateTime now = LocalDateTime.now();
+        String proposalNo = new StringBuilder("PNS-").append(now.getDayOfMonth()).append("/")
+            .append(now.getMonthValue()).append("/").append(now.getYear()).toString();
+        double amcTaxAmount = contract.getAmcBasicAmount() * tax / 100;
+        final Contract insertedContract = map(contractDao.insert(map(ImmutableContract.builder().from(contract)
+            .amcTax(tax).amcTaxAmount(amcTaxAmount).amcTotalAmount(contract.getAmcBasicAmount() + amcTaxAmount)
+            .customer(customerbyid).equipmentItem(equipmentItem).proposalNo(proposalNo).build())));
+        return invoiceHelper.generateInvoice(insertedContract);
     }
 
-    public Contract getContractbyId(final String id) throws PnsException {
+    public Report getContractReportById(final String id) throws PnsException {
+        return invoiceHelper.generateInvoice(getContractById(id));
+    }
+
+    public Contract getContractById(final String id) throws PnsException {
         return map(
             contractDao.findById(id).orElseThrow(() -> new PnsException("Contract Not Found!!", PnsError.NOT_FOUND)));
     }
 
     public Contract modifyContract(final Contract contract) throws PnsException {
         contractDao.update(map(contract));
-        return getContractbyId(contract.getId());
+        return getContractById(contract.getId());
     }
 
-    public Contract DeleteContractById(final String id) throws PnsException {
-        final Contract deletedContract = getContractbyId(id);
+    public Contract deleteContractById(final String id) throws PnsException {
+        final Contract deletedContract = getContractById(id);
         contractDao.deleteById(id);
         return deletedContract;
     }
@@ -94,6 +113,9 @@ public class ContractServiceImpl {
             .equipmentItem(entity.getEquipmentItem())
             .note(entity.getNote())
             .id(entity.getId())
+            .contractDate(entity.getContractDate())
+            .proposalNo(entity.getProposalNo())
+            .amcTax(entity.getAmcTaxAmount())
             .build();
         // @formatter:on
 
@@ -111,6 +133,9 @@ public class ContractServiceImpl {
             .customer(contract.getCustomer())
             .equipmentItem(contract.getEquipmentItem())
             .note(contract.getNote())
+            .contractDate(contract.getContractDate())
+            .proposalNo(contract.getProposalNo())
+            .amcTax(contract.getAmcTaxAmount())
             .build();
         // @formatter:on
         entity.setId(contract.getId());

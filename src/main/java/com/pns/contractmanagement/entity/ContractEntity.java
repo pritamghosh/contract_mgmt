@@ -27,9 +27,13 @@ public class ContractEntity extends AbstractMongoEntity {
     private double amcBasicAmount;
     private double amcTotalAmount;
     private double amcTax;
+    private double amcTaxAmount;
     private String billingCycle;
     private String note;
     private ObjectId customerOid;
     private ObjectId equipmnetOid;
+    private LocalDate contractDate;
+
+    private String proposalNo;
 
 }

@@ -17,6 +17,7 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<dependency.version.jasper>6.4.0</dependency.version.jasper>
 		<dependency.version.org.immutables>2.8.8</dependency.version.org.immutables>
 		<dependency.version.spring-cloud-sleuth>2.2.2.RELEASE</dependency.version.spring-cloud-sleuth>
 		<dependency.version.springfox.swagger2>2.9.2</dependency.version.springfox.swagger2>
@@ -24,6 +25,16 @@
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>${dependency.version.jasper}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-fonts</artifactId>
+			<version>6.0.0</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.immutables/value -->
 		<dependency>
 			<groupId>org.immutables</groupId>

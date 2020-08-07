@@ -33,11 +33,18 @@ public interface Contract {
     double getAmcBasicAmount();
 
     double getAmcTax();
-
     @Nullable
+    double getAmcTaxAmount();
+
     String getBillingCycle();
 
     @Nullable
     String getNote();
+    
+    @Nullable
+    LocalDate getContractDate();
+    
+    @Nullable
+    String getProposalNo();
 
 }

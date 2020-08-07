@@ -18,7 +18,4 @@ public interface Equipment {
 
     @Nullable
     String getDescription();
-
-    @Nullable
-    Long getCount();
 }
