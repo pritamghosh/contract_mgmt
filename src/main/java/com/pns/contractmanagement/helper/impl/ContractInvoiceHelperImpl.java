@@ -45,7 +45,8 @@ public class ContractInvoiceHelperImpl {
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
             byte[] pdfReport = JasperExportManager.exportReportToPdf(jasperPrint);
-            return ImmutableReport.builder().content(pdfReport).fileName(contract.getId() + "xyxz.pdf")
+            //JasperExportManager.exportReportToPdfFile(jasperPrint, contract.getId() + ".pdf");
+            return ImmutableReport.builder().content(pdfReport).fileName(contract.getId() + ".pdf")
                 .contentType(MediaType.APPLICATION_PDF).build();
         } catch (JRException e) {
             // TODO Auto-generated catch block

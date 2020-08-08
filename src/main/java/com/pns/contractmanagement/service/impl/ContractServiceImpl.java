@@ -54,9 +54,12 @@ public class ContractServiceImpl {
         LocalDateTime now = LocalDateTime.now();
         String proposalNo = new StringBuilder("PNS-").append(now.getDayOfMonth()).append("/")
             .append(now.getMonthValue()).append("/").append(now.getYear()).toString();
-        double amcTaxAmount = contract.getAmcBasicAmount() * tax / 100;
+        final double amcBasicAmount = Math.round(contract.getAmcBasicAmount() * 100.0) / 100.0;
+        double amcTaxAmount = Math.round((amcBasicAmount * tax / 100) * 100.0) / 100.0;
         final Contract insertedContract = map(
-            contractDao.insert(map(ImmutableContract.builder().from(contract).amcTax(tax).amcTaxAmount(amcTaxAmount)
+            contractDao.insert(map(ImmutableContract.builder().from(contract)
+                .amcBasicAmount(amcBasicAmount)
+                .amcTax(tax).amcTaxAmount(amcTaxAmount)
                 .amcTotalAmount(contract.getAmcBasicAmount() + amcTaxAmount).customer(customerbyid)
                 .equipmentItem(equipmentItem).proposalNo(proposalNo).contractDate(LocalDate.now()).build())));
         return invoiceHelper.generateInvoice(insertedContract);
@@ -82,9 +85,10 @@ public class ContractServiceImpl {
         } else {
             equipmentItem = equipmentService.getEquipmentItemById(contract.getEquipmentItem().getId());
         }
-        double amcTaxAmount = contract.getAmcBasicAmount() * tax / 100;
+        final double amcBasicAmount = Math.round(contract.getAmcBasicAmount() * 100.0) / 100.0;
+        double amcTaxAmount = Math.round((amcBasicAmount * tax / 100) * 100.0) / 100.0;
         contractDao.update(map(ImmutableContract.builder().from(contract).amcTax(tax).amcTaxAmount(amcTaxAmount)
-            .amcTotalAmount(contract.getAmcBasicAmount() + amcTaxAmount).customer(customerbyid)
+            .amcTotalAmount(amcBasicAmount + amcTaxAmount).customer(customerbyid).amcBasicAmount(amcBasicAmount)
             .equipmentItem(equipmentItem).contractDate(LocalDate.now()).build()));
         return getContractById(contract.getId());
     }

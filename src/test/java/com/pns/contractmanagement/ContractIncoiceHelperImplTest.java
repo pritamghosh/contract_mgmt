@@ -63,4 +63,11 @@ public class ContractIncoiceHelperImplTest {
 // @formatter:on
         assertNotNull(helper.generateInvoice(contract));
     }
+    
+    @Test
+    void sample() {
+        double a = 123.45677;
+      double d =  Math.round(a * 100.0) / 100.0   ;
+      System.out.println(d);
+    }
 }
