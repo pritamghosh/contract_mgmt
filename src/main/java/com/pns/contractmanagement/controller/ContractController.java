@@ -26,7 +26,7 @@ import com.pns.contractmanagement.service.impl.ContractServiceImpl;
 public class ContractController {
 
     @Autowired
-    ContractServiceImpl service;
+    private ContractServiceImpl service;
 
     @PutMapping
     public ResponseEntity<byte[]> addContract(@RequestBody final Contract contract) throws PnsException {

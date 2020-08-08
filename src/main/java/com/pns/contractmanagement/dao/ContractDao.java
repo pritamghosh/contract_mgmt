@@ -69,10 +69,12 @@ public class ContractDao {
         // @formatter:off
             set("customer", contract.getCustomer()),
             set("equipmentItem", contract.getEquipmentItem()), 
-            set("equipmentItem", contract.getAmcBasicAmount()),
+            set("amcBasicAmount", contract.getAmcBasicAmount()),
             set("amcEndDate",  contract.getAmcEndDate()),
             set("amcStartDate",  contract.getAmcStartDate()),
             set("amcTax",  contract.getAmcTax()),
+            set("amcTaxAmount",  contract.getAmcTaxAmount()),
+            set("proposalNo",  contract.getProposalNo()),
             set("amcTotalAmount",  contract.getAmcTotalAmount()),
             set("billingCycle", contract.getBillingCycle()),
             set("note",  contract.getNote()),
@@ -114,6 +116,9 @@ public class ContractDao {
     }
 
     private ContractEntity map(Document document) {
+        if(document==null) {
+            return null;
+        }
         try {
             final Customer customer = objectMapper.readValue(((Document) document.get("customer")).toJson(),
                 Customer.class);

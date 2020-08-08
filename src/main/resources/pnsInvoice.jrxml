@@ -358,7 +358,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Calibri" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{contract}.getAmcTaxcAmount()/2+"\n"+$P{contract}.getAmcTaxcAmount()/2]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{contract}.getAmcTaxAmount()/2+"\n"+$P{contract}.getAmcTaxAmount()/2]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="280" y="0" width="100" height="60" isPrintWhenDetailOverflows="true" uuid="acfaa5ab-aa1b-448e-8f29-9cadcdb6199c"/>

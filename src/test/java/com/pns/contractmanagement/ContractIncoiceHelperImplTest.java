@@ -46,7 +46,7 @@ public class ContractIncoiceHelperImplTest {
         .amcStartDate(LocalDate.of(2020, 1, 19))
         .amcTax(18)
         .amcTotalAmount(12000)
-        .amcTaxcAmount(1700)
+        .amcTaxAmount(1700.00)
         .billingCycle("Half Yearly")
         .customer(customer)
         .equipmentItem(ImmutableEquipmentItem.builder()

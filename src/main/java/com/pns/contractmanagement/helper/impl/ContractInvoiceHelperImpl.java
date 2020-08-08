@@ -27,8 +27,8 @@ import net.sf.jasperreports.engine.JasperReport;
 @Component
 public class ContractInvoiceHelperImpl {
 
-    @Value("${app.print.date.formar:dd-MM-yyyy")
-    private String dateFormat = "dd-MM-yyyy";
+    @Value("${app.print.date.formar:dd-MM-yyyy}")
+    private String dateFormat;
 
     public Report generateInvoice(Contract contract) {
         Map<String, Object> parameters = new HashMap<>();
@@ -45,7 +45,7 @@ public class ContractInvoiceHelperImpl {
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
             byte[] pdfReport = JasperExportManager.exportReportToPdf(jasperPrint);
-            return ImmutableReport.builder().content(pdfReport).fileName(contract.getId() + ".pdf")
+            return ImmutableReport.builder().content(pdfReport).fileName(contract.getId() + "xyxz.pdf")
                 .contentType(MediaType.APPLICATION_PDF).build();
         } catch (JRException e) {
             // TODO Auto-generated catch block

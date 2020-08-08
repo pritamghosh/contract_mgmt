@@ -1,5 +1,6 @@
 package com.pns.contractmanagement.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,9 +55,10 @@ public class ContractServiceImpl {
         String proposalNo = new StringBuilder("PNS-").append(now.getDayOfMonth()).append("/")
             .append(now.getMonthValue()).append("/").append(now.getYear()).toString();
         double amcTaxAmount = contract.getAmcBasicAmount() * tax / 100;
-        final Contract insertedContract = map(contractDao.insert(map(ImmutableContract.builder().from(contract)
-            .amcTax(tax).amcTaxAmount(amcTaxAmount).amcTotalAmount(contract.getAmcBasicAmount() + amcTaxAmount)
-            .customer(customerbyid).equipmentItem(equipmentItem).proposalNo(proposalNo).build())));
+        final Contract insertedContract = map(
+            contractDao.insert(map(ImmutableContract.builder().from(contract).amcTax(tax).amcTaxAmount(amcTaxAmount)
+                .amcTotalAmount(contract.getAmcBasicAmount() + amcTaxAmount).customer(customerbyid)
+                .equipmentItem(equipmentItem).proposalNo(proposalNo).contractDate(LocalDate.now()).build())));
         return invoiceHelper.generateInvoice(insertedContract);
     }
 
@@ -70,7 +72,20 @@ public class ContractServiceImpl {
     }
 
     public Contract modifyContract(final Contract contract) throws PnsException {
-        contractDao.update(map(contract));
+        Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
+        EquipmentItem equipmentItem = null;
+        if (contract.getEquipmentItem().getId() == null) {
+            Equipment equipmentbyid = equipmentService
+                .getEquipmentById(contract.getEquipmentItem().getEquipment().getId());
+            equipmentItem = equipmentService.addEquipmentItem(ImmutableEquipmentItem.builder().equipment(equipmentbyid)
+                .serialNumber(contract.getEquipmentItem().getSerialNumber()).build());
+        } else {
+            equipmentItem = equipmentService.getEquipmentItemById(contract.getEquipmentItem().getId());
+        }
+        double amcTaxAmount = contract.getAmcBasicAmount() * tax / 100;
+        contractDao.update(map(ImmutableContract.builder().from(contract).amcTax(tax).amcTaxAmount(amcTaxAmount)
+            .amcTotalAmount(contract.getAmcBasicAmount() + amcTaxAmount).customer(customerbyid)
+            .equipmentItem(equipmentItem).contractDate(LocalDate.now()).build()));
         return getContractById(contract.getId());
     }
 
@@ -115,7 +130,7 @@ public class ContractServiceImpl {
             .id(entity.getId())
             .contractDate(entity.getContractDate())
             .proposalNo(entity.getProposalNo())
-            .amcTax(entity.getAmcTaxAmount())
+            .amcTaxAmount(entity.getAmcTaxAmount())
             .build();
         // @formatter:on
 
@@ -135,7 +150,7 @@ public class ContractServiceImpl {
             .note(contract.getNote())
             .contractDate(contract.getContractDate())
             .proposalNo(contract.getProposalNo())
-            .amcTax(contract.getAmcTaxAmount())
+            .amcTaxAmount(contract.getAmcTaxAmount()!=null?contract.getAmcTaxAmount():0)
             .build();
         // @formatter:on
         entity.setId(contract.getId());

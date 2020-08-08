@@ -1,7 +1,7 @@
 #server.port=9009
 #logging.config: classpath:logback.xml
 server.servlet.context-path: /pns
-spring.data.mongodb.uri: mongodb+srv://pritamadmin:adminpritam@cluster0.y4hyl.mongodb.net/<dbname>?retryWrites=true&w=majority
+#spring.data.mongodb.uri: mongodb+srv://pritamadmin:adminpritam@cluster0.y4hyl.mongodb.net/<dbname>?retryWrites=true&w=majority
 app:
    switch:
       index.update:
