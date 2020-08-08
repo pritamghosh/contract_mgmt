@@ -3,9 +3,13 @@ package com.pns.contractmanagement;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.pns.contractmanagement.helper.impl.ContractInvoiceHelperImpl;
 import com.pns.contractmanagement.model.Equipment;
@@ -17,16 +21,17 @@ import com.pns.contractmanagement.model.ImmutableEquipmentItem;
 /**
  *
  */
-
+@ExtendWith(MockitoExtension.class)
 public class ContractIncoiceHelperImplTest {
 
-    ContractInvoiceHelperImpl helper = new ContractInvoiceHelperImpl();
+    @InjectMocks
+    ContractInvoiceHelperImpl helper ;
 
     @Test
     void jasperTest() {
         // @formatter:off
-        
-
+        MockitoAnnotations.initMocks(this);
+        ReflectionTestUtils.setField(helper, "dateFormat", "dd-MM-yyyy");
         final ImmutableCustomer customer = ImmutableCustomer.builder()
         .id("")
         .name("STAR SPORTS")

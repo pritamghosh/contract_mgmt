@@ -163,7 +163,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<textElement>
 					<font fontName="Calibri" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["GSTIN NO-  "+$P{contract}.getCustomer().getGstinNo()+",PAN - "+$P{contract}.getCustomer().getPan()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["GSTIN NO-  "+$P{contract}.getCustomer().getGstinNo()+", PAN - "+$P{contract}.getCustomer().getPan()]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -250,7 +250,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["ANNUAL MAINTENANCE CONTRACT OF "+$P{contract}.getEquipmentItem().getEquipment().getModel()+"\n"+$P{contract}.getEquipmentItem().getEquipment().getDescription()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["ANNUAL MAINTENANCE CONTRACT OF "+$P{contract}.getEquipmentItem().getEquipment().getModel()+"\n"+$P{contract}.getEquipmentItem().getEquipment().getDescription().toUpperCase()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="280" y="0" width="100" height="50" uuid="2f20d356-d16e-4462-b2a9-76ed333d144b"/>
@@ -533,7 +533,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["12154"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{contract}.getAmcTotalAmount()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="480" y="30" width="75" height="30" uuid="e33c729c-d6d8-46a4-813d-a076fe5493a7"/>
@@ -546,7 +546,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Calibri" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["12154"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{contract}.getAmcTotalAmount()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="10" y="0" width="290" height="60" uuid="3321d9ed-a957-4358-9b94-3f1da0de9eb0"/>
