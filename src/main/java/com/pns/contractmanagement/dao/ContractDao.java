@@ -6,9 +6,13 @@ import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Range;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
@@ -110,6 +115,17 @@ public class ContractDao {
     public List<ContractEntity> findAll() {
         return map(contractDocumentCollection.find());
     }
+    
+	public List<ContractEntity> findContractByAmcDateRange(Range<LocalDate> dateRange) {
+		return map(contractDocumentCollection
+				.find(and(new Document("amcStartDate", new Document("$gte", dateRange.lowerEndpoint())),
+						new Document("amcEndDate", new Document("$lte", dateRange.upperEndpoint())))));
+	}
+	
+	public List<ContractEntity> findContractByCreationDateRange(Range<LocalDate> dateRange) {
+		return map(contractDocumentCollection.find(new Document("contractDate",
+				new Document("$gte", dateRange.lowerEndpoint()).append("$lte", dateRange.upperEndpoint()))));
+	}
 
     public List<ContractEntity> searchByQuery(final String query) {
         return map(contractDocumentCollection.find(text(query)));
@@ -156,4 +172,6 @@ public class ContractDao {
     private List<ContractEntity> map(FindIterable<Document> mongoIterable) {
         return StreamSupport.stream(mongoIterable.spliterator(), true).map(d -> map(d)).collect(Collectors.toList());
     }
+
+	
 }

@@ -1,5 +1,7 @@
 package com.pns.contractmanagement.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.collect.Range;
 import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.model.Contract;
 import com.pns.contractmanagement.model.Report;
@@ -25,6 +28,7 @@ import com.pns.contractmanagement.service.impl.ContractServiceImpl;
 @RequestMapping("/contract")
 public class ContractController {
 
+	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     @Autowired
     private ContractServiceImpl service;
 
@@ -70,9 +74,19 @@ public class ContractController {
         
     }
 
-    @GetMapping
+    @GetMapping(params = { "!form","!to","!create" })
     public List<Contract> getAllContract() {
         return service.getAllContract();
+    }
+    
+    @GetMapping(params = { "form","to","!create" })
+    public List<Contract> getContractsByAMCDateRange(@RequestParam("form") String form,@RequestParam("to") String to) {
+		return service.getContractByAmcDateRange(Range.closed(LocalDate.parse(form),LocalDate.parse(to)));
+    }
+    
+    @GetMapping(params = { "form","to","create" })
+    public List<Contract> getContractsByCreationDate(@RequestParam("form") String form,@RequestParam("to") String to) {
+        return service.getContractByCreationDateRange(Range.closed(LocalDate.parse(form),LocalDate.parse(to)));
     }
 
     @GetMapping("/customer/{id}")

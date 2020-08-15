@@ -65,14 +65,12 @@ public class CustomerDao {
         return Optional.ofNullable(customerCollection.find(new Document("_id", new ObjectId(id))).first());
     }
 
-    public List<CustomerEntity> findByRegion(final String region) {
-        Document regQuery = new Document();
-        regQuery.append("$regex", "^(?)" + region);
-        regQuery.append("$options", "i");
-        final List<CustomerEntity> customers = new ArrayList<>();
-        customerCollection.find(new Document("region", region)).iterator().forEachRemaining(customers::add);
-        return customers;
-    }
+	public List<CustomerEntity> findByRegion(final String region) {
+		final List<CustomerEntity> customers = new ArrayList<>();
+		customerCollection.find(new Document("region", DaoUtil.buildCaseInsentiveQuery(region))).iterator()
+				.forEachRemaining(customers::add);
+		return customers;
+	}
 
     public boolean deleteById(final String id) {
 
@@ -92,12 +90,10 @@ public class CustomerDao {
         return customers;
     }
 
-    public Collection<CustomerEntity> findByName(String name) {
-        Document regQuery = new Document();
-        regQuery.append("$regex", "^(?)" + name);
-        regQuery.append("$options", "i");
-        final List<CustomerEntity> customers = new ArrayList<>();
-        customerCollection.find(new Document("name", name)).iterator().forEachRemaining(customers::add);
-        return customers;
-    }
+	public Collection<CustomerEntity> findByName(String name) {
+		final List<CustomerEntity> customers = new ArrayList<>();
+		customerCollection.find(new Document("name", DaoUtil.buildCaseInsentiveQuery(name))).iterator()
+				.forEachRemaining(customers::add);
+		return customers;
+	}
 }

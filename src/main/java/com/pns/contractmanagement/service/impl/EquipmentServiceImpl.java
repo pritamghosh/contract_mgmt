@@ -72,13 +72,17 @@ public class EquipmentServiceImpl {
         return map(equipmentDao.findById(id)
             .orElseThrow(() -> new PnsException("Equipment Detail Not Found!!", PnsError.NOT_FOUND)));
     }
-    public List<Equipment> getAllEquipment() {
+    public List<Equipment> getAllEquipments() {
         return equipmentDao.findAll().stream().map(e->map(e)).collect(Collectors.toList());
     }
     
     public long getEquipmentCountById(String id) {
         return equipmentItemDao.getCountById(id);
     }
+    
+    public List<Equipment> getEquipmentsByModel(final String model) {
+    	return equipmentDao.findByModel(model).stream().map(e->map(e)).collect(Collectors.toList());
+	}
     
     public long getEquipmentCountByIds(List<String> ids) {
         return 0;
@@ -121,6 +125,7 @@ public class EquipmentServiceImpl {
         return map(list, equipmentDao
             .findByIds(list.stream().map(e -> e.getEquipmentId()).collect(Collectors.toList())));
     }
+
 
 
 

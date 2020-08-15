@@ -23,55 +23,61 @@ import com.pns.contractmanagement.service.impl.EquipmentServiceImpl;
 @RequestMapping("/equipment")
 public class EquipmentController {
 
+	@Autowired
+	EquipmentServiceImpl service;
 
-    @Autowired
-    EquipmentServiceImpl service;
+	@PutMapping
+	public Equipment addEquipment(@RequestBody final Equipment equipment) throws PnsException {
+		return service.addEquipment(equipment);
+	}
 
-    
-    @PutMapping
-    public Equipment addEquipment(@RequestBody final Equipment equipment) throws PnsException {
-        return service.addEquipment(equipment);
-    }
-    @PostMapping
-    public Equipment modifyEquipment(@RequestBody final Equipment equipment) throws PnsException {
-        return service.modifyEquipment(equipment);
-    }
-    
-    @GetMapping
-    public List<Equipment> getAllEquipment() throws PnsException {
-        return service.getAllEquipment();
-    }
-    @PutMapping("/item")
-    public EquipmentItem addEquipmentItem(@RequestBody final EquipmentItem equipment) throws PnsException {
-        return service.addEquipmentItem(equipment);
-    }
-    
-    @PostMapping("/item")
-    public EquipmentItem modifyEquipmentItem(@RequestBody final EquipmentItem equipment) throws PnsException {
-        return service.modifyEquipmentItem(equipment);
-    }
+	@PostMapping
+	public Equipment modifyEquipment(@RequestBody final Equipment equipment) throws PnsException {
+		return service.modifyEquipment(equipment);
+	}
 
-    @DeleteMapping("/item/{id}")
-    public EquipmentItem DeleteEquipmentById(@PathVariable("id") final String id) throws PnsException {
-        return service.DeleteEquipmentById(id);
-    }
-    @GetMapping(value="/count/{id}")
-    public ResponseEntity<Long> getCountById(@PathVariable("id") final String id){
-        return ResponseEntity.ok(service.getEquipmentCountById(id));
-    }
+	@GetMapping(params = { "!model" })
+	public List<Equipment> getAllEquipments() throws PnsException {
+		return service.getAllEquipments();
+	}
 
-    @GetMapping("/item/{id}")
-    public EquipmentItem getEquipmentbyid(@PathVariable("id") final String id) throws PnsException {
-        return service.getEquipmentItemById(id);
-    }
+	@GetMapping(params = { "model" })
+	public List<Equipment> getEquipmentsByModel(@RequestParam("model") final String model) throws PnsException {
+		return service.getEquipmentsByModel(model);
+	}
 
-    @GetMapping("/item")
-    public List<EquipmentItem> getAllEquipmentItem() {
-        return service.getAllEquipmentItem();
-    }
-    
-    @GetMapping(value = "/search" ,params = {"query"})
-    public List<Equipment> searchEquipmentbyQuery(@RequestParam("query") final String query) throws PnsException {
-        return service.searchEquipmentbyQuery(query);
-    }
+	@PutMapping("/item")
+	public EquipmentItem addEquipmentItem(@RequestBody final EquipmentItem equipment) throws PnsException {
+		return service.addEquipmentItem(equipment);
+	}
+
+	@PostMapping("/item")
+	public EquipmentItem modifyEquipmentItem(@RequestBody final EquipmentItem equipment) throws PnsException {
+		return service.modifyEquipmentItem(equipment);
+	}
+
+	@DeleteMapping("/item/{id}")
+	public EquipmentItem DeleteEquipmentById(@PathVariable("id") final String id) throws PnsException {
+		return service.DeleteEquipmentById(id);
+	}
+
+	@GetMapping(value = "/count/{id}")
+	public ResponseEntity<Long> getCountById(@PathVariable("id") final String id) {
+		return ResponseEntity.ok(service.getEquipmentCountById(id));
+	}
+
+	@GetMapping("/item/{id}")
+	public EquipmentItem getEquipmentbyid(@PathVariable("id") final String id) throws PnsException {
+		return service.getEquipmentItemById(id);
+	}
+
+	@GetMapping("/item")
+	public List<EquipmentItem> getAllEquipmentItem() {
+		return service.getAllEquipmentItem();
+	}
+
+	@GetMapping(value = "/search", params = { "query" })
+	public List<Equipment> searchEquipmentbyQuery(@RequestParam("query") final String query) throws PnsException {
+		return service.searchEquipmentbyQuery(query);
+	}
 }

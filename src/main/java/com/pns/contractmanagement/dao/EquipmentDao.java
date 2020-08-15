@@ -58,6 +58,12 @@ public class EquipmentDao {
     public Optional<EquipmentEntity> findById(final String id) {
         return Optional.ofNullable(equipmentCollection.find(new Document("_id", new ObjectId(id))).first());
     }
+    
+    public List<EquipmentEntity> findByModel(final String model) {
+    	final List<EquipmentEntity> equipmentEntities = new ArrayList<>();
+        equipmentCollection.find(new Document("model", DaoUtil.buildCaseInsentiveQuery(model))).iterator().forEachRemaining(equipmentEntities::add);
+        return equipmentEntities;
+    }
 
     public Map<String, EquipmentEntity> findByIds(final List<String> ids) {
         final Map<String, EquipmentEntity> equipmentEntity = new HashMap<>();
@@ -80,9 +86,9 @@ public class EquipmentDao {
     }
 
     public List<EquipmentEntity> searchByQuery(final String query) {
-        final List<EquipmentEntity> equipmentEntitys = new ArrayList<>();
-        equipmentCollection.find(text(query)).iterator().forEachRemaining(equipmentEntitys::add);
-        return equipmentEntitys;
+        final List<EquipmentEntity> equipmentEntities = new ArrayList<>();
+        equipmentCollection.find(text(query)).iterator().forEachRemaining(equipmentEntities::add);
+        return equipmentEntities;
     }
 
 }

@@ -48,7 +48,7 @@ public class SystemDao {
             MongoCollection<Document> collection = databese.getCollection(contractIndexName);
             dropExistingTextIndex(collection);
             collection.createIndex(Indexes.compoundIndex(Indexes.text("customer.name"), Indexes.text("customer.region"),
-                Indexes.text("equipmentItem.serialNumber"), Indexes.text("billingCycle")));
+                Indexes.text("equipmentItem.serialNumber"),Indexes.text("equipmentItem.equipment.model"), Indexes.text("billingCycle")));
         }
         
         if(isEquipmentIndexUpdateAllowed) {
