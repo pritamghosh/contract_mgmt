@@ -12,7 +12,7 @@ app:
    page.size:
       customer: 3
       equipment: 3
-      contract: 5
+      contract: 3
    index:
       name:
          customer: customers

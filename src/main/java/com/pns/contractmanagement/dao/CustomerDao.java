@@ -36,7 +36,7 @@ public class CustomerDao {
 	private final MongoCollection<CustomerEntity> customerCollection;
 
 	/**
-	 * 
+	 *
 	 */
 	@Autowired
 	public CustomerDao(final MongoCollectionUtil util,
@@ -52,14 +52,14 @@ public class CustomerDao {
 
 	public boolean update(final CustomerEntity customer) {
 
-		Bson update = combine(
+		final Bson update = combine(
 				// @formatter:off
 				set("name", customer.getName()), set("region", customer.getRegion()),
 				set("address", customer.getAddress()), set("gstinNo", customer.getGstinNo()),
 				set("pan", customer.getPan())
 		// @formatter:on
 		);
-		UpdateResult ur = customerCollection.updateOne(and(eq("_id", customer.getOid())), update);
+		final UpdateResult ur = customerCollection.updateOne(and(eq("_id", customer.getOid())), update);
 		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
 
@@ -67,58 +67,58 @@ public class CustomerDao {
 		return Optional.ofNullable(customerCollection.find(new Document("_id", new ObjectId(id))).first());
 	}
 
-	public List<CustomerEntity> findByRegion(final String region, int page) {
+	public List<CustomerEntity> findByRegion(final String region, final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
 		customerCollection.find(new Document("region", DaoUtil.buildCaseInsentiveQuery(region)))
-				.skip((page - 1) * pageSize).limit(page * pageSize).iterator().forEachRemaining(customers::add);
+				.skip((page - 1) * pageSize).limit(pageSize).iterator().forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public boolean deleteById(final String id) {
 
-		DeleteResult deleteOne = customerCollection.deleteOne(and(eq("_id", new ObjectId(id))));
+		final DeleteResult deleteOne = customerCollection.deleteOne(and(eq("_id", new ObjectId(id))));
 		return deleteOne.getDeletedCount() > 0;
 	}
 
-	public List<CustomerEntity> findAll(int page) {
+	public List<CustomerEntity> findAll(final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find().skip((page - 1) * pageSize).limit(page * pageSize).iterator()
+		customerCollection.find().skip((page - 1) * pageSize).limit(pageSize).iterator()
 				.forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public long countAllDocumnets() {
-		long countDocuments = customerCollection.countDocuments();
+		final long countDocuments = customerCollection.countDocuments();
 		return DaoUtil.countPages(countDocuments, pageSize);
 	}
 
-	public List<CustomerEntity> searchByQuery(final String query, int page) {
+	public List<CustomerEntity> searchByQuery(final String query, final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find(text(query)).skip((page - 1) * pageSize).limit(page * pageSize).iterator()
+		customerCollection.find(text(query)).skip((page - 1) * pageSize).limit(pageSize).iterator()
 				.forEachRemaining(customers::add);
 		return customers;
 	}
 
-	public long countDocumnetsByQuery(String query) {
-		long countDocuments = customerCollection.countDocuments(text(query));
+	public long countDocumnetsByQuery(final String query) {
+		final long countDocuments = customerCollection.countDocuments(text(query));
 		return DaoUtil.countPages(countDocuments, pageSize);
 	}
 
-	public Collection<CustomerEntity> findByName(String name, int page) {
+	public Collection<CustomerEntity> findByName(final String name, final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
 		customerCollection.find(new Document("name", DaoUtil.buildCaseInsentiveQuery(name))).skip((page - 1) * pageSize)
-				.limit(page * pageSize).iterator().forEachRemaining(customers::add);
+				.limit(pageSize).iterator().forEachRemaining(customers::add);
 		return customers;
 	}
 
-	public long countDocumnetsByName(String name) {
-		long countDocuments = customerCollection
+	public long countDocumnetsByName(final String name) {
+		final long countDocuments = customerCollection
 				.countDocuments(new Document("name", DaoUtil.buildCaseInsentiveQuery(name)));
 		return DaoUtil.countPages(countDocuments, pageSize);
 	}
 
-	public long countDocumnetsByRegion(String region) {
-		long countDocuments = customerCollection
+	public long countDocumnetsByRegion(final String region) {
+		final long countDocuments = customerCollection
 				.countDocuments(new Document("region", DaoUtil.buildCaseInsentiveQuery(region)));
 		return DaoUtil.countPages(countDocuments, pageSize);
 	}

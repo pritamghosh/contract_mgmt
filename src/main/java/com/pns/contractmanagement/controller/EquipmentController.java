@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.model.Equipment;
 import com.pns.contractmanagement.model.EquipmentItem;
+import com.pns.contractmanagement.model.SearchResponse;
 import com.pns.contractmanagement.service.impl.EquipmentServiceImpl;
 
 @RestController
@@ -24,7 +25,7 @@ import com.pns.contractmanagement.service.impl.EquipmentServiceImpl;
 public class EquipmentController {
 
 	@Autowired
-	EquipmentServiceImpl service;
+	private EquipmentServiceImpl service;
 
 	@PutMapping
 	public Equipment addEquipment(@RequestBody final Equipment equipment) throws PnsException {
@@ -37,13 +38,15 @@ public class EquipmentController {
 	}
 
 	@GetMapping(params = { "!model" })
-	public List<Equipment> getAllEquipments() throws PnsException {
-		return service.getAllEquipments();
+	public SearchResponse<Equipment> getAllEquipments(@RequestParam(value = "page", defaultValue = "1") final int page)
+			throws PnsException {
+		return service.getAllEquipments(page);
 	}
 
 	@GetMapping(params = { "model" })
-	public List<Equipment> getEquipmentsByModel(@RequestParam("model") final String model) throws PnsException {
-		return service.getEquipmentsByModel(model);
+	public SearchResponse<Equipment> getEquipmentsByModel(@RequestParam("model") final String model,
+			@RequestParam(value = "page", defaultValue = "1") final int page) throws PnsException {
+		return service.getEquipmentsByModel(model, page);
 	}
 
 	@PutMapping("/item")
@@ -77,7 +80,8 @@ public class EquipmentController {
 	}
 
 	@GetMapping(value = "/search", params = { "query" })
-	public List<Equipment> searchEquipmentbyQuery(@RequestParam("query") final String query) throws PnsException {
-		return service.searchEquipmentbyQuery(query);
+	public SearchResponse<Equipment> searchEquipmentbyQuery(@RequestParam("query") final String query,
+			@RequestParam(value = "page", defaultValue = "1") final int page) throws PnsException {
+		return service.searchEquipmentbyQuery(query, page);
 	}
 }

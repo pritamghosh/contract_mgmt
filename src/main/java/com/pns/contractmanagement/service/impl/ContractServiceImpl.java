@@ -21,7 +21,9 @@ import com.pns.contractmanagement.model.Equipment;
 import com.pns.contractmanagement.model.EquipmentItem;
 import com.pns.contractmanagement.model.ImmutableContract;
 import com.pns.contractmanagement.model.ImmutableEquipmentItem;
+import com.pns.contractmanagement.model.ImmutableSearchResponse;
 import com.pns.contractmanagement.model.Report;
+import com.pns.contractmanagement.model.SearchResponse;
 
 @Service
 public class ContractServiceImpl {
@@ -42,21 +44,21 @@ public class ContractServiceImpl {
 	private ContractInvoiceHelperImpl invoiceHelper;
 
 	public Report addContract(final Contract contract) throws PnsException {
-		Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
+		final Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
 		EquipmentItem equipmentItem = null;
 		if (contract.getEquipmentItem().getId() == null) {
-			Equipment equipmentbyid = equipmentService
+			final Equipment equipmentbyid = equipmentService
 					.getEquipmentById(contract.getEquipmentItem().getEquipment().getId());
 			equipmentItem = equipmentService.addEquipmentItem(ImmutableEquipmentItem.builder().equipment(equipmentbyid)
 					.serialNumber(contract.getEquipmentItem().getSerialNumber()).build());
 		} else {
 			equipmentItem = equipmentService.getEquipmentItemById(contract.getEquipmentItem().getId());
 		}
-		LocalDateTime now = LocalDateTime.now();
-		String proposalNo = new StringBuilder("PNS-").append(now.getDayOfMonth()).append("/")
+		final LocalDateTime now = LocalDateTime.now();
+		final String proposalNo = new StringBuilder("PNS-").append(now.getDayOfMonth()).append("/")
 				.append(now.getMonthValue()).append("/").append(now.getYear()).toString();
 		final double amcBasicAmount = Math.round(contract.getAmcBasicAmount() * 100.0) / 100.0;
-		double amcTaxAmount = Math.round((amcBasicAmount * tax / 100) * 100.0) / 100.0;
+		final double amcTaxAmount = Math.round((amcBasicAmount * tax / 100) * 100.0) / 100.0;
 		final Contract insertedContract = map(contractDao.insert(map(ImmutableContract.builder().from(contract)
 				.amcBasicAmount(amcBasicAmount).amcTax(tax).amcTaxAmount(amcTaxAmount)
 				.amcTotalAmount(contract.getAmcBasicAmount() + amcTaxAmount).customer(customerbyid)
@@ -74,10 +76,10 @@ public class ContractServiceImpl {
 	}
 
 	public Contract modifyContract(final Contract contract) throws PnsException {
-		Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
+		final Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
 		EquipmentItem equipmentItem = null;
 		if (contract.getEquipmentItem().getId() == null) {
-			Equipment equipmentbyid = equipmentService
+			final Equipment equipmentbyid = equipmentService
 					.getEquipmentById(contract.getEquipmentItem().getEquipment().getId());
 			equipmentItem = equipmentService.addEquipmentItem(ImmutableEquipmentItem.builder().equipment(equipmentbyid)
 					.serialNumber(contract.getEquipmentItem().getSerialNumber()).build());
@@ -85,7 +87,7 @@ public class ContractServiceImpl {
 			equipmentItem = equipmentService.getEquipmentItemById(contract.getEquipmentItem().getId());
 		}
 		final double amcBasicAmount = Math.round(contract.getAmcBasicAmount() * 100.0) / 100.0;
-		double amcTaxAmount = Math.round((amcBasicAmount * tax / 100) * 100.0) / 100.0;
+		final double amcTaxAmount = Math.round((amcBasicAmount * tax / 100) * 100.0) / 100.0;
 		contractDao.update(map(ImmutableContract.builder().from(contract).amcTax(tax).amcTaxAmount(amcTaxAmount)
 				.amcTotalAmount(amcBasicAmount + amcTaxAmount).customer(customerbyid).amcBasicAmount(amcBasicAmount)
 				.equipmentItem(equipmentItem).contractDate(LocalDate.now()).build()));
@@ -98,28 +100,36 @@ public class ContractServiceImpl {
 		return deletedContract;
 	}
 
-	public List<Contract> getContractByAmcDateRange(Range<LocalDate> dateRange) {
-		return map(contractDao.findContractByAmcDateRange(dateRange));
+	public SearchResponse<Contract> getContractByAmcDateRange(final Range<LocalDate> dateRange, final int page) {
+		return ImmutableSearchResponse.<Contract>builder()
+				.result(map(contractDao.findContractByAmcDateRange(dateRange, page)))
+				.pageCount(contractDao.countDocumnetsByAmcDateRange(dateRange)).build();
 	}
 
-	public List<Contract> getContractByCreationDateRange(Range<LocalDate> dateRange) {
-		return map(contractDao.findContractByCreationDateRange(dateRange));
+	public SearchResponse<Contract> getContractByCreationDateRange(final Range<LocalDate> dateRange, final int page) {
+		return ImmutableSearchResponse.<Contract>builder()
+				.result(map(contractDao.findContractByCreationDateRange(dateRange, page)))
+				.pageCount(contractDao.countDocumnetsByCreationDateRange(dateRange)).build();
 	}
 
-	public List<Contract> getAllContract() {
-		return map(contractDao.findAll());
+	public SearchResponse<Contract> getAllContract(final int page) {
+		return ImmutableSearchResponse.<Contract>builder().result(map(contractDao.findAll(page)))
+				.pageCount(contractDao.countAllDocumnets()).build();
 	}
 
-	public List<Contract> getContractsByCustomerId(final String customerId) {
-		return map(contractDao.findByCustomerId(customerId));
+	public SearchResponse<Contract> getContractsByCustomerId(final String customerId, final int page) {
+		return ImmutableSearchResponse.<Contract>builder().result(map(contractDao.findByCustomerId(customerId, page)))
+				.pageCount(contractDao.countDocumnetsByCustomerId(customerId)).build();
 	}
 
-	public List<Contract> getContractsByEquipmentrId(final String equipmentId) {
-		return map(contractDao.findByEquipmentId(equipmentId));
+	public SearchResponse<Contract> getContractsByEquipmentrId(final String equipmentId, final int page) {
+		return ImmutableSearchResponse.<Contract>builder().result(map(contractDao.findByEquipmentId(equipmentId, page)))
+				.pageCount(contractDao.countDocumnetsByEquipmentId(equipmentId)).build();
 	}
 
-	public List<Contract> searchContractByQuery(final String query) {
-		return map(contractDao.searchByQuery(query));
+	public SearchResponse<Contract> searchContractByQuery(final String query, final int page) {
+		return ImmutableSearchResponse.<Contract>builder().result(map(contractDao.searchByQuery(query, page)))
+				.pageCount(contractDao.countDocumnetsByQuery(query)).build();
 	}
 
 	private List<Contract> map(final List<ContractEntity> list) {
