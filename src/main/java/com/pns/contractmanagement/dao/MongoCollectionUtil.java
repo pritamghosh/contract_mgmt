@@ -6,6 +6,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.MongoClientSettings;
@@ -19,31 +20,34 @@ import com.mongodb.client.MongoDatabase;
 @Component
 public class MongoCollectionUtil {
 
-    // @Value("${app.database:userdb}")
-    private final String databaseName = "userdb";
-    private final MongoDatabase db;
+	private final String databaseName;
+	private final MongoDatabase db;
 
-    public MongoCollectionUtil(final MongoClient mongoClient) {
-        db = mongoClient.getDatabase(databaseName);
-    }
+	public MongoCollectionUtil(final MongoClient mongoClient, @Value("${app.database.name:userdb}") String databaseName) {
+		this.databaseName = databaseName;
+		db = mongoClient.getDatabase(databaseName);
+	}
 
-    public <TDocument> MongoCollection<TDocument>getCollection(final String collectionName, final Class<TDocument> collectionType) {
-        CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-            fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-        return db.getCollection(collectionName, collectionType).withCodecRegistry(pojoCodecRegistry );
-    }
-    
-    public <TDocument> MongoCollection<Document> getCollection(final String collectionName) {
-        return db.getCollection(collectionName);
-    }
+	public <TDocument> MongoCollection<TDocument> getCollection(final String collectionName,
+			final Class<TDocument> collectionType) {
+		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
+				fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+		return db.getCollection(collectionName, collectionType).withCodecRegistry(pojoCodecRegistry);
+	}
 
-    /**
-     * @return the db
-     */
-    public MongoDatabase getDb() {
-        return db;
-    }
-    
-    
+	public <TDocument> MongoCollection<Document> getCollection(final String collectionName) {
+		return db.getCollection(collectionName);
+	}
+
+	/**
+	 * @return the db
+	 */
+	public MongoDatabase getDb() {
+		return db;
+	}
+
+	public String getDatabaseName() {
+		return databaseName;
+	}
 
 }

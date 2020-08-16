@@ -5,6 +5,9 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
+import static com.pns.contractmanagement.dao.DaoUtil.DELET_BSON_DOC;
+import static com.pns.contractmanagement.dao.DaoUtil.NOT_DELETED_FILTER;
+import static com.pns.contractmanagement.dao.DaoUtil.countPages;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -28,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Range;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.pns.contractmanagement.entity.ContractEntity;
@@ -94,7 +96,7 @@ public class ContractDao {
 	}
 
 	public long countDocumnetsByCustomerId(final String customerId) {
-		return DaoUtil.countPages(
+		return countPages(
 				contractDocumentCollection.countDocuments(new Document("customerOid", new ObjectId(customerId))),
 				pageSize);
 	}
@@ -105,7 +107,7 @@ public class ContractDao {
 	}
 
 	public long countDocumnetsByEquipmentId(final String equipmentId) {
-		return DaoUtil.countPages(
+		return countPages(
 				contractDocumentCollection.countDocuments(new Document("equipmnetOid", new ObjectId(equipmentId))),
 				pageSize);
 	}
@@ -115,52 +117,53 @@ public class ContractDao {
 	}
 
 	public boolean deleteById(final String id) {
-		final DeleteResult deleteOne = contractCollection.deleteOne(and(eq("_id", new ObjectId(id))));
-		return deleteOne.getDeletedCount() > 0;
+		final UpdateResult ur = contractCollection.updateOne(eq("_id", new ObjectId(id)), DELET_BSON_DOC);
+		//final DeleteResult deleteOne = contractCollection.deleteOne(and(eq("_id", new ObjectId(id))));
+		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
 
 	public List<ContractEntity> findAll(final int page) {
-		return map(contractDocumentCollection.find().skip((page - 1) * pageSize).limit(pageSize));
+		return map(contractDocumentCollection.find(NOT_DELETED_FILTER).skip((page - 1) * pageSize).limit(pageSize));
 	}
 
 	public List<ContractEntity> findContractByAmcDateRange(final Range<LocalDate> dateRange, final int page) {
 		return map(contractDocumentCollection
-				.find(and(new Document("amcStartDate", new Document("$gte", dateRange.lowerEndpoint())),
+				.find(and(NOT_DELETED_FILTER,new Document("amcStartDate", new Document("$gte", dateRange.lowerEndpoint())),
 						new Document("amcEndDate", new Document("$lte", dateRange.upperEndpoint()))))
 				.skip((page - 1) * pageSize).limit(pageSize));
 	}
 
 	public List<ContractEntity> findContractByCreationDateRange(final Range<LocalDate> dateRange, final int page) {
 		return map(contractDocumentCollection
-				.find(new Document("contractDate",
-						new Document("$gte", dateRange.lowerEndpoint()).append("$lte", dateRange.upperEndpoint())))
+				.find(and(NOT_DELETED_FILTER,new Document("contractDate",
+						new Document("$gte", dateRange.lowerEndpoint()).append("$lte", dateRange.upperEndpoint()))))
 				.skip((page - 1) * pageSize).limit(pageSize));
 	}
 
 	public List<ContractEntity> searchByQuery(final String query, final int page) {
-		return map(contractDocumentCollection.find(text(query)).skip((page - 1) * pageSize).limit(pageSize));
+		return map(contractDocumentCollection.find(and(NOT_DELETED_FILTER,text(query))).skip((page - 1) * pageSize).limit(pageSize));
 	}
 
 	public long countAllDocumnets() {
-		return DaoUtil.countPages(contractDocumentCollection.countDocuments(), pageSize);
+		return countPages(contractDocumentCollection.countDocuments(NOT_DELETED_FILTER), pageSize);
 	}
 
 	public long countDocumnetsByQuery(final String query) {
-		return DaoUtil.countPages(contractDocumentCollection.countDocuments(text(query)), pageSize);
+		return countPages(contractDocumentCollection.countDocuments(and(NOT_DELETED_FILTER,text(query))), pageSize);
 	}
 
 	public long countDocumnetsByAmcDateRange(final Range<LocalDate> dateRange) {
-		return DaoUtil.countPages(
+		return countPages(
 				contractDocumentCollection.countDocuments(
-						and(new Document("amcStartDate", new Document("$gte", dateRange.lowerEndpoint())),
+						and(NOT_DELETED_FILTER,new Document("amcStartDate", new Document("$gte", dateRange.lowerEndpoint())),
 								new Document("amcEndDate", new Document("$lte", dateRange.upperEndpoint())))),
 				pageSize);
 	}
 
 	public long countDocumnetsByCreationDateRange(final Range<LocalDate> dateRange) {
-		return DaoUtil.countPages(
-				contractDocumentCollection.countDocuments(new Document("contractDate",
-						new Document("$gte", dateRange.lowerEndpoint()).append("$lte", dateRange.upperEndpoint()))),
+		return countPages(
+				contractDocumentCollection.countDocuments(and(NOT_DELETED_FILTER,new Document("contractDate",
+						new Document("$gte", dateRange.lowerEndpoint()).append("$lte", dateRange.upperEndpoint())))),
 				pageSize);
 	}
 

@@ -5,6 +5,10 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
+import static com.pns.contractmanagement.dao.DaoUtil.NOT_DELETED_FILTER;
+import static com.pns.contractmanagement.dao.DaoUtil.DELET_BSON_DOC;
+import static com.pns.contractmanagement.dao.DaoUtil.buildCaseInsentiveQuery;
+import static com.pns.contractmanagement.dao.DaoUtil.countPages;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +23,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.pns.contractmanagement.entity.CustomerEntity;
@@ -69,57 +72,58 @@ public class CustomerDao {
 
 	public List<CustomerEntity> findByRegion(final String region, final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find(new Document("region", DaoUtil.buildCaseInsentiveQuery(region)))
+		customerCollection.find(and(NOT_DELETED_FILTER, new Document("region", buildCaseInsentiveQuery(region))))
 				.skip((page - 1) * pageSize).limit(pageSize).iterator().forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public boolean deleteById(final String id) {
-
-		final DeleteResult deleteOne = customerCollection.deleteOne(and(eq("_id", new ObjectId(id))));
-		return deleteOne.getDeletedCount() > 0;
+		final UpdateResult ur = customerCollection.updateOne(eq("_id", new ObjectId(id)), DELET_BSON_DOC);
+		// final DeleteResult deleteOne = customerCollection.deleteOne(and(eq("_id", new
+		// ObjectId(id))));
+		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
 
 	public List<CustomerEntity> findAll(final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find().skip((page - 1) * pageSize).limit(pageSize).iterator()
+		customerCollection.find(NOT_DELETED_FILTER).skip((page - 1) * pageSize).limit(pageSize).iterator()
 				.forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public long countAllDocumnets() {
-		final long countDocuments = customerCollection.countDocuments();
-		return DaoUtil.countPages(countDocuments, pageSize);
+		final long countDocuments = customerCollection.countDocuments(NOT_DELETED_FILTER);
+		return countPages(countDocuments, pageSize);
 	}
 
 	public List<CustomerEntity> searchByQuery(final String query, final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find(text(query)).skip((page - 1) * pageSize).limit(pageSize).iterator()
-				.forEachRemaining(customers::add);
+		customerCollection.find(and(text(query), NOT_DELETED_FILTER)).skip((page - 1) * pageSize).limit(pageSize)
+				.iterator().forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public long countDocumnetsByQuery(final String query) {
-		final long countDocuments = customerCollection.countDocuments(text(query));
-		return DaoUtil.countPages(countDocuments, pageSize);
+		final long countDocuments = customerCollection.countDocuments(and(text(query), NOT_DELETED_FILTER));
+		return countPages(countDocuments, pageSize);
 	}
 
 	public Collection<CustomerEntity> findByName(final String name, final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find(new Document("name", DaoUtil.buildCaseInsentiveQuery(name))).skip((page - 1) * pageSize)
-				.limit(pageSize).iterator().forEachRemaining(customers::add);
+		customerCollection.find(and(NOT_DELETED_FILTER, new Document("name", buildCaseInsentiveQuery(name))))
+				.skip((page - 1) * pageSize).limit(pageSize).iterator().forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public long countDocumnetsByName(final String name) {
 		final long countDocuments = customerCollection
-				.countDocuments(new Document("name", DaoUtil.buildCaseInsentiveQuery(name)));
-		return DaoUtil.countPages(countDocuments, pageSize);
+				.countDocuments(and(NOT_DELETED_FILTER, new Document("name", buildCaseInsentiveQuery(name))));
+		return countPages(countDocuments, pageSize);
 	}
 
 	public long countDocumnetsByRegion(final String region) {
 		final long countDocuments = customerCollection
-				.countDocuments(new Document("region", DaoUtil.buildCaseInsentiveQuery(region)));
-		return DaoUtil.countPages(countDocuments, pageSize);
+				.countDocuments(and(NOT_DELETED_FILTER, new Document("region", buildCaseInsentiveQuery(region))));
+		return countPages(countDocuments, pageSize);
 	}
 }

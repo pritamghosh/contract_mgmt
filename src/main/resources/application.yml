@@ -3,17 +3,18 @@
 server.servlet.context-path: /pns
 spring.data.mongodb.uri: mongodb+srv://pritamadmin:adminpritam@cluster0.y4hyl.mongodb.net/<dbname>?retryWrites=true&w=majority
 app:
-   switch:
+    database.name: userdb
+    switch:
       index.update:
          customer: true
          contract: true
          equipment: true
          equipmentDetails: true
-   page.size:
+    page.size:
       customer: 3
       equipment: 3
       contract: 3
-   index:
+    index:
       name:
          customer: customers
          contract: contracts

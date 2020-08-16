@@ -40,9 +40,9 @@ public class EquipmentServiceImpl {
 		return getEquipmentItemById(equipmentItem.getId());
 	}
 
-	public EquipmentItem DeleteEquipmentById(final String id) throws PnsException {
-		final EquipmentItem deletedEquipment = getEquipmentItemById(id);
-		equipmentItemDao.deleteById(id);
+	public Equipment DeleteEquipmentById(final String id) throws PnsException {
+		final Equipment deletedEquipment = getEquipmentById(id);
+		equipmentDao.deleteById(id);
 		return deletedEquipment;
 	}
 

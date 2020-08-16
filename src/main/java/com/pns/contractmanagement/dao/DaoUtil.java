@@ -1,9 +1,13 @@
 package com.pns.contractmanagement.dao;
 
+import static com.mongodb.client.model.Updates.set;
+
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 public final class DaoUtil {
-
+	public static final Document NOT_DELETED_FILTER = new Document("deleted", null);
+	public static  final Bson DELET_BSON_DOC = set("deleted", true);
 	private DaoUtil() {
 	}
 

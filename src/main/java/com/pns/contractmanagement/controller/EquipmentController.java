@@ -59,8 +59,8 @@ public class EquipmentController {
 		return service.modifyEquipmentItem(equipment);
 	}
 
-	@DeleteMapping("/item/{id}")
-	public EquipmentItem DeleteEquipmentById(@PathVariable("id") final String id) throws PnsException {
+	@DeleteMapping("/{id}")
+	public Equipment DeleteEquipmentById(@PathVariable("id") final String id) throws PnsException {
 		return service.DeleteEquipmentById(id);
 	}
 
