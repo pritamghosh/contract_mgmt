@@ -9,6 +9,10 @@ app:
          contract: true
          equipment: true
          equipmentDetails: true
+   page.size:
+      customer: 3
+      equipment: 3
+      contract: 5
    index:
       name:
          customer: customers

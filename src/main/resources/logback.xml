@@ -1,4 +1,4 @@
-<configuration>
+<configuration scan="true" scanPeriod="60 seconds">
 
 	<property name="HOME_LOG" value="logs/pns.log" />
 	<appender name="CONSOLE"
@@ -36,8 +36,6 @@
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="FILE-ROLLING" />
 	</logger>
-
-
 
 	<root level="info">
 		<appender-ref ref="CONSOLE" />

@@ -6,13 +6,10 @@ import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -44,6 +41,8 @@ import com.pns.contractmanagement.model.EquipmentItem;
 @Repository
 public class ContractDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContractDao.class);
+    @Value("${app.page.size.contract}")
+	private int pageSize;
     private final MongoCollection<ContractEntity> contractCollection;
 
     private final MongoCollection<Document> contractDocumentCollection;

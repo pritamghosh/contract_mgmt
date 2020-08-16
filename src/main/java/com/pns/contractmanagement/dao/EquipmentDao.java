@@ -32,63 +32,66 @@ import com.pns.contractmanagement.entity.EquipmentEntity;
  */
 @Repository
 public class EquipmentDao {
+	@Value("${app.page.size.equipment}")
+	private int pageSize;
+	
+	private final MongoCollection<EquipmentEntity> equipmentCollection;
 
-    private final MongoCollection<EquipmentEntity> equipmentCollection;
+	@Autowired
+	public EquipmentDao(final MongoCollectionUtil util,
+			final @Value("${app.index.name.equipment:equipments}") String equipmentEntityIndexName) {
+		equipmentCollection = util.getCollection(equipmentEntityIndexName, EquipmentEntity.class);
+	}
 
-    @Autowired
-    public EquipmentDao(final MongoCollectionUtil util,
-        final @Value("${app.index.name.equipment:equipments}") String equipmentEntityIndexName) {
-        equipmentCollection = util.getCollection(equipmentEntityIndexName, EquipmentEntity.class);
-    }
+	public EquipmentEntity insert(final EquipmentEntity equipmentEntity) {
+		final InsertOneResult insertOne = equipmentCollection.insertOne(equipmentEntity);
+		equipmentEntity.setOid(insertOne.getInsertedId().asObjectId().getValue());
+		return equipmentEntity;
+	}
 
-    public EquipmentEntity insert(final EquipmentEntity equipmentEntity) {
-        final InsertOneResult insertOne = equipmentCollection.insertOne(equipmentEntity);
-        equipmentEntity.setOid(insertOne.getInsertedId().asObjectId().getValue());
-        return equipmentEntity;
-    }
+	public boolean update(final EquipmentEntity equipmentEntity) {
 
-    public boolean update(final EquipmentEntity equipmentEntity) {
+		Bson update = combine(set("model", equipmentEntity.getModel()),
+				set("description", equipmentEntity.getDescription()));
+		UpdateResult ur = equipmentCollection.updateOne(and(eq("_id", equipmentEntity.getOid())), update);
+		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
+	}
 
-        Bson update = combine(set("model", equipmentEntity.getModel()),
-            set("description", equipmentEntity.getDescription()));
-        UpdateResult ur = equipmentCollection.updateOne(and(eq("_id", equipmentEntity.getOid())), update);
-        return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
-    }
+	public Optional<EquipmentEntity> findById(final String id) {
+		return Optional.ofNullable(equipmentCollection.find(new Document("_id", new ObjectId(id))).first());
+	}
 
-    public Optional<EquipmentEntity> findById(final String id) {
-        return Optional.ofNullable(equipmentCollection.find(new Document("_id", new ObjectId(id))).first());
-    }
-    
-    public List<EquipmentEntity> findByModel(final String model) {
-    	final List<EquipmentEntity> equipmentEntities = new ArrayList<>();
-        equipmentCollection.find(new Document("model", DaoUtil.buildCaseInsentiveQuery(model))).iterator().forEachRemaining(equipmentEntities::add);
-        return equipmentEntities;
-    }
+	public List<EquipmentEntity> findByModel(final String model) {
+		final List<EquipmentEntity> equipmentEntities = new ArrayList<>();
+		equipmentCollection.find(new Document("model", DaoUtil.buildCaseInsentiveQuery(model))).iterator()
+				.forEachRemaining(equipmentEntities::add);
+		return equipmentEntities;
+	}
 
-    public Map<String, EquipmentEntity> findByIds(final List<String> ids) {
-        final Map<String, EquipmentEntity> equipmentEntity = new HashMap<>();
-        equipmentCollection
-            .find(Filters.all("_id", ids.stream().map(id -> new ObjectId(id)).collect(Collectors.toList()))).iterator()
-            .forEachRemaining(e -> equipmentEntity.put(e.getId(), e));
-        return equipmentEntity;
-    }
+	public Map<String, EquipmentEntity> findByIds(final List<String> ids) {
+		final Map<String, EquipmentEntity> equipmentEntity = new HashMap<>();
+		equipmentCollection
+				.find(Filters.all("_id", ids.stream().map(id -> new ObjectId(id)).collect(Collectors.toList())))
+				.iterator().forEachRemaining(e -> equipmentEntity.put(e.getId(), e));
+		return equipmentEntity;
+	}
 
-    public boolean deleteById(final String id) {
+	public boolean deleteById(final String id) {
 
-        DeleteResult deleteOne = equipmentCollection.deleteOne(and(eq("_id", new ObjectId(id))));
-        return deleteOne.getDeletedCount() > 0;
-    }
+		DeleteResult deleteOne = equipmentCollection.deleteOne(and(eq("_id", new ObjectId(id))));
+		return deleteOne.getDeletedCount() > 0;
+	}
 
-    public List<EquipmentEntity> findAll() {
-        final List<EquipmentEntity> equipmentEntity = new ArrayList<>();
-        equipmentCollection.find().iterator().forEachRemaining(equipmentEntity::add);
-        return equipmentEntity;
-    }
+	public List<EquipmentEntity> findAll() {
+		final List<EquipmentEntity> equipmentEntity = new ArrayList<>();
+		equipmentCollection.find().iterator().forEachRemaining(equipmentEntity::add);
+		return equipmentEntity;
+	}
 
-    public List<EquipmentEntity> searchByQuery(final String query) {
-        final List<EquipmentEntity> equipmentEntities = new ArrayList<>();
-        equipmentCollection.find(text(query)).iterator().forEachRemaining(equipmentEntities::add);
-        return equipmentEntities;
-    }
+	public List<EquipmentEntity> searchByQuery(final String query) {
+		final List<EquipmentEntity> equipmentEntities = new ArrayList<>();
+		equipmentCollection.find(text(query)).iterator().forEachRemaining(equipmentEntities::add);
+		return equipmentEntities;
+	}
 
 }

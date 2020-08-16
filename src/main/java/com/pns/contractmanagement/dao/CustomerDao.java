@@ -29,6 +29,10 @@ import com.pns.contractmanagement.entity.CustomerEntity;
  */
 @Repository
 public class CustomerDao {
+	
+	@Value("${app.page.size.customer}")
+	private int pageSize;
+	
     private final MongoCollection<CustomerEntity> customerCollection;
 
     /**
@@ -65,7 +69,7 @@ public class CustomerDao {
         return Optional.ofNullable(customerCollection.find(new Document("_id", new ObjectId(id))).first());
     }
 
-	public List<CustomerEntity> findByRegion(final String region) {
+	public List<CustomerEntity> findByRegion(final String region,int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
 		customerCollection.find(new Document("region", DaoUtil.buildCaseInsentiveQuery(region))).iterator()
 				.forEachRemaining(customers::add);
@@ -78,22 +82,41 @@ public class CustomerDao {
         return deleteOne.getDeletedCount() > 0;
     }
 
-    public List<CustomerEntity> findAll() {
+    public List<CustomerEntity> findAll(int page) {
         final List<CustomerEntity> customers = new ArrayList<>();
         customerCollection.find().iterator().forEachRemaining(customers::add);
         return customers;
     }
+    
+    public long countAllDocumnets() {
+        long countDocuments = customerCollection.countDocuments();
+        return DaoUtil.countPages(countDocuments, pageSize);
+    }
 
-    public List<CustomerEntity> searchByQuery(final String query) {
+    public List<CustomerEntity> searchByQuery(final String query,int page) {
         final List<CustomerEntity> customers = new ArrayList<>();
         customerCollection.find(text(query)).iterator().forEachRemaining(customers::add);
         return customers;
     }
+    
+    public long countDocumnetsByQuery(String query) {
+        long countDocuments = customerCollection.countDocuments(text(query));
+        return DaoUtil.countPages(countDocuments, pageSize);
+    }
 
-	public Collection<CustomerEntity> findByName(String name) {
+	public Collection<CustomerEntity> findByName(String name,int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
 		customerCollection.find(new Document("name", DaoUtil.buildCaseInsentiveQuery(name))).iterator()
 				.forEachRemaining(customers::add);
 		return customers;
 	}
+	
+	public long countDocumnetsByName(String name) {
+        long countDocuments = customerCollection.countDocuments(new Document("name", DaoUtil.buildCaseInsentiveQuery(name)));
+        return DaoUtil.countPages(countDocuments, pageSize);
+    }
+	public long countDocumnetsByRegion(String region) {
+        long countDocuments = customerCollection.countDocuments(new Document("region", DaoUtil.buildCaseInsentiveQuery(region)));
+        return DaoUtil.countPages(countDocuments, pageSize);
+    }
 }

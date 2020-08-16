@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,14 +29,15 @@ import com.pns.contractmanagement.service.impl.ContractServiceImpl;
 @RestController
 @RequestMapping("/contract")
 public class ContractController {
+	Logger logger = LoggerFactory.getLogger(ContractController.class);
+	
 
-	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     @Autowired
     private ContractServiceImpl service;
 
     @PutMapping
     public ResponseEntity<byte[]> addContract(@RequestBody final Contract contract) throws PnsException {
-
+    	
         final Report contractReport = service.addContract(contract);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(contractReport.getContentType());
@@ -76,6 +79,10 @@ public class ContractController {
 
     @GetMapping(params = { "!form","!to","!create" })
     public List<Contract> getAllContract() {
+    	logger.debug("debug");
+    	logger.info("info");
+    	logger.error("error");
+    	logger.trace("trace");
         return service.getAllContract();
     }
     
