@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,9 +38,7 @@ public class ContractController {
 		final String filename = contractReport.getFileName();
 		headers.setContentDispositionFormData(filename, filename);
 		headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-		final ResponseEntity<byte[]> response = new ResponseEntity(contractReport.getContent(), headers, HttpStatus.OK);
-		return response;
-		// return service.addContract(contract);
+		return ResponseEntity.ok().headers(headers).body(contractReport.getContent());
 	}
 
 	@PostMapping
