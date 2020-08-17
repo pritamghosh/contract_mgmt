@@ -11,7 +11,7 @@ app:
          equipment: true
          equipmentDetails: true
     page.size:
-      customer: 3
+      customer: 4
       equipment: 3
       contract: 3
     index:
