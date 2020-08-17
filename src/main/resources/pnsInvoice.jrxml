@@ -557,9 +557,9 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Calibri" size="12"/>
+					<font fontName="Calibri" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["AMOUNT IN WORDS: (Rupees Twelve Thousand One Hundred Fifty Four Only )"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["AMOUNT IN WORDS: (Rupees "+com.pns.contractmanagement.util.AmountUtil.convertToWord($P{contract}.getAmcTotalAmount())+" )"]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnFooter>
