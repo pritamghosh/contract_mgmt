@@ -4,6 +4,7 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.inc;
 import static com.mongodb.client.model.Updates.set;
 import static com.pns.contractmanagement.dao.DaoUtil.DELET_BSON_DOC;
 import static com.pns.contractmanagement.dao.DaoUtil.NOT_DELETED_FILTER;
@@ -33,7 +34,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
-import com.pns.contractmanagement.entity.ContractEntity;
+import com.pns.contractmanagement.entity.ContractEntity;import com.pns.contractmanagement.entity.SequenceEntity;
 import com.pns.contractmanagement.model.Customer;
 import com.pns.contractmanagement.model.EquipmentItem;
 
@@ -48,6 +49,8 @@ public class ContractDao {
 	private final MongoCollection<ContractEntity> contractCollection;
 
 	private final MongoCollection<Document> contractDocumentCollection;
+	
+	private final MongoCollection<SequenceEntity> sequenceDocumentCollection;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -56,9 +59,11 @@ public class ContractDao {
 	 */
 	@Autowired
 	public ContractDao(final MongoCollectionUtil util,
-			final @Value("${app.index.name.contract:contracts}") String contractIndexName) {
+			final @Value("${app.index.name.contract:contracts}") String contractIndexName,
+			final @Value("${app.index.name.sequence:sequences}") String sequenceIndexName) {
 		contractCollection = util.getCollection(contractIndexName, ContractEntity.class);
 		contractDocumentCollection = util.getCollection(contractIndexName);
+		sequenceDocumentCollection = util.getCollection(sequenceIndexName, SequenceEntity.class);
 	}
 
 	public ContractEntity insert(final ContractEntity contract) {
@@ -68,7 +73,27 @@ public class ContractDao {
 		contract.setOid(insertOne.getInsertedId().asObjectId().getValue());
 		return contract;
 	}
+	
+	public SequenceEntity findAndUpdateSequece() {
+		SequenceEntity sequence = sequenceDocumentCollection.findOneAndUpdate(
+				and(new Document("squenceType", "proposal-no"), new Document("date", LocalDate.now())), inc("sequence", 1));
+		if (sequence == null) {
+			sequence = sequenceDocumentCollection.findOneAndUpdate((new Document("squenceType", "proposal-no")),
+					combine(set("date", LocalDate.now()), set("sequence", 1)));
+		} else {
+			sequence.setSequence(sequence.getSequence()+1);
+			return sequence;
+		}
+		if (sequence == null) {
+			sequence = SequenceEntity.builder().date(LocalDate.now()).sequence(1).squenceType("proposal-no").build();
+			sequenceDocumentCollection.insertOne(sequence);
+		} else {
+			sequence.setSequence(1);
+			sequence.setDate(LocalDate.now());
+		}
+		return sequence;
 
+	}
 	public boolean update(final ContractEntity contract) {
 
 		final Bson update = combine(

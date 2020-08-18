@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Range;
 import com.pns.contractmanagement.dao.ContractDao;
 import com.pns.contractmanagement.entity.ContractEntity;
+import com.pns.contractmanagement.entity.SequenceEntity;
 import com.pns.contractmanagement.exceptions.PnsError;
 import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.helper.impl.ContractInvoiceHelperImpl;
@@ -54,15 +55,18 @@ public class ContractServiceImpl {
 		} else {
 			equipmentItem = equipmentService.getEquipmentItemById(contract.getEquipmentItem().getId());
 		}
-		final LocalDateTime now = LocalDateTime.now();
-		final String proposalNo = new StringBuilder("PNS-").append(now.getDayOfMonth()).append("/")
-				.append(now.getMonthValue()).append("/").append(now.getYear()).toString();
+
+		final SequenceEntity proposalSequence = contractDao.findAndUpdateSequece();
+		final LocalDate currentDate = proposalSequence.getDate();
+		final String proposalNo = new StringBuilder("PNS-").append(currentDate.getDayOfMonth()).append("/")
+				.append(currentDate.getMonthValue()).append("/").append(currentDate.getYear()).append("/")
+				.append(proposalSequence.getSequence()).toString();
 		final double amcBasicAmount = Math.round(contract.getAmcBasicAmount() * 100.0) / 100.0;
 		final double amcTaxAmount = Math.round((amcBasicAmount * tax / 100) * 100.0) / 100.0;
 		final Contract insertedContract = map(contractDao.insert(map(ImmutableContract.builder().from(contract)
 				.amcBasicAmount(amcBasicAmount).amcTax(tax).amcTaxAmount(amcTaxAmount)
 				.amcTotalAmount(contract.getAmcBasicAmount() + amcTaxAmount).customer(customerbyid)
-				.equipmentItem(equipmentItem).proposalNo(proposalNo).contractDate(LocalDate.now()).build())));
+				.equipmentItem(equipmentItem).proposalNo(proposalNo).contractDate(currentDate).build())));
 		return invoiceHelper.generateInvoice(insertedContract);
 	}
 
