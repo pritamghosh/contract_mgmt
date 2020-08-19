@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class ContractController {
 	private ContractServiceImpl service;
 
 	@PutMapping
+	@PreAuthorize("hasRole('create')")
 	public ResponseEntity<byte[]> addContract(@RequestBody final Contract contract) throws PnsException {
 
 		final Report contractReport = service.addContract(contract);
@@ -42,21 +44,25 @@ public class ContractController {
 	}
 
 	@PostMapping
+	@PreAuthorize("hasRole('update')")
 	public Contract modifyContract(@RequestBody final Contract contract) throws PnsException {
 		return service.modifyContract(contract);
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('delete')")
 	public Contract DeleteContract(@PathVariable("id") final String id) throws PnsException {
 		return service.deleteContractById(id);
 	}
 
 	@GetMapping("{id}")
+	@PreAuthorize("hasRole('read')")
 	public Contract getContractById(@PathVariable("id") final String id) throws PnsException {
 		return service.getContractById(id);
 	}
 
 	@GetMapping("/pdf/{id}")
+	@PreAuthorize("hasRole('read')")
 	public ResponseEntity<byte[]> getContractPdfById(@PathVariable("id") final String id) throws PnsException {
 		final Report contractReport = service.getContractReportById(id);
 		final HttpHeaders headers = new HttpHeaders();
@@ -70,35 +76,41 @@ public class ContractController {
 	}
 
 	@GetMapping(params = { "!form", "!to", "!create" })
+	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Contract> getAllContract(@RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.getAllContract(page);
 	}
 
 	@GetMapping(params = { "form", "to", "!create" })
+	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Contract> getContractsByAMCDateRange(@RequestParam("form") final String form,
 			@RequestParam("to") final String to, @RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.getContractByAmcDateRange(Range.closed(LocalDate.parse(form), LocalDate.parse(to)), page);
 	}
 
 	@GetMapping(params = { "form", "to", "create" })
+	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Contract> getContractsByCreationDate(@RequestParam("form") final String form,
 			@RequestParam("to") final String to, @RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.getContractByCreationDateRange(Range.closed(LocalDate.parse(form), LocalDate.parse(to)), page);
 	}
 
 	@GetMapping("/customer/{id}")
+	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Contract> getContractsByCustomerId(@PathVariable("id") final String customerId,
 			@RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.getContractsByCustomerId(customerId, page);
 	}
 
 	@GetMapping("/equipment/{id}")
+	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Contract> getContractsByEquipmentrId(@PathVariable("id") final String equipmentId,
 			@RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.getContractsByEquipmentrId(equipmentId, page);
 	}
 
 	@GetMapping("/search")
+	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Contract> searchContractByQuery(@RequestParam("query") final String query,
 			@RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.searchContractByQuery(query, page);
