@@ -1,6 +1,7 @@
 HELP.md
 target/
 logs/
+bin/
 .apt_generated*/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
