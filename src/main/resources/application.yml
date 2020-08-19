@@ -8,8 +8,9 @@ keycloak:
     auth-server-url: http://localhost:8080/auth
     realm: PNS_REALM
     resource: pns-contract-mangement
-    public-client: true
     principal-attribute: preferred_username
+    credentials:        secret: d1c07de3-8705-42e1-9169-b31934f353f2
+    use-resource-role-mappings: true        
 app:
     database.name: userdb
     switch:
