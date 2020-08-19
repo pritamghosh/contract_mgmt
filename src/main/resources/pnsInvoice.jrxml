@@ -530,8 +530,8 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Calibri" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+				<textElement verticalAlignment="Middle" textAlignment="Center">
+					<font fontName="Calibri" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true" />
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getAmcTotalAmount()]]></textFieldExpression>
 			</textField>
@@ -543,7 +543,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" textAlignment="Center">
 					<font fontName="Calibri" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getAmcTotalAmount()]]></textFieldExpression>
@@ -581,14 +581,14 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				</textElement>
 				<text><![CDATA[02. Maintenance :         ]]></text>
 			</staticText>
-			<staticText>
+			<textField>
 				<reportElement x="101" y="25" width="455" height="20" uuid="74ca33b6-3b6a-46af-8696-d711ad26ee7a"/>
 				<box leftPadding="10"/>
 				<textElement>
 					<font fontName="Calibri"/>
 				</textElement>
-				<text><![CDATA[Half yearly advance along with work order / Agreement .]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{contract}.getBillingCycle()+" along with work order / Agreement."]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement x="1" y="125" width="100" height="20" uuid="d9ffda3a-702f-4bfd-a28f-3af8cdeaa01d"/>
 				<box leftPadding="10"/>
