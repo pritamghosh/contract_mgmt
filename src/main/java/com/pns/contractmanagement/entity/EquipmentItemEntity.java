@@ -18,7 +18,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EquipmentItemEntity extends AbstractMongoEntity {
+public class EquipmentItemEntity extends BaseMongoEntity {
 
     @JsonProperty("equipment_id")
     @BsonIgnore

@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import springfox.documentation.swagger.web.ApiKeyVehicle;
+import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
@@ -13,13 +15,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableMongoRepositories
 public class ContractManagementApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ContractManagementApplication.class, args);
-    }
-    
+	public static void main(String[] args) {
+		SpringApplication.run(ContractManagementApplication.class, args);
+	}
 
-    @Bean
-    public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
-        return new KeycloakSpringBootConfigResolver();
-    }
+	@Bean
+	public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
+		return new KeycloakSpringBootConfigResolver();
+	}
+	
+	@Bean
+	SecurityConfiguration security() {
+	return new SecurityConfiguration(null, null, null, null, "Bearer access_token", ApiKeyVehicle.HEADER, "Authorization", ",");
+	}
 }

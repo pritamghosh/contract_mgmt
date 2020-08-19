@@ -5,7 +5,6 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
-import static com.pns.contractmanagement.dao.DaoUtil.DELET_BSON_DOC;
 import static com.pns.contractmanagement.dao.DaoUtil.NOT_DELETED_FILTER;
 import static com.pns.contractmanagement.dao.DaoUtil.buildCaseInsentiveQuery;
 import static com.pns.contractmanagement.dao.DaoUtil.countPages;
@@ -47,15 +46,18 @@ public class EquipmentDao {
 	}
 
 	public EquipmentEntity insert(final EquipmentEntity equipmentEntity) {
+		DaoUtil.setCreationDetails(equipmentEntity);
 		final InsertOneResult insertOne = equipmentCollection.insertOne(equipmentEntity);
 		equipmentEntity.setOid(insertOne.getInsertedId().asObjectId().getValue());
 		return equipmentEntity;
 	}
 
 	public boolean update(final EquipmentEntity equipmentEntity) {
-
+		DaoUtil.setModificationDetails(equipmentEntity);
 		final Bson update = combine(set("model", equipmentEntity.getModel()),
-				set("description", equipmentEntity.getDescription()));
+				set("description", equipmentEntity.getDescription()),
+				set("lastModifiedBy", equipmentEntity.getLastModifiedBy()),
+				set("lastModifiedDate", equipmentEntity.getLastModifiedDate()));
 		final UpdateResult ur = equipmentCollection.updateOne(and(eq("_id", equipmentEntity.getOid())), update);
 		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
@@ -73,7 +75,7 @@ public class EquipmentDao {
 	}
 
 	public boolean deleteById(final String id) {
-		final UpdateResult ur = equipmentCollection.updateOne(eq("_id", new ObjectId(id)), DELET_BSON_DOC);
+		final UpdateResult ur = equipmentCollection.updateOne(eq("_id", new ObjectId(id)), DaoUtil.deleteBsonDoc());
 		// final DeleteResult deleteOne = equipmentCollection.deleteOne(and(eq("_id",
 		// new ObjectId(id))));
 		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;

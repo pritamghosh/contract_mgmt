@@ -6,7 +6,6 @@ import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 import static com.pns.contractmanagement.dao.DaoUtil.NOT_DELETED_FILTER;
-import static com.pns.contractmanagement.dao.DaoUtil.DELET_BSON_DOC;
 import static com.pns.contractmanagement.dao.DaoUtil.buildCaseInsentiveQuery;
 import static com.pns.contractmanagement.dao.DaoUtil.countPages;
 
@@ -48,18 +47,20 @@ public class CustomerDao {
 	}
 
 	public CustomerEntity insert(final CustomerEntity customer) {
+		DaoUtil.setCreationDetails(customer);
 		final InsertOneResult insertOne = customerCollection.insertOne(customer);
 		customer.setOid(insertOne.getInsertedId().asObjectId().getValue());
 		return customer;
 	}
 
 	public boolean update(final CustomerEntity customer) {
-
+		DaoUtil.setModificationDetails(customer);
 		final Bson update = combine(
 				// @formatter:off
 				set("name", customer.getName()), set("region", customer.getRegion()),
 				set("address", customer.getAddress()), set("gstinNo", customer.getGstinNo()),
-				set("pan", customer.getPan())
+				set("pan", customer.getPan()), set("lastModifiedBy", customer.getLastModifiedBy()),
+				set("lastModifiedDate", customer.getLastModifiedDate())
 		// @formatter:on
 		);
 		final UpdateResult ur = customerCollection.updateOne(and(eq("_id", customer.getOid())), update);
@@ -78,7 +79,7 @@ public class CustomerDao {
 	}
 
 	public boolean deleteById(final String id) {
-		final UpdateResult ur = customerCollection.updateOne(eq("_id", new ObjectId(id)), DELET_BSON_DOC);
+		final UpdateResult ur = customerCollection.updateOne(eq("_id", new ObjectId(id)), DaoUtil.deleteBsonDoc());
 		// final DeleteResult deleteOne = customerCollection.deleteOne(and(eq("_id", new
 		// ObjectId(id))));
 		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;

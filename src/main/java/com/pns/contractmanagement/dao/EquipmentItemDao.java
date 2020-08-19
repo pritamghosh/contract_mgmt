@@ -47,15 +47,18 @@ public class EquipmentItemDao {
     }
 
     public EquipmentItemEntity insert(final EquipmentItemEntity equipmentItem) {
+		DaoUtil.setCreationDetails(equipmentItem);
         final InsertOneResult insertOne = equipmentItemCollection.insertOne(equipmentItem);
         equipmentItem.setOid(insertOne.getInsertedId().asObjectId().getValue());
         return equipmentItem;
     }
 
     public boolean update(final EquipmentItemEntity equipmentItem) {
-
+    	DaoUtil.setModificationDetails(equipmentItem);
         Bson update = combine(set("serialNumber", equipmentItem.getSerialNumber()),
-            set("equipmentDetailObjectId", equipmentItem.getEquipmentObjectId()));
+            set("equipmentDetailObjectId", equipmentItem.getEquipmentObjectId()),
+			set("lastModifiedBy", equipmentItem.getLastModifiedBy()),
+			set("lastModifiedDate", equipmentItem.getLastModifiedDate()));
         UpdateResult ur = equipmentItemCollection.updateOne(and(eq("_id", equipmentItem.getOid())), update);
         return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
     }

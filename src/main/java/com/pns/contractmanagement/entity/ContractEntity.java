@@ -18,7 +18,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContractEntity extends AbstractMongoEntity {
+public class ContractEntity extends BaseMongoEntity {
 
     private Customer customer;
     private EquipmentItem equipmentItem;

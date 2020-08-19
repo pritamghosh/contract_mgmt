@@ -1,7 +1,6 @@
 package com.pns.contractmanagement.service.impl;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,12 +60,13 @@ public class ContractServiceImpl {
 		final String proposalNo = new StringBuilder("PNS-").append(currentDate.getDayOfMonth()).append("/")
 				.append(currentDate.getMonthValue()).append("/").append(currentDate.getYear()).append("/")
 				.append(proposalSequence.getSequence()).toString();
-		final double amcBasicAmount = Math.round(contract.getAmcBasicAmount() * 100.0) / 100.0;
-		final double amcTaxAmount = Math.round((amcBasicAmount * tax / 100) * 100.0) / 100.0;
-		final Contract insertedContract = map(contractDao.insert(map(ImmutableContract.builder().from(contract)
-				.amcBasicAmount(amcBasicAmount).amcTax(tax).amcTaxAmount(amcTaxAmount)
-				.amcTotalAmount(contract.getAmcBasicAmount() + amcTaxAmount).customer(customerbyid)
-				.equipmentItem(equipmentItem).proposalNo(proposalNo).contractDate(currentDate).build())));
+		final double amcBasicAmount = roundUp(contract.getAmcBasicAmount());
+		final double amcTaxAmount = roundUp(amcBasicAmount * tax / 100);
+		final double amcTotalAmount = roundUp(amcBasicAmount + amcTaxAmount);
+		final Contract insertedContract = map(
+				contractDao.insert(map(ImmutableContract.builder().from(contract).amcBasicAmount(amcBasicAmount)
+						.amcTax(tax).amcTaxAmount(amcTaxAmount).amcTotalAmount(amcTotalAmount).customer(customerbyid)
+						.equipmentItem(equipmentItem).proposalNo(proposalNo).contractDate(currentDate).build())));
 		return invoiceHelper.generateInvoice(insertedContract);
 	}
 
@@ -90,12 +90,17 @@ public class ContractServiceImpl {
 		} else {
 			equipmentItem = equipmentService.getEquipmentItemById(contract.getEquipmentItem().getId());
 		}
-		final double amcBasicAmount = Math.round(contract.getAmcBasicAmount() * 100.0) / 100.0;
-		final double amcTaxAmount = Math.round((amcBasicAmount * tax / 100) * 100.0) / 100.0;
+		final double amcBasicAmount = roundUp(contract.getAmcBasicAmount());
+		final double amcTaxAmount = roundUp(amcBasicAmount * tax / 100);
+		final double amcTotalAmount = roundUp(amcBasicAmount + amcTaxAmount);
 		contractDao.update(map(ImmutableContract.builder().from(contract).amcTax(tax).amcTaxAmount(amcTaxAmount)
-				.amcTotalAmount(amcBasicAmount + amcTaxAmount).customer(customerbyid).amcBasicAmount(amcBasicAmount)
+				.amcTotalAmount(amcTotalAmount).customer(customerbyid).amcBasicAmount(amcBasicAmount)
 				.equipmentItem(equipmentItem).contractDate(LocalDate.now()).build()));
 		return getContractById(contract.getId());
+	}
+
+	private double roundUp(final double amount) {
+		return Math.round(amount * 100.0) / 100.0;
 	}
 
 	public Contract deleteContractById(final String id) throws PnsException {

@@ -6,7 +6,6 @@ import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.inc;
 import static com.mongodb.client.model.Updates.set;
-import static com.pns.contractmanagement.dao.DaoUtil.DELET_BSON_DOC;
 import static com.pns.contractmanagement.dao.DaoUtil.NOT_DELETED_FILTER;
 import static com.pns.contractmanagement.dao.DaoUtil.countPages;
 
@@ -34,7 +33,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
-import com.pns.contractmanagement.entity.ContractEntity;import com.pns.contractmanagement.entity.SequenceEntity;
+import com.pns.contractmanagement.entity.ContractEntity;
+import com.pns.contractmanagement.entity.SequenceEntity;
 import com.pns.contractmanagement.model.Customer;
 import com.pns.contractmanagement.model.EquipmentItem;
 
@@ -49,7 +49,7 @@ public class ContractDao {
 	private final MongoCollection<ContractEntity> contractCollection;
 
 	private final MongoCollection<Document> contractDocumentCollection;
-	
+
 	private final MongoCollection<SequenceEntity> sequenceDocumentCollection;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -67,21 +67,23 @@ public class ContractDao {
 	}
 
 	public ContractEntity insert(final ContractEntity contract) {
+		DaoUtil.setCreationDetails(contract);
 		contract.setCustomerOid(new ObjectId(contract.getCustomer().getId()));
 		contract.setEquipmnetOid(new ObjectId(contract.getEquipmentItem().getEquipment().getId()));
 		final InsertOneResult insertOne = contractCollection.insertOne(contract);
 		contract.setOid(insertOne.getInsertedId().asObjectId().getValue());
 		return contract;
 	}
-	
+
 	public SequenceEntity findAndUpdateSequece() {
 		SequenceEntity sequence = sequenceDocumentCollection.findOneAndUpdate(
-				and(new Document("squenceType", "proposal-no"), new Document("date", LocalDate.now())), inc("sequence", 1));
+				and(new Document("squenceType", "proposal-no"), new Document("date", LocalDate.now())),
+				inc("sequence", 1));
 		if (sequence == null) {
 			sequence = sequenceDocumentCollection.findOneAndUpdate((new Document("squenceType", "proposal-no")),
 					combine(set("date", LocalDate.now()), set("sequence", 1)));
 		} else {
-			sequence.setSequence(sequence.getSequence()+1);
+			sequence.setSequence(sequence.getSequence() + 1);
 			return sequence;
 		}
 		if (sequence == null) {
@@ -94,8 +96,9 @@ public class ContractDao {
 		return sequence;
 
 	}
-	public boolean update(final ContractEntity contract) {
 
+	public boolean update(final ContractEntity contract) {
+		DaoUtil.setModificationDetails(contract);
 		final Bson update = combine(
 				// @formatter:off
 				set("customer", contract.getCustomer()), set("equipmentItem", contract.getEquipmentItem()),
@@ -104,7 +107,10 @@ public class ContractDao {
 				set("amcTaxAmount", contract.getAmcTaxAmount()), set("proposalNo", contract.getProposalNo()),
 				set("amcTotalAmount", contract.getAmcTotalAmount()), set("billingCycle", contract.getBillingCycle()),
 				set("note", contract.getNote()), set("equipmnetOid", new ObjectId(contract.getCustomer().getId())),
-				set("customerOid", new ObjectId(contract.getEquipmentItem().getEquipment().getId()))
+				set("customerOid", new ObjectId(contract.getEquipmentItem().getEquipment().getId())),
+				set("lastModifiedBy", contract.getLastModifiedBy()),
+				set("lastModifiedDate", contract.getLastModifiedDate())
+
 		// @formatter:on
 		);
 		final UpdateResult ur = contractCollection.updateOne(eq("_id", contract.getOid()), update);
@@ -142,8 +148,9 @@ public class ContractDao {
 	}
 
 	public boolean deleteById(final String id) {
-		final UpdateResult ur = contractCollection.updateOne(eq("_id", new ObjectId(id)), DELET_BSON_DOC);
-		//final DeleteResult deleteOne = contractCollection.deleteOne(and(eq("_id", new ObjectId(id))));
+		final UpdateResult ur = contractCollection.updateOne(eq("_id", new ObjectId(id)),  DaoUtil.deleteBsonDoc());
+		// final DeleteResult deleteOne = contractCollection.deleteOne(and(eq("_id", new
+		// ObjectId(id))));
 		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
 
@@ -153,20 +160,25 @@ public class ContractDao {
 
 	public List<ContractEntity> findContractByAmcDateRange(final Range<LocalDate> dateRange, final int page) {
 		return map(contractDocumentCollection
-				.find(and(NOT_DELETED_FILTER,new Document("amcStartDate", new Document("$gte", dateRange.lowerEndpoint())),
+				.find(and(NOT_DELETED_FILTER,
+						new Document("amcStartDate", new Document("$gte", dateRange.lowerEndpoint())),
 						new Document("amcEndDate", new Document("$lte", dateRange.upperEndpoint()))))
 				.skip((page - 1) * pageSize).limit(pageSize));
 	}
 
 	public List<ContractEntity> findContractByCreationDateRange(final Range<LocalDate> dateRange, final int page) {
-		return map(contractDocumentCollection
-				.find(and(NOT_DELETED_FILTER,new Document("contractDate",
-						new Document("$gte", dateRange.lowerEndpoint()).append("$lte", dateRange.upperEndpoint()))))
-				.skip((page - 1) * pageSize).limit(pageSize));
+		return map(
+				contractDocumentCollection
+						.find(and(NOT_DELETED_FILTER,
+								new Document("contractDate",
+										new Document("$gte", dateRange.lowerEndpoint()).append("$lte",
+												dateRange.upperEndpoint()))))
+						.skip((page - 1) * pageSize).limit(pageSize));
 	}
 
 	public List<ContractEntity> searchByQuery(final String query, final int page) {
-		return map(contractDocumentCollection.find(and(NOT_DELETED_FILTER,text(query))).skip((page - 1) * pageSize).limit(pageSize));
+		return map(contractDocumentCollection.find(and(NOT_DELETED_FILTER, text(query))).skip((page - 1) * pageSize)
+				.limit(pageSize));
 	}
 
 	public long countAllDocumnets() {
@@ -174,20 +186,19 @@ public class ContractDao {
 	}
 
 	public long countDocumnetsByQuery(final String query) {
-		return countPages(contractDocumentCollection.countDocuments(and(NOT_DELETED_FILTER,text(query))), pageSize);
+		return countPages(contractDocumentCollection.countDocuments(and(NOT_DELETED_FILTER, text(query))), pageSize);
 	}
 
 	public long countDocumnetsByAmcDateRange(final Range<LocalDate> dateRange) {
-		return countPages(
-				contractDocumentCollection.countDocuments(
-						and(NOT_DELETED_FILTER,new Document("amcStartDate", new Document("$gte", dateRange.lowerEndpoint())),
-								new Document("amcEndDate", new Document("$lte", dateRange.upperEndpoint())))),
+		return countPages(contractDocumentCollection.countDocuments(
+				and(NOT_DELETED_FILTER, new Document("amcStartDate", new Document("$gte", dateRange.lowerEndpoint())),
+						new Document("amcEndDate", new Document("$lte", dateRange.upperEndpoint())))),
 				pageSize);
 	}
 
 	public long countDocumnetsByCreationDateRange(final Range<LocalDate> dateRange) {
 		return countPages(
-				contractDocumentCollection.countDocuments(and(NOT_DELETED_FILTER,new Document("contractDate",
+				contractDocumentCollection.countDocuments(and(NOT_DELETED_FILTER, new Document("contractDate",
 						new Document("$gte", dateRange.lowerEndpoint()).append("$lte", dateRange.upperEndpoint())))),
 				pageSize);
 	}

@@ -11,7 +11,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public  class EquipmentEntity  extends AbstractMongoEntity{
+public  class EquipmentEntity  extends BaseMongoEntity{
     
     private String model;
     
