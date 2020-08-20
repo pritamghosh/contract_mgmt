@@ -1,7 +1,7 @@
 package com.pns.contractmanagement.util;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,10 @@ class AmountUtilTest {
 //			System.out.println("" + i + "," + AmountUtil.convertToWord(i));
 //		}
 //		writer.close();
-		System.out.println( AmountUtil.convertToWord(203234d));
+		assertEquals("TWO LAKH THREE THOUSAND TWO HUNDRED THIRTY-FOUR ONLY",
+				AmountUtil.convertToWord(203234));
+		assertEquals("SIXTEEN LAKH THIRTY-SIX THOUSAND NINE HUNDRED FOURTEEN AND SIXTY-NINE PAISE ONLY",
+				AmountUtil.convertToWord(1636914.69));
 	}
 
 }

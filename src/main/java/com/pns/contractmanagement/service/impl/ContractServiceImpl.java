@@ -43,7 +43,7 @@ public class ContractServiceImpl {
 	@Autowired
 	private ContractInvoiceHelperImpl invoiceHelper;
 
-	public Report addContract(final Contract contract) throws PnsException {
+	public Report addContract(final Contract contract) {
 		final Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
 		EquipmentItem equipmentItem = null;
 		if (contract.getEquipmentItem().getId() == null) {
@@ -70,16 +70,16 @@ public class ContractServiceImpl {
 		return invoiceHelper.generateInvoice(insertedContract);
 	}
 
-	public Report getContractReportById(final String id) throws PnsException {
+	public Report getContractReportById(final String id) {
 		return invoiceHelper.generateInvoice(getContractById(id));
 	}
 
-	public Contract getContractById(final String id) throws PnsException {
+	public Contract getContractById(final String id) {
 		return map(contractDao.findById(id)
 				.orElseThrow(() -> new PnsException("Contract Not Found!!", PnsError.NOT_FOUND)));
 	}
 
-	public Contract modifyContract(final Contract contract) throws PnsException {
+	public Contract modifyContract(final Contract contract) {
 		final Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
 		EquipmentItem equipmentItem = null;
 		if (contract.getEquipmentItem().getId() == null) {
@@ -103,7 +103,7 @@ public class ContractServiceImpl {
 		return Math.round(amount * 100.0) / 100.0;
 	}
 
-	public Contract deleteContractById(final String id) throws PnsException {
+	public Contract deleteContractById(final String id) {
 		final Contract deletedContract = getContractById(id);
 		contractDao.deleteById(id);
 		return deletedContract;
@@ -142,7 +142,7 @@ public class ContractServiceImpl {
 	}
 
 	private List<Contract> map(final List<ContractEntity> list) {
-		return list.stream().map(e -> map(e)).collect(Collectors.toList());
+		return list.stream().map(this::map).collect(Collectors.toList());
 	}
 
 	private Contract map(final ContractEntity entity) {

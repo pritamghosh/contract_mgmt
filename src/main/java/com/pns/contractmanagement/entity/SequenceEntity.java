@@ -2,7 +2,10 @@ package com.pns.contractmanagement.entity;
 
 import java.time.LocalDate;
 
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +21,8 @@ import lombok.Setter;
 public class SequenceEntity {
 	private int sequence;
 	private LocalDate date;
-	private ObjectId _id;
-	private String squenceType ;
+	@BsonId
+	@JsonProperty("_id")
+	private ObjectId oid;
+	private String squenceType;
 }

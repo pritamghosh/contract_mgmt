@@ -16,25 +16,28 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.pns.contractmanagement.entity.BaseMongoEntity;
 
 public final class DaoUtil {
-	public static final Document NOT_DELETED_FILTER = new Document("deleted", null);
 
 	private DaoUtil() {
+	}
+
+	public static Document notDeletedFilter() {
+		return new Document("deleted", null);
 	}
 
 	public static Document buildCaseInsentiveQuery(final String query) {
 		return new Document().append("$regex", "^" + query + "$").append("$options", "i");
 	}
 
-	public static long countPages(long countDocuments, int pageSize) {
+	public static long countPages(final long countDocuments, final int pageSize) {
 		return (countDocuments / pageSize) + (countDocuments % pageSize > 0 ? 1 : 0);
 	}
 
-	public static <T extends BaseMongoEntity> void setCreationDetails(T entity) {
+	public static <T extends BaseMongoEntity> void setCreationDetails(final T entity) {
 		entity.setCreationDate(LocalDateTime.now());
 		entity.setCreatedBy(getUsernameFromContext());
 	}
 
-	public static <T extends BaseMongoEntity> void setModificationDetails(T entity) {
+	public static <T extends BaseMongoEntity> void setModificationDetails(final T entity) {
 		entity.setLastModifiedBy(getUsernameFromContext());
 		entity.setLastModifiedDate(LocalDateTime.now());
 	}
@@ -43,13 +46,12 @@ public final class DaoUtil {
 		final KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken) SecurityContextHolder
 				.getContext().getAuthentication();
 		@SuppressWarnings("unchecked")
-		KeycloakPrincipal<KeycloakSecurityContext> pricipal = (KeycloakPrincipal<KeycloakSecurityContext>) authentication
+		final KeycloakPrincipal<KeycloakSecurityContext> pricipal = (KeycloakPrincipal<KeycloakSecurityContext>) authentication
 				.getPrincipal();
-		final String name = pricipal.getName();
-		return name;
+		return pricipal.getName();
 	}
 
-	public static final Bson deleteBsonDoc() {
+	public static Bson deleteBsonDoc() {
 		return combine(set("lastModifiedBy", LocalDate.now()),
 				set("lastModifiedDate", DaoUtil.getUsernameFromContext()), set("deleted", true));
 	}

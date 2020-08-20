@@ -30,23 +30,23 @@ public class EquipmentServiceImpl {
 	@Autowired
 	EquipmentItemDao equipmentItemDao;
 
-	public EquipmentItem addEquipmentItem(final EquipmentItem equipmentItem) throws PnsException {
+	public EquipmentItem addEquipmentItem(final EquipmentItem equipmentItem) {
 		final EquipmentItemEntity insertedEquipment = equipmentItemDao.insert(map(equipmentItem));
 		return map(insertedEquipment, getEquipmentById(insertedEquipment.getEquipmentId()));
 	}
 
-	public EquipmentItem modifyEquipmentItem(final EquipmentItem equipmentItem) throws PnsException {
+	public EquipmentItem modifyEquipmentItem(final EquipmentItem equipmentItem) {
 		equipmentItemDao.update(map(equipmentItem));
 		return getEquipmentItemById(equipmentItem.getId());
 	}
 
-	public Equipment DeleteEquipmentById(final String id) throws PnsException {
+	public Equipment deleteEquipmentById(final String id) {
 		final Equipment deletedEquipment = getEquipmentById(id);
 		equipmentDao.deleteById(id);
 		return deletedEquipment;
 	}
 
-	public EquipmentItem getEquipmentItemById(final String id) throws PnsException {
+	public EquipmentItem getEquipmentItemById(final String id) {
 		final EquipmentItemEntity entity = equipmentItemDao.findById(id)
 				.orElseThrow(() -> new PnsException("Equipment Not Found!!", PnsError.NOT_FOUND));
 		return map(entity, getEquipmentById(entity.getEquipmentId()));
@@ -62,7 +62,7 @@ public class EquipmentServiceImpl {
 		return map(equipmentItemDao.findAll());
 	}
 
-	public Equipment modifyEquipment(final Equipment equipment) throws PnsException {
+	public Equipment modifyEquipment(final Equipment equipment) {
 		equipmentDao.update(map(equipment));
 		return getEquipmentById(equipment.getId());
 	}
@@ -71,14 +71,14 @@ public class EquipmentServiceImpl {
 		return map(equipmentDao.insert(map(equipments)));
 	}
 
-	public Equipment getEquipmentById(final String id) throws PnsException {
+	public Equipment getEquipmentById(final String id) {
 		return map(equipmentDao.findById(id)
 				.orElseThrow(() -> new PnsException("Equipment Detail Not Found!!", PnsError.NOT_FOUND)));
 	}
 
 	public SearchResponse<Equipment> getAllEquipments(final int page) {
 		return ImmutableSearchResponse.<Equipment>builder()
-				.result(equipmentDao.findAll(page).stream().map(e -> map(e)).collect(Collectors.toList()))
+				.result(equipmentDao.findAll(page).stream().map(this::map).collect(Collectors.toList()))
 				.pageCount(equipmentDao.countAllDocumnets()).build();
 	}
 
@@ -87,14 +87,10 @@ public class EquipmentServiceImpl {
 	}
 
 	public SearchResponse<Equipment> getEquipmentsByModel(final String model, final int page) {
-		final List<Equipment> collect = equipmentDao.findByModel(model, page).stream().map(e -> map(e))
+		final List<Equipment> collect = equipmentDao.findByModel(model, page).stream().map(this::map)
 				.collect(Collectors.toList());
 		return ImmutableSearchResponse.<Equipment>builder().result(collect)
 				.pageCount(equipmentDao.countDocumnetsByModel(model)).build();
-	}
-
-	public long getEquipmentCountByIds(final List<String> ids) {
-		return 0;
 	}
 
 	private EquipmentItemEntity map(final EquipmentItem equipment) {
@@ -129,12 +125,12 @@ public class EquipmentServiceImpl {
 	}
 
 	private List<Equipment> mapEquipment(final List<EquipmentEntity> searchByQuery) {
-		return searchByQuery.stream().map(e -> map(e)).collect(Collectors.toList());
+		return searchByQuery.stream().map(this::map).collect(Collectors.toList());
 	}
 
 	private List<EquipmentItem> map(final List<EquipmentItemEntity> list) {
-		return map(list,
-				equipmentDao.findByIds(list.stream().map(e -> e.getEquipmentId()).collect(Collectors.toList())));
+		return map(list, equipmentDao
+				.findByIds(list.stream().map(EquipmentItemEntity::getEquipmentId).collect(Collectors.toList())));
 	}
 
 }

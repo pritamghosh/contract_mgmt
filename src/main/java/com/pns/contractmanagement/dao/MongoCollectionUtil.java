@@ -23,19 +23,19 @@ public class MongoCollectionUtil {
 	private final String databaseName;
 	private final MongoDatabase db;
 
-	public MongoCollectionUtil(final MongoClient mongoClient, @Value("${app.database.name:userdb}") String databaseName) {
+	public MongoCollectionUtil(final MongoClient mongoClient,
+			@Value("${app.database.name:userdb}") String databaseName) {
 		this.databaseName = databaseName;
 		db = mongoClient.getDatabase(databaseName);
 	}
 
-	public <TDocument> MongoCollection<TDocument> getCollection(final String collectionName,
-			final Class<TDocument> collectionType) {
+	public <T> MongoCollection<T> getCollection(final String collectionName, final Class<T> collectionType) {
 		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
 				fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 		return db.getCollection(collectionName, collectionType).withCodecRegistry(pojoCodecRegistry);
 	}
 
-	public <TDocument> MongoCollection<Document> getCollection(final String collectionName) {
+	public MongoCollection<Document> getCollection(final String collectionName) {
 		return db.getCollection(collectionName);
 	}
 

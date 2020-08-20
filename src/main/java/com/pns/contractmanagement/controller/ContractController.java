@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Range;
-import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.model.Contract;
 import com.pns.contractmanagement.model.Report;
 import com.pns.contractmanagement.model.SearchResponse;
@@ -32,7 +31,7 @@ public class ContractController {
 
 	@PutMapping
 	@PreAuthorize("hasRole('create')")
-	public ResponseEntity<byte[]> addContract(@RequestBody final Contract contract) throws PnsException {
+	public ResponseEntity<byte[]> addContract(@RequestBody final Contract contract) {
 
 		final Report contractReport = service.addContract(contract);
 		final HttpHeaders headers = new HttpHeaders();
@@ -45,32 +44,31 @@ public class ContractController {
 
 	@PostMapping
 	@PreAuthorize("hasRole('update')")
-	public Contract modifyContract(@RequestBody final Contract contract) throws PnsException {
+	public Contract modifyContract(@RequestBody final Contract contract) {
 		return service.modifyContract(contract);
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('delete')")
-	public Contract DeleteContract(@PathVariable("id") final String id) throws PnsException {
+	public Contract deleteContract(@PathVariable("id") final String id) {
 		return service.deleteContractById(id);
 	}
 
 	@GetMapping("{id}")
 	@PreAuthorize("hasRole('read')")
-	public Contract getContractById(@PathVariable("id") final String id) throws PnsException {
+	public Contract getContractById(@PathVariable("id") final String id) {
 		return service.getContractById(id);
 	}
 
 	@GetMapping("/pdf/{id}")
 	@PreAuthorize("hasRole('read')")
-	public ResponseEntity<byte[]> getContractPdfById(@PathVariable("id") final String id) throws PnsException {
+	public ResponseEntity<byte[]> getContractPdfById(@PathVariable("id") final String id) {
 		final Report contractReport = service.getContractReportById(id);
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(contractReport.getContentType());
 		final String filename = contractReport.getFileName();
 		headers.setContentDispositionFormData(filename, filename);
 		headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-		//final ResponseEntity<byte[]> response = new ResponseEntity(contractReport.getContent(), headers, HttpStatus.OK);
 		return ResponseEntity.ok().headers(headers).body(contractReport.getContent());
 
 	}

@@ -58,7 +58,6 @@ public class ContractInvoiceHelperImpl {
 
 			JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
 			byte[] pdfReport = JasperExportManager.exportReportToPdf(jasperPrint);
-
 			// JasperExportManager.exportReportToPdfFile(jasperPrint, contract.getId() +
 			// ".pdf");
 			return ImmutableReport.builder().content(pdfReport).fileName(contract.getId() + ".pdf")
@@ -69,7 +68,7 @@ public class ContractInvoiceHelperImpl {
 		}
 	}
 
-	public void compileJasper() throws PnsException {
+	public void compileJasper() {
 		InputStream employeeReportStream = getClass().getResourceAsStream("/pnsinvoice.jrxml");
 
 		try {
@@ -77,7 +76,7 @@ public class ContractInvoiceHelperImpl {
 			JRSaver.saveObject(report, jasperFileUrl);
 
 		} catch (JRException ex) {
-			LOGGER.error("Exception occured while compiling jasper report.", ex);
+			LOGGER.error("Exception occured while compiling jasper report.");
 			throw new PnsException("Unable to compile pnsinvoice.jrxml", ex, PnsError.SYSTEM_ERROR);
 		}
 	}

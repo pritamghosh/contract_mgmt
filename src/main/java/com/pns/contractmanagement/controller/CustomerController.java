@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.model.Customer;
 import com.pns.contractmanagement.model.SearchResponse;
 import com.pns.contractmanagement.service.impl.CustomerServiceImpl;
@@ -26,47 +25,47 @@ public class CustomerController {
 
 	@PutMapping
 	@PreAuthorize("hasRole('create')")
-	public Customer addCustomer(@RequestBody final Customer customer) throws PnsException {
+	public Customer addCustomer(@RequestBody final Customer customer) {
 		return service.addCustomer(customer);
 	}
 
 	@PostMapping
 	@PreAuthorize("hasRole('update')")
-	public Customer modifyCustomer(@RequestBody final Customer Customer) throws PnsException {
-		return service.ModifyCustomer(Customer);
+	public Customer modifyCustomer(@RequestBody final Customer customer) {
+		return service.modifyCustomer(customer);
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('delete')")
-	public Customer DeleteCustomerById(@PathVariable("id") final String id) throws PnsException {
-		return service.DeleteCustomerById(id);
+	public Customer deleteCustomerById(@PathVariable("id") final String id) {
+		return service.deleteCustomerById(id);
 	}
 
 	@GetMapping("{id}")
 	@PreAuthorize("hasRole('read')")
-	public Customer getCustomerbyid(@PathVariable("id") final String id) throws PnsException {
+	public Customer getCustomerbyid(@PathVariable("id") final String id) {
 		return service.getCustomerbyid(id);
 	}
 
 	@GetMapping(params = { "region", "!name" })
 	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Customer> getCustomerbyRegion(@RequestParam("region") final String region,
-			@RequestParam(value = "page", defaultValue = "1") final int page) throws PnsException {
-		return service.getCustomerByRegion(region,page);
+			@RequestParam(value = "page", defaultValue = "1") final int page) {
+		return service.getCustomerByRegion(region, page);
 	}
 
 	@GetMapping(params = { "name", "!region" })
 	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Customer> getCustomerbyName(@RequestParam("name") final String name,
-			@RequestParam(value = "page", defaultValue = "1") final int page) throws PnsException {
-		return service.getCustomerByName(name,page);
+			@RequestParam(value = "page", defaultValue = "1") final int page) {
+		return service.getCustomerByName(name, page);
 	}
 
 	@GetMapping(value = "search", params = { "query" })
 	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Customer> searchCustomerbyQuery(@RequestParam("query") final String query,
-			@RequestParam(value = "page", defaultValue = "1") final int page) throws PnsException {
-		return service.searchCustomerbyQuery(query,page);
+			@RequestParam(value = "page", defaultValue = "1") final int page) {
+		return service.searchCustomerbyQuery(query, page);
 	}
 
 	@GetMapping(params = { "!region", "!name" })

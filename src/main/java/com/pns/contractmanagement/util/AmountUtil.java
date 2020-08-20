@@ -9,9 +9,13 @@ import com.ibm.icu.text.DecimalFormat;
 
 public final class AmountUtil {
 
+	private AmountUtil() {
+		super();
+	}
+
 	private static final String EMPTY_SPACE = " ";
 	private static final String HYPHEN = "-";
-	private static Map<Integer, String> AMOUNT_WORD_MAP = new HashMap<>();
+	private static final Map<Integer, String> AMOUNT_WORD_MAP = new HashMap<>();
 	static {
 		AMOUNT_WORD_MAP.put(1, "ONE");
 		AMOUNT_WORD_MAP.put(2, "TWO");
@@ -50,9 +54,9 @@ public final class AmountUtil {
 		convert(split[0], builder);
 		if(split.length>1) {
 			final String paise = convertTwoDigit(StringUtils.substring(split[1], 0,2),null);
-			builder.append("AND ").append(paise).append("PAISE");
+			builder.append("AND ").append(paise).append("PAISE ");
 		}
-		return builder.append(" ONLY").toString();
+		return builder.append("ONLY").toString();
 	}
 
 	private static void convert(String strParam, StringBuilder builder) {

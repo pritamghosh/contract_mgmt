@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.model.Equipment;
 import com.pns.contractmanagement.model.EquipmentItem;
 import com.pns.contractmanagement.model.SearchResponse;
@@ -30,46 +29,46 @@ public class EquipmentController {
 
 	@PutMapping
 	@PreAuthorize("hasRole('create')")
-	public Equipment addEquipment(@RequestBody final Equipment equipment) throws PnsException {
+	public Equipment addEquipment(@RequestBody final Equipment equipment) {
 		return service.addEquipment(equipment);
 	}
 
 	@PostMapping
 	@PreAuthorize("hasRole('update')")
-	public Equipment modifyEquipment(@RequestBody final Equipment equipment) throws PnsException {
+	public Equipment modifyEquipment(@RequestBody final Equipment equipment) {
 		return service.modifyEquipment(equipment);
 	}
 
 	@GetMapping(params = { "!model" })
 	@PreAuthorize("hasRole('read')")
-	public SearchResponse<Equipment> getAllEquipments(@RequestParam(value = "page", defaultValue = "1") final int page)
-			throws PnsException {
+	public SearchResponse<Equipment> getAllEquipments(
+			@RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.getAllEquipments(page);
 	}
 
 	@GetMapping(params = { "model" })
 	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Equipment> getEquipmentsByModel(@RequestParam("model") final String model,
-			@RequestParam(value = "page", defaultValue = "1") final int page) throws PnsException {
+			@RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.getEquipmentsByModel(model, page);
 	}
 
 	@PutMapping("/item")
 	@PreAuthorize("hasRole('create')")
-	public EquipmentItem addEquipmentItem(@RequestBody final EquipmentItem equipment) throws PnsException {
+	public EquipmentItem addEquipmentItem(@RequestBody final EquipmentItem equipment) {
 		return service.addEquipmentItem(equipment);
 	}
 
 	@PostMapping("/item")
 	@PreAuthorize("hasRole('update')")
-	public EquipmentItem modifyEquipmentItem(@RequestBody final EquipmentItem equipment) throws PnsException {
+	public EquipmentItem modifyEquipmentItem(@RequestBody final EquipmentItem equipment) {
 		return service.modifyEquipmentItem(equipment);
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('delete')")
-	public Equipment DeleteEquipmentById(@PathVariable("id") final String id) throws PnsException {
-		return service.DeleteEquipmentById(id);
+	public Equipment deleteEquipmentById(@PathVariable("id") final String id) {
+		return service.deleteEquipmentById(id);
 	}
 
 	@GetMapping(value = "/count/{id}")
@@ -80,7 +79,7 @@ public class EquipmentController {
 
 	@GetMapping("/item/{id}")
 	@PreAuthorize("hasRole('read')")
-	public EquipmentItem getEquipmentbyid(@PathVariable("id") final String id) throws PnsException {
+	public EquipmentItem getEquipmentbyid(@PathVariable("id") final String id) {
 		return service.getEquipmentItemById(id);
 	}
 
@@ -93,7 +92,7 @@ public class EquipmentController {
 	@GetMapping(value = "/search", params = { "query" })
 	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Equipment> searchEquipmentbyQuery(@RequestParam("query") final String query,
-			@RequestParam(value = "page", defaultValue = "1") final int page) throws PnsException {
+			@RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.searchEquipmentbyQuery(query, page);
 	}
 }

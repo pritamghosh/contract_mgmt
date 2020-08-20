@@ -1,4 +1,4 @@
-package com.pns.contractmanagement;
+package com.pns.contractmanagement.helper;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -22,7 +22,7 @@ import com.pns.contractmanagement.model.ImmutableEquipmentItem;
  *
  */
 @ExtendWith(MockitoExtension.class)
-public class ContractIncoiceHelperImplTest {
+class ContractIncoiceHelperImplTest {
 
     @InjectMocks
     ContractInvoiceHelperImpl helper ;
@@ -69,10 +69,4 @@ public class ContractIncoiceHelperImplTest {
         assertNotNull(helper.generateInvoice(contract));
     }
     
-    @Test
-    void sample() {
-        double a = 123.45677;
-      double d =  Math.round(a * 100.0) / 100.0   ;
-      System.out.println(d);
-    }
 }

@@ -5,9 +5,9 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
-import static com.pns.contractmanagement.dao.DaoUtil.NOT_DELETED_FILTER;
 import static com.pns.contractmanagement.dao.DaoUtil.buildCaseInsentiveQuery;
 import static com.pns.contractmanagement.dao.DaoUtil.countPages;
+import static com.pns.contractmanagement.dao.DaoUtil.notDeletedFilter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +34,8 @@ import com.pns.contractmanagement.entity.EquipmentEntity;
  */
 @Repository
 public class EquipmentDao {
+	private static final String MODEL = "model";
+
 	@Value("${app.page.size.equipment}")
 	private int pageSize;
 
@@ -54,7 +56,7 @@ public class EquipmentDao {
 
 	public boolean update(final EquipmentEntity equipmentEntity) {
 		DaoUtil.setModificationDetails(equipmentEntity);
-		final Bson update = combine(set("model", equipmentEntity.getModel()),
+		final Bson update = combine(set(MODEL, equipmentEntity.getModel()),
 				set("description", equipmentEntity.getDescription()),
 				set("lastModifiedBy", equipmentEntity.getLastModifiedBy()),
 				set("lastModifiedDate", equipmentEntity.getLastModifiedDate()));
@@ -68,51 +70,48 @@ public class EquipmentDao {
 
 	public Map<String, EquipmentEntity> findByIds(final List<String> ids) {
 		final Map<String, EquipmentEntity> equipmentEntity = new HashMap<>();
-		equipmentCollection
-				.find(Filters.all("_id", ids.stream().map(id -> new ObjectId(id)).collect(Collectors.toList())))
+		equipmentCollection.find(Filters.all("_id", ids.stream().map(ObjectId::new).collect(Collectors.toList())))
 				.iterator().forEachRemaining(e -> equipmentEntity.put(e.getId(), e));
 		return equipmentEntity;
 	}
 
 	public boolean deleteById(final String id) {
 		final UpdateResult ur = equipmentCollection.updateOne(eq("_id", new ObjectId(id)), DaoUtil.deleteBsonDoc());
-		// final DeleteResult deleteOne = equipmentCollection.deleteOne(and(eq("_id",
-		// new ObjectId(id))));
 		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
 
 	public List<EquipmentEntity> findByModel(final String model, final int page) {
 		final List<EquipmentEntity> equipmentEntities = new ArrayList<>();
-		equipmentCollection.find(and(NOT_DELETED_FILTER, new Document("model", buildCaseInsentiveQuery(model))))
+		equipmentCollection.find(and(notDeletedFilter(), new Document(MODEL, buildCaseInsentiveQuery(model))))
 				.skip((page - 1) * pageSize).limit(pageSize).iterator().forEachRemaining(equipmentEntities::add);
 		return equipmentEntities;
 	}
 
 	public long countDocumnetsByModel(final String model) {
 		return countPages(equipmentCollection.countDocuments(
-				and(NOT_DELETED_FILTER, new Document("model", buildCaseInsentiveQuery(model)))), pageSize);
+				and(notDeletedFilter(), new Document(MODEL, buildCaseInsentiveQuery(model)))), pageSize);
 	}
 
 	public List<EquipmentEntity> findAll(final int page) {
 		final List<EquipmentEntity> equipmentEntity = new ArrayList<>();
-		equipmentCollection.find(NOT_DELETED_FILTER).skip((page - 1) * pageSize).limit(pageSize).iterator()
+		equipmentCollection.find(notDeletedFilter()).skip((page - 1) * pageSize).limit(pageSize).iterator()
 				.forEachRemaining(equipmentEntity::add);
 		return equipmentEntity;
 	}
 
 	public long countAllDocumnets() {
-		return countPages(equipmentCollection.countDocuments(NOT_DELETED_FILTER), pageSize);
+		return countPages(equipmentCollection.countDocuments(notDeletedFilter()), pageSize);
 	}
 
 	public List<EquipmentEntity> searchByQuery(final String query, final int page) {
 		final List<EquipmentEntity> equipmentEntities = new ArrayList<>();
-		equipmentCollection.find(and(NOT_DELETED_FILTER, text(query))).skip((page - 1) * pageSize).limit(pageSize)
+		equipmentCollection.find(and(notDeletedFilter(), text(query))).skip((page - 1) * pageSize).limit(pageSize)
 				.iterator().forEachRemaining(equipmentEntities::add);
 		return equipmentEntities;
 	}
 
 	public long countDocumnetsByQuery(final String query) {
-		return countPages(equipmentCollection.countDocuments(and(NOT_DELETED_FILTER, text(query))), pageSize);
+		return countPages(equipmentCollection.countDocuments(and(notDeletedFilter(), text(query))), pageSize);
 	}
 
 }

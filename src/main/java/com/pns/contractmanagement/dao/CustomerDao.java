@@ -5,9 +5,9 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
-import static com.pns.contractmanagement.dao.DaoUtil.NOT_DELETED_FILTER;
 import static com.pns.contractmanagement.dao.DaoUtil.buildCaseInsentiveQuery;
 import static com.pns.contractmanagement.dao.DaoUtil.countPages;
+import static com.pns.contractmanagement.dao.DaoUtil.notDeletedFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +31,8 @@ import com.pns.contractmanagement.entity.CustomerEntity;
  */
 @Repository
 public class CustomerDao {
+
+	private static final String REGION = "region";
 
 	@Value("${app.page.size.customer}")
 	private int pageSize;
@@ -57,7 +59,7 @@ public class CustomerDao {
 		DaoUtil.setModificationDetails(customer);
 		final Bson update = combine(
 				// @formatter:off
-				set("name", customer.getName()), set("region", customer.getRegion()),
+				set("name", customer.getName()), set(REGION, customer.getRegion()),
 				set("address", customer.getAddress()), set("gstinNo", customer.getGstinNo()),
 				set("pan", customer.getPan()), set("lastModifiedBy", customer.getLastModifiedBy()),
 				set("lastModifiedDate", customer.getLastModifiedDate())
@@ -73,58 +75,56 @@ public class CustomerDao {
 
 	public List<CustomerEntity> findByRegion(final String region, final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find(and(NOT_DELETED_FILTER, new Document("region", buildCaseInsentiveQuery(region))))
+		customerCollection.find(and(notDeletedFilter(), new Document(REGION, buildCaseInsentiveQuery(region))))
 				.skip((page - 1) * pageSize).limit(pageSize).iterator().forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public boolean deleteById(final String id) {
 		final UpdateResult ur = customerCollection.updateOne(eq("_id", new ObjectId(id)), DaoUtil.deleteBsonDoc());
-		// final DeleteResult deleteOne = customerCollection.deleteOne(and(eq("_id", new
-		// ObjectId(id))));
 		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
 
 	public List<CustomerEntity> findAll(final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find(NOT_DELETED_FILTER).skip((page - 1) * pageSize).limit(pageSize).iterator()
+		customerCollection.find(notDeletedFilter()).skip((page - 1) * pageSize).limit(pageSize).iterator()
 				.forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public long countAllDocumnets() {
-		final long countDocuments = customerCollection.countDocuments(NOT_DELETED_FILTER);
+		final long countDocuments = customerCollection.countDocuments(notDeletedFilter());
 		return countPages(countDocuments, pageSize);
 	}
 
 	public List<CustomerEntity> searchByQuery(final String query, final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find(and(text(query), NOT_DELETED_FILTER)).skip((page - 1) * pageSize).limit(pageSize)
+		customerCollection.find(and(text(query), notDeletedFilter())).skip((page - 1) * pageSize).limit(pageSize)
 				.iterator().forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public long countDocumnetsByQuery(final String query) {
-		final long countDocuments = customerCollection.countDocuments(and(text(query), NOT_DELETED_FILTER));
+		final long countDocuments = customerCollection.countDocuments(and(text(query), notDeletedFilter()));
 		return countPages(countDocuments, pageSize);
 	}
 
 	public Collection<CustomerEntity> findByName(final String name, final int page) {
 		final List<CustomerEntity> customers = new ArrayList<>();
-		customerCollection.find(and(NOT_DELETED_FILTER, new Document("name", buildCaseInsentiveQuery(name))))
+		customerCollection.find(and(notDeletedFilter(), new Document("name", buildCaseInsentiveQuery(name))))
 				.skip((page - 1) * pageSize).limit(pageSize).iterator().forEachRemaining(customers::add);
 		return customers;
 	}
 
 	public long countDocumnetsByName(final String name) {
 		final long countDocuments = customerCollection
-				.countDocuments(and(NOT_DELETED_FILTER, new Document("name", buildCaseInsentiveQuery(name))));
+				.countDocuments(and(notDeletedFilter(), new Document("name", buildCaseInsentiveQuery(name))));
 		return countPages(countDocuments, pageSize);
 	}
 
 	public long countDocumnetsByRegion(final String region) {
 		final long countDocuments = customerCollection
-				.countDocuments(and(NOT_DELETED_FILTER, new Document("region", buildCaseInsentiveQuery(region))));
+				.countDocuments(and(notDeletedFilter(), new Document(REGION, buildCaseInsentiveQuery(region))));
 		return countPages(countDocuments, pageSize);
 	}
 }
