@@ -1,8 +1,9 @@
 package com.pns.contractmanagement.aspect;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -12,10 +13,13 @@ import org.springframework.stereotype.Component;
 public class PnsControllerAspect {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PnsControllerAspect.class);
 
-	@Around("execution(* com.pns.contractmanagement.controller.*(..))")
-	public void beforeAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
-		LOGGER.info("Executing Method {} with parameters {} .", joinPoint.getSignature(), joinPoint.getArgs());
-		joinPoint.proceed();
+	@Before("execution(* com.pns.contractmanagement.controller..*(..))")
+	public void beforeAdvice(JoinPoint joinPoint) throws Throwable {
+		LOGGER.info("Executing Method {} .", joinPoint.getSignature());
+	}
+	
+	@AfterReturning("execution(* com.pns.contractmanagement.controller..*(..))")
+	public void afterAdvice(JoinPoint joinPoint) throws Throwable {
 		LOGGER.info("Exiting Method {} .", joinPoint.getSignature());
 	}
 }
