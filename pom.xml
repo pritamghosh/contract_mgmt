@@ -19,6 +19,7 @@
 		<java.version>11</java.version>
 		<dependency.version.jasper>6.4.0</dependency.version.jasper>
 		<dependency.version.org.immutables>2.8.8</dependency.version.org.immutables>
+		<dependency.version.keycloak>9.0.0</dependency.version.keycloak>
 		<dependency.version.spring-cloud-sleuth>2.2.2.RELEASE</dependency.version.spring-cloud-sleuth>
 		<dependency.version.springfox.swagger2>2.9.2</dependency.version.springfox.swagger2>
 		<spring-cloud.version>Hoxton.SR6</spring-cloud.version>
@@ -62,6 +63,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.keycloak</groupId>
@@ -125,6 +130,25 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
