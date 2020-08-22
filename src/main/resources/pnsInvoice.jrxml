@@ -19,7 +19,7 @@
 			<staticText>
 				<reportElement x="-2" y="93" width="555" height="15" uuid="987c5c48-1924-492e-bf37-4c6e86449c8b"/>
 				<textElement textAlignment="Center">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Customer Service Support Agreement (CSSA)]]></text>
 			</staticText>
@@ -31,7 +31,7 @@
 			<staticText>
 				<reportElement x="0" y="0" width="555" height="20" uuid="5e366110-1613-47d6-8c8b-8bff8bdcca82"/>
 				<textElement textAlignment="Center">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[COMPREHHENSIVE ANNUAL MAINTENANCE CONTRACT SERVICE SUPPORT]]></text>
 			</staticText>
@@ -39,7 +39,7 @@
 				<reportElement x="0" y="50" width="440" height="42" uuid="d1a15a99-924d-4ba5-a0ef-21b438fcae2d"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans"" size="10" isBold="false"/>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[BLOCK- J, 1/244, GROUND FLOOR, PATULI, B.P.TOWNSHIP , KOLKATA 700094        
 West Bengal, India.
@@ -66,7 +66,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[PROPOSAL NO]]></text>
 			</staticText>
@@ -79,7 +79,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[DATE]]></text>
 			</staticText>
@@ -92,7 +92,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[AMC PERIOD]]></text>
 			</staticText>
@@ -105,7 +105,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getProposalNo()]]></textFieldExpression>
 			</textField>
@@ -118,7 +118,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getContractDate().format($P{formatter})]]></textFieldExpression>
 			</textField>
@@ -131,7 +131,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getAmcStartDate().format($P{formatter}) +" To "+ $P{contract}.getAmcEndDate().format($P{formatter})]]></textFieldExpression>
 			</textField>
@@ -145,7 +145,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="0" y="0" width="100" height="15" uuid="6ffdda43-d9a0-4b50-b68e-de0f5e19d349"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[To]]></text>
 			</staticText>
@@ -153,7 +153,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="0" y="15" width="280" height="40" uuid="02751fd3-b5f8-4928-ba24-bcb8cb97a76e"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getCustomer().getName()+"\n"+$P{contract}.getCustomer().getAddress()]]></textFieldExpression>
 			</textField>
@@ -161,7 +161,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="0" y="55" width="280" height="15" uuid="e171645a-c437-4ecc-8094-ec5fb1007bcb"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["GSTIN NO-  "+$P{contract}.getCustomer().getGstinNo()+", PAN - "+$P{contract}.getCustomer().getPan()]]></textFieldExpression>
 			</textField>
@@ -178,7 +178,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Description of Work ]]></text>
 			</staticText>
@@ -191,7 +191,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Unit]]></text>
 			</staticText>
@@ -204,7 +204,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Rate Per Unit	
 ]]></text>
@@ -218,7 +218,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Total Amount
 ]]></text>
@@ -232,7 +232,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Annum in Rs.
 ]]></text>
@@ -248,7 +248,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["ANNUAL MAINTENANCE CONTRACT OF "+$P{contract}.getEquipmentItem().getEquipment().getModel()+"\n"+$P{contract}.getEquipmentItem().getEquipment().getDescription().toUpperCase()]]></textFieldExpression>
 			</textField>
@@ -261,7 +261,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["1"]]></textFieldExpression>
 			</textField>
@@ -274,7 +274,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getAmcBasicAmount()]]></textFieldExpression>
 			</textField>
@@ -287,7 +287,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getAmcBasicAmount()]]></textFieldExpression>
 			</textField>
@@ -302,7 +302,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["HSN/SAC Code- 998719\nSERIAL NO-  "+$P{contract}.getEquipmentItem().getSerialNumber()+"\nTotal[a]"]]></textFieldExpression>
 			</textField>
@@ -315,7 +315,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getAmcBasicAmount()]]></textFieldExpression>
 			</textField>
@@ -328,7 +328,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[   ]]></text>
 			</staticText>
@@ -343,7 +343,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" CGST ( "+$P{contract}.getAmcTax()/2+" %[a] )\n SGST ( "+$P{contract}.getAmcTax()/2+" % (a) )"]]></textFieldExpression>
 			</textField>
@@ -356,7 +356,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getAmcTaxAmount()/2+"\n"+$P{contract}.getAmcTaxAmount()/2]]></textFieldExpression>
 			</textField>
@@ -369,7 +369,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[  ]]></text>
 			</staticText>
@@ -387,7 +387,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="110" y="60" width="446" height="20" uuid="039ca4fa-2647-4b9e-a342-d7d26f27eaa4"/>
 				<box rightPadding="5"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Date of expiry of maintenance under Technical Service Contract: 30.05.2020"]]></textFieldExpression>
 			</textField>
@@ -395,14 +395,14 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="0" y="80" width="20" height="15" uuid="423c7b14-3441-46c1-9961-0e5ae27c27ad"/>
 				<box leftPadding="5"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[For]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="20" y="80" width="180" height="15" uuid="195ef7b3-a92a-4d9f-9c50-06e71df73bd2"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" size="12" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" size="12" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[PNS SERVICE]]></text>
 			</staticText>
@@ -410,7 +410,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="0" y="95" width="200" height="15" uuid="423c7b14-3441-46c1-9961-0e5ae27c27ad"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Signature]]></text>
 			</staticText>
@@ -418,7 +418,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="0" y="110" width="200" height="15" uuid="423c7b14-3441-46c1-9961-0e5ae27c27ad"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Name              :]]></text>
 			</staticText>
@@ -426,7 +426,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="0" y="125" width="200" height="15" uuid="423c7b14-3441-46c1-9961-0e5ae27c27ad"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Designation      :]]></text>
 			</staticText>
@@ -434,7 +434,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="200" y="80" width="355" height="15" uuid="28e0d14a-98d8-4942-8eab-6b251d1cd437"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Customer’s Signature]]></text>
 			</staticText>
@@ -442,7 +442,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="200" y="95" width="355" height="15" uuid="c21a12a1-097a-447f-833f-26ad23b3727b"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Name]]></text>
 			</staticText>
@@ -450,7 +450,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="200" y="110" width="355" height="15" uuid="18954310-2d65-4b75-94de-1e00862fd475"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Designation]]></text>
 			</staticText>
@@ -458,7 +458,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="200" y="125" width="355" height="15" uuid="4823ae09-9a6f-4fac-9ba2-86fa006bbd07"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Customer’s Name]]></text>
 			</staticText>
@@ -466,7 +466,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="200" y="140" width="355" height="15" uuid="18954310-2d65-4b75-94de-1e00862fd475"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Address]]></text>
 			</staticText>
@@ -474,7 +474,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="200" y="155" width="355" height="15" uuid="4823ae09-9a6f-4fac-9ba2-86fa006bbd07"/>
 				<box leftPadding="5"/>
 				<textElement>
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Date]]></text>
 			</staticText>
@@ -493,7 +493,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[Grand Total]]></text>
 			</staticText>
@@ -506,7 +506,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 			</staticText>
 			<staticText>
@@ -518,7 +518,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[TOTAL AMOUNT]]></text>
 			</staticText>
@@ -531,7 +531,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getAmcTotalAmount()]]></textFieldExpression>
 			</textField>
@@ -544,7 +544,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
+					<font fontName="DejaVu Sans" isBold="true" pdfFontName="Helvetica-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getAmcTotalAmount()]]></textFieldExpression>
 			</textField>
@@ -557,7 +557,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans"" size="10"/>
+					<font fontName="DejaVu Sans" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["AMOUNT IN WORDS: (Rupees "+com.pns.contractmanagement.util.AmountUtil.convertToWord($P{contract}.getAmcTotalAmount())+" )"]]></textFieldExpression>
 			</textField>
@@ -569,7 +569,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="1" y="25" width="100" height="20" uuid="15deaf5e-569c-4532-9f8e-dd4e53440c12"/>
 				<box leftPadding="10"/>
 				<textElement>
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[01.Payment  :        ]]></text>
 			</staticText>
@@ -577,7 +577,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="1" y="45" width="100" height="20" uuid="208e3d4f-4b43-4222-93c8-57d70c398e4d"/>
 				<box leftPadding="10"/>
 				<textElement>
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[02. Maintenance :         ]]></text>
 			</staticText>
@@ -585,7 +585,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="101" y="25" width="455" height="20" uuid="74ca33b6-3b6a-46af-8696-d711ad26ee7a"/>
 				<box leftPadding="10"/>
 				<textElement>
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{contract}.getBillingCycle()+" along with work order / Agreement."]]></textFieldExpression>
 			</textField>
@@ -593,7 +593,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="1" y="125" width="100" height="20" uuid="d9ffda3a-702f-4bfd-a28f-3af8cdeaa01d"/>
 				<box leftPadding="10"/>
 				<textElement>
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[ 03. Spares Support :      ]]></text>
 			</staticText>
@@ -606,7 +606,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement>
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Note :- 
  	]]></text>
@@ -615,7 +615,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<reportElement x="101" y="45" width="455" height="80" uuid="d0cdb8e7-b7de-4d13-9e16-2e4d3757dc47"/>
 				<box leftPadding="10"/>
 				<textElement textAlignment="Justified">
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Service Support calls to be logged in our support help desk – customersupport@pnsservices.in
 Service Support to be provided within 24/48 hours of call logging.
@@ -628,7 +628,7 @@ Escalation on Service/ Sales/ Product – 9831050465  / 9674719186
 				<reportElement x="101" y="125" width="455" height="54" uuid="ab30bbc4-c156-4340-a87f-809801216d4c"/>
 				<box leftPadding="10" rightPadding="5"/>
 				<textElement textAlignment="Justified">
-					<font fontName="DejaVu Sans""/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[All spares of EPABX will be covered under AMC including Digital Phones and Operating Software . 
 Spares support will be provided for all normal failure of EPABX and digital phones & System cards. Any failure due to Misuse / Burnt cases Water/ Insects or Act of God are not covered under AMC.
