@@ -12,6 +12,7 @@ keycloak:
     credentials:        secret: d1c07de3-8705-42e1-9169-b31934f353f2
 app:
     database.name: userdb
+    print.jasper.compiled: true
     switch:
       index.update:
          customer: true

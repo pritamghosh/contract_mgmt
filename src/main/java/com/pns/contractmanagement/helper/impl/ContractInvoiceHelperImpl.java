@@ -39,7 +39,7 @@ public class ContractInvoiceHelperImpl {
 
 	@Value("${app.print.jasper.compiled:false}")
 	private boolean isCompiled;
-	@Value("${app.print.jasper.file.url:./pnsinvoice.jasper}")
+	@Value("${app.print.jasper.file.url:/pnsinvoice.jasper}")
 	private String jasperFileUrl;
 
 	public Report generateInvoice(Contract contract) {
@@ -63,8 +63,8 @@ public class ContractInvoiceHelperImpl {
 			return ImmutableReport.builder().content(pdfReport).fileName(contract.getId() + ".pdf")
 					.contentType(MediaType.APPLICATION_PDF).build();
 		} catch (JRException ex) {
-			LOGGER.error("Exception occured while generating jasper report.", ex);
-			return null;
+			LOGGER.error("Exception occured while generating jasper report.");
+			throw new PnsException("Unable to Create Pdf", ex, PnsError.WARNING);
 		}
 	}
 
