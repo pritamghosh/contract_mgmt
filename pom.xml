@@ -257,7 +257,7 @@
 												<include name="application.yml" />
 											</fileset>
 										</copy>
-										<copy todir="/pns/config/deploy/${artifact.name}"
+										<copy todir="/etc/systemd/system"
 											overwrite="true" flatten="true">
 											<fileset dir="${basedir}/deploy">
 												<include name="${artifact.name}.service" />
