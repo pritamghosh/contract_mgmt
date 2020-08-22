@@ -39,7 +39,7 @@ public class ContractInvoiceHelperImpl {
 
 	@Value("${app.print.jasper.compiled:false}")
 	private boolean isCompiled;
-	@Value("${app.print.jasper.file.url:/pnsinvoice.jasper}")
+	@Value("${app.print.jasper.file.url:pnsinvoice.jasper}")
 	private String jasperFileUrl;
 
 	public Report generateInvoice(Contract contract) {
