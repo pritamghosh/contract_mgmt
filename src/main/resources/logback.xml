@@ -1,5 +1,5 @@
 <configuration scan="true" scanPeriod="60 seconds">
-	<property name="applicationName" source="contract-management" /> 
+	<property name="applicationName" value="contract-management" /> 
 	<property name="HOME_LOG" value="/pns/logs" />
 	<appender name="CONSOLE"
 		class="ch.qos.logback.core.ConsoleAppender">
