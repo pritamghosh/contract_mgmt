@@ -69,7 +69,7 @@ public class ContractInvoiceHelperImpl {
 	}
 
 	public void compileJasper() {
-		InputStream employeeReportStream = getClass().getResourceAsStream("/pnsinvoice.jrxml");
+		InputStream employeeReportStream = getClass().getResourceAsStream("/PnsContractInvoice.jrxml");
 
 		try {
 			JasperReport report = JasperCompileManager.compileReport(employeeReportStream);

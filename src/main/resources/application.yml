@@ -14,7 +14,7 @@ app:
     database.name: userdb
     print.jasper:
       compiled: true
-      file.url: PnsContractInvoice.jasper
+      file.url: /pns/config/application/${spring.application.name}/PnsContractInvoice.jasper
     switch:
       index.update:
          customer: true
