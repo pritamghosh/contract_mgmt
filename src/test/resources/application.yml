@@ -1,0 +1,29 @@
+#logging.config: /pns/config/log/contract-managemnt/logback.xml
+server:
+  port: 8081
+  servlet.context-path: /pns
+spring.data.mongodb.uri: mongodb+srv://pritamadmin:adminpritam@cluster0.y4hyl.mongodb.net/<dbname>?retryWrites=true&w=majority
+keycloak:
+    auth-server-url: https://pns.southeastasia.cloudapp.azure.com/auth
+    realm: PNS_REALM
+    resource: pns-contract-mangement
+    principal-attribute: preferred_username
+    credentials:        secret: d1c07de3-8705-42e1-9169-b31934f353f2
+app:
+    database.name: userdb
+    switch:
+      index.update:
+         customer: true
+         contract: true
+         equipment: true
+         equipmentDetails: true
+    page.size:
+      customer: 4
+      equipment: 6
+      contract: 3
+    index:
+      name:
+         customer: customers
+         contract: contracts
+         equipment: equipments
+         equipmentItem: equipmentItems
