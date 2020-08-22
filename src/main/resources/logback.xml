@@ -1,6 +1,6 @@
 <configuration scan="true" scanPeriod="60 seconds">
-
-	<property name="HOME_LOG" value="/pns/logs/pns.log" />
+	<property name="applicationName" source="contract-management" /> 
+	<property name="HOME_LOG" value="/pns/logs" />
 	<appender name="CONSOLE"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
@@ -12,11 +12,11 @@
 
 	<appender name="FILE-ROLLING"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${HOME_LOG}</file>
+		<file>${HOME_LOG}/${applicationName}.log</file>
 
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<fileNamePattern>logs/archived/pns.%d{yyyy-MM-dd}.%i.log.gz
+			<fileNamePattern>${HOME_LOG}/archived/${applicationName}.%d{yyyy-MM-dd}.%i.log.gz
 			</fileNamePattern>
 			<!-- each archived file, size max 10MB -->
 			<maxFileSize>1MB</maxFileSize>
