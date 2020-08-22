@@ -1,0 +1,18 @@
+[Unit]
+Description=PNS CONTRACT MANAGEMENT Service
+After=syslog.target network.target
+Before=httpd.service
+
+[Service]
+User=root
+LimitNOFILE=102642
+PIDFile=/var/run/contract-management/contract-management.pid
+WorkingDirectory=/pns/config/application/contract-management
+ExecStart=java -jar /pns/core/contract-managemnt/contract-management.jar
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -13,10 +13,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @EnableMongoRepositories
 @EnableAspectJAutoProxy(proxyTargetClass=true)  
-public class ContractManagementApplication {
+public class PnsContractManagementApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ContractManagementApplication.class, args);
+		SpringApplication.run(PnsContractManagementApplication.class, args);
 	}
 
 	@Bean

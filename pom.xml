@@ -17,6 +17,7 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<artifact.name>contract-management</artifact.name>
 		<dependency.version.jasper>6.4.0</dependency.version.jasper>
 		<dependency.version.org.immutables>2.8.8</dependency.version.org.immutables>
 		<dependency.version.keycloak>9.0.0</dependency.version.keycloak>
@@ -124,33 +125,154 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
+	<profiles><!-- profile for dev -->
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<finalName>${artifact.name}</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.8.5</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy</id>
+								<phase>package</phase>
+								<configuration>
+									<target>
+										<echo>copying files....</echo>
+										<copy todir="/pns/config/log/${artifact.name}"
+											overwrite="true" flatten="true">
+											<fileset dir="${basedir}/target/classes">
+												<include name="logback.xml" />
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<build>
+				<finalName>${artifact.name}</finalName>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>logback.xml</exclude>
+							<exclude>application.yml</exclude>
+						</excludes>
+					</resource>
+				</resources>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>repackage</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<mainClass>com.pns.contractmanagement.PnsContractManagementApplication</mainClass>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.8.5</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy</id>
+								<phase>package</phase>
+								<configuration>
+									<target>
+										<echo>copying files....</echo>
+										<copy todir="/pns/core/${artifact.name}" overwrite="true"
+											flatten="true">
+											<fileset dir="${basedir}/target">
+												<include name="${artifact.name}.jar" />
+											</fileset>
+										</copy>
+										<copy todir="/pns/config/log/${artifact.name}"
+											overwrite="true" flatten="true">
+											<fileset dir="${basedir}/src/main/resources">
+												<include name="logback.xml" />
+											</fileset>
+										</copy>
+										<copy todir="/pns/config/application/${artifact.name}"
+											overwrite="true" flatten="true">
+											<fileset dir="${basedir}/src/main/resources">
+												<include name="application.yml" />
+											</fileset>
+										</copy>
+										<copy todir="/pns/config/defply/${artifact.name}"
+											overwrite="true" flatten="true">
+											<fileset dir="${basedir}/deploy">
+												<include name="${artifact.name}.service" />
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
