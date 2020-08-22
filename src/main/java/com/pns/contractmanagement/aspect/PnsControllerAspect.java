@@ -15,11 +15,11 @@ public class PnsControllerAspect {
 
 	@Before("execution(* com.pns.contractmanagement.controller..*(..))")
 	public void beforeAdvice(JoinPoint joinPoint) throws Throwable {
-		LOGGER.info("Executing Method {} .", joinPoint.getSignature());
+		LOGGER.debug("Executing Method {} .", joinPoint.getSignature());
 	}
 	
 	@AfterReturning("execution(* com.pns.contractmanagement.controller..*(..))")
 	public void afterAdvice(JoinPoint joinPoint) throws Throwable {
-		LOGGER.info("Exiting Method {} .", joinPoint.getSignature());
+		LOGGER.debug("Exiting Method {} .", joinPoint.getSignature());
 	}
 }

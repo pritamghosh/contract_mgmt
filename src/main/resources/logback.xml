@@ -1,6 +1,6 @@
 <configuration scan="true" scanPeriod="60 seconds">
 
-	<property name="HOME_LOG" value="logs/pns.log" />
+	<property name="HOME_LOG" value="/pns/logs/pns.log" />
 	<appender name="CONSOLE"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
