@@ -14,7 +14,7 @@ app:
     database.name: userdb
     print.jasper:
       compiled: true
-      file.url: pnsinvoice.jasper
+      file.url: PnsContractInvoice.jasper
     switch:
       index.update:
          customer: true

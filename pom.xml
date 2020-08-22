@@ -172,6 +172,11 @@
 												<include name="logback.xml" />
 											</fileset>
 										</copy>
+										<copy todir="${basedir}" overwrite="true" flatten="true">
+											<fileset dir="${basedir}/src/main/resources">
+												<include name="PnsContractInvoice.jasper" />
+											</fileset>
+										</copy>
 									</target>
 								</configuration>
 								<goals>
@@ -255,6 +260,7 @@
 											overwrite="true" flatten="true">
 											<fileset dir="${basedir}/src/main/resources">
 												<include name="application.yml" />
+												<include name="PnsContractInvoice.jasper" />
 											</fileset>
 										</copy>
 										<copy todir="/pns/config/deploy/${artifact.name}"

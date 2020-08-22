@@ -39,7 +39,7 @@ public class ContractInvoiceHelperImpl {
 
 	@Value("${app.print.jasper.compiled:false}")
 	private boolean isCompiled;
-	@Value("${app.print.jasper.file.url:pnsinvoice.jasper}")
+	@Value("${app.print.jasper.file.url:PnsContractInvoice.jasper}")
 	private String jasperFileUrl;
 
 	public Report generateInvoice(Contract contract) {
@@ -52,7 +52,7 @@ public class ContractInvoiceHelperImpl {
 			if (isCompiled) {
 				report = (JasperReport) JRLoader.loadObjectFromFile(jasperFileUrl);
 			} else {
-				InputStream employeeReportStream = getClass().getResourceAsStream("/pnsinvoice.jrxml");
+				InputStream employeeReportStream = getClass().getResourceAsStream("/PnsContractInvoice.jrxml");
 				report = JasperCompileManager.compileReport(employeeReportStream);
 			}
 
