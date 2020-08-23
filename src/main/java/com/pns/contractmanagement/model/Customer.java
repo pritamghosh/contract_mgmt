@@ -20,9 +20,9 @@ public interface Customer  {
     String getRegion();
     
     String getAddress();
-    
+    @Nullable
     String getGstinNo();
-    
+    @Nullable
     String getPan();
 
 }

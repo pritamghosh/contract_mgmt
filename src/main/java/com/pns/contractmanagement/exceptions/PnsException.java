@@ -70,7 +70,7 @@ public class PnsException extends RuntimeException {
 	}
 
 	public String getMessage() {
-		return this.getMessage() != null ? this.getMessage() : this.error.getGenericMessage();
+		return super.getMessage() != null ? super.getMessage() : this.error.getGenericMessage();
 	}
 
 }

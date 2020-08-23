@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +68,8 @@ public class CustomerServiceImpl {
 
 	private CustomerEntity map(final Customer customer) {
 		final CustomerEntity entity = CustomerEntity.builder().name(customer.getName()).region(customer.getRegion())
-				.gstinNo(customer.getGstinNo()).address(customer.getAddress()).pan(customer.getPan()).build();
+				.gstinNo(StringUtils.upperCase(customer.getGstinNo())).address(customer.getAddress())
+				.pan(StringUtils.upperCase(customer.getPan())).build();
 		entity.setId(customer.getId());
 		return entity;
 	}

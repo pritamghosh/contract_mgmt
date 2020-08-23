@@ -156,7 +156,7 @@ GSTIN NO. : 19BPMPD4956A1ZW, PAN No: BPMPD4956A.]]></text>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["GSTIN NO-  "+$P{contract}.getCustomer().getGstinNo()+", PAN - "+$P{contract}.getCustomer().getPan()]]></textFieldExpression>
+				<textFieldExpression><![CDATA["GSTIN NO-  "+($P{contract}.getCustomer().getGstinNo()!=null ? $P{contract}.getCustomer().getGstinNo().toUpperCase() : "                   ")+", PAN - "+($P{contract}.getCustomer().getPan()!=null ? $P{contract}.getCustomer().getPan().toUpperCase() : "")]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
