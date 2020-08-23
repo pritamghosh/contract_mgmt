@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.pns.contractmanagement.model.Customer;
 import com.pns.contractmanagement.model.SearchResponse;
@@ -19,7 +18,6 @@ import com.pns.contractmanagement.service.impl.CustomerServiceImpl;
 
 @RestController
 @RequestMapping("/customer")
-@RestControllerAdvice
 public class CustomerController {
 
 	@Autowired

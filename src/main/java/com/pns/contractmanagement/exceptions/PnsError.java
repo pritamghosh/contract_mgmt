@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum PnsError {
 	SYSTEM_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "System Error"),
 	NOT_FOUND(HttpStatus.NOT_FOUND, "Resource Not Found"), DUPLICTE_RECORD(HttpStatus.BAD_REQUEST, "Duplicate Record"),
-	WARNING(HttpStatus.PARTIAL_CONTENT, "");
+	WARNING(HttpStatus.INTERNAL_SERVER_ERROR, "");
 
 	private PnsError(HttpStatus status, String genericMessage) {
 		this.status = status;
