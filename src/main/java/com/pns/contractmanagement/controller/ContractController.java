@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.google.common.collect.Range;
 import com.pns.contractmanagement.model.Contract;
@@ -24,6 +25,7 @@ import com.pns.contractmanagement.service.impl.ContractServiceImpl;
 
 @RestController
 @RequestMapping("/contract")
+@RestControllerAdvice
 public class ContractController {
 
 	@Autowired

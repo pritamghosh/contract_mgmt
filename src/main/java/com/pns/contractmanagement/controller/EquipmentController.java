@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.pns.contractmanagement.model.Equipment;
 import com.pns.contractmanagement.model.EquipmentItem;
@@ -22,6 +23,7 @@ import com.pns.contractmanagement.service.impl.EquipmentServiceImpl;
 
 @RestController
 @RequestMapping("/equipment")
+@RestControllerAdvice
 public class EquipmentController {
 
 	@Autowired
