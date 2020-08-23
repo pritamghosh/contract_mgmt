@@ -38,7 +38,7 @@
 
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<fileNamePattern>${HOME_LOG}/archived/${applicationName}.%d{yyyy-MM-dd}.%i.log.gz
+			<fileNamePattern>${HOME_LOG}/archived/${applicationName}_auth.%d{yyyy-MM-dd}.%i.log.gz
 			</fileNamePattern>
 			<!-- each archived file, size max 10MB -->
 			<maxFileSize>1MB</maxFileSize>
@@ -54,7 +54,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.pns" level="debug" additivity="false">
+	<logger name="com.pns" level="info" additivity="false">
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="FILE-ROLLING" />
 	</logger>
