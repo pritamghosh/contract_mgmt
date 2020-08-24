@@ -60,7 +60,7 @@ public class ContractInvoiceHelperImpl {
 			byte[] pdfReport = JasperExportManager.exportReportToPdf(jasperPrint);
 			// JasperExportManager.exportReportToPdfFile(jasperPrint, contract.getId() +
 			// ".pdf");
-			return ImmutableReport.builder().content(pdfReport).fileName(contract.getId() + ".pdf")
+			return ImmutableReport.builder().content(pdfReport).fileName(contract.getProposalNo() + ".pdf")
 					.contentType(MediaType.APPLICATION_PDF).build();
 		} catch (JRException ex) {
 			LOGGER.error("Exception occured while generating jasper report.");
