@@ -60,10 +60,10 @@ class ContractControllerTest {
 
     @Test
     void getContractByProposalNoTest() {
-        when(service.getContractByProposalNo(Mockito.anyString())).thenReturn(mockContract);
-        final Contract contractResp = controller.getContractByProposalNo("SAMPLE_PROPOSAL_NO");
+        when(service.getContractByProposalNo(Mockito.anyString())).thenReturn(mockSearchResp);
+        final SearchResponse<Contract> contractResp = controller.getContractByProposalNo("SAMPLE_PROPOSAL_NO");
         verify(service, only()).getContractByProposalNo(paramOneCaptor.capture());
-        assertEquals(mockContract, contractResp);
+        assertEquals(mockSearchResp, contractResp);
         assertEquals("SAMPLE_PROPOSAL_NO", paramOneCaptor.getValue());
     }
 

@@ -55,7 +55,7 @@ public class SystemDao {
 			dropExistingTextIndex(collection);
 			collection.createIndex(Indexes.compoundIndex(Indexes.text("customer.name"), Indexes.text("customer.region"),
 					Indexes.text("equipmentItem.serialNumber"), Indexes.text("equipmentItem.equipment.model"),
-					Indexes.text("billingCycle")));
+					Indexes.text("billingCycle"),Indexes.text("proposalNo")));
 		}
 
 		if (isEquipmentIndexUpdateAllowed) {

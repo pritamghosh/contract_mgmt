@@ -95,7 +95,7 @@ public class ContractController {
 
     @GetMapping(params = { "!form", "!to", "!create", "proposalNo" })
     @PreAuthorize("hasRole('read')")
-    public Contract getContractByProposalNo(@RequestParam("proposalNo") final String proposalNo) {
+    public SearchResponse<Contract> getContractByProposalNo(@RequestParam("proposalNo") final String proposalNo) {
         return service.getContractByProposalNo(proposalNo);
     }
 

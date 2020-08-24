@@ -133,28 +133,29 @@ public class ContractDao {
 	}
 
 	public Optional<ContractEntity> findById(final String id) {
-		return Optional.ofNullable(map(contractDocumentCollection.find(new Document("_id", new ObjectId(id))).first()));
+		return Optional.ofNullable(map(contractDocumentCollection
+				.find(and(new Document("_id", new ObjectId(id)), notDeletedFilter())).first()));
 	}
 
 	public List<ContractEntity> findByCustomerId(final String customerId, final int page) {
-		return map(contractDocumentCollection.find(new Document(CUSTOMER_OID, new ObjectId(customerId)))
+		return map(contractDocumentCollection.find(and(new Document(CUSTOMER_OID, new ObjectId(customerId)),notDeletedFilter()))
 				.skip((page - 1) * pageSize).limit(pageSize).limit(pageSize));
 	}
 
 	public long countDocumnetsByCustomerId(final String customerId) {
 		return countPages(
-				contractDocumentCollection.countDocuments(new Document(CUSTOMER_OID, new ObjectId(customerId))),
+				contractDocumentCollection.countDocuments(and(new Document(CUSTOMER_OID, new ObjectId(customerId)),notDeletedFilter())),
 				pageSize);
 	}
 
 	public List<ContractEntity> findByEquipmentId(final String equipmentId, final int page) {
-		return map(contractDocumentCollection.find(new Document(EQUIPMNET_OID, new ObjectId(equipmentId)))
+		return map(contractDocumentCollection.find(and(new Document(EQUIPMNET_OID, new ObjectId(equipmentId)),notDeletedFilter()))
 				.skip((page - 1) * pageSize).limit(pageSize));
 	}
 
 	public long countDocumnetsByEquipmentId(final String equipmentId) {
 		return countPages(
-				contractDocumentCollection.countDocuments(new Document(EQUIPMNET_OID, new ObjectId(equipmentId))),
+				contractDocumentCollection.countDocuments(and(new Document(EQUIPMNET_OID, new ObjectId(equipmentId)),notDeletedFilter())),
 				pageSize);
 	}
 
@@ -215,6 +216,11 @@ public class ContractDao {
 						new Document("$gte", dateRange.lowerEndpoint()).append("$lte", dateRange.upperEndpoint())))),
 				pageSize);
 	}
+	
+	public Optional<ContractEntity> findByProposalNo(String proposalNo) {
+		return Optional.ofNullable(map(contractDocumentCollection
+				.find(and(new Document("proposalNo", DaoUtil.buildCaseInsentiveQuery(proposalNo)), notDeletedFilter())).first()));
+	}
 
 	private ContractEntity map(final Document document) {
 		if (document == null) {
@@ -249,12 +255,10 @@ public class ContractDao {
 		}
 	}
 
-	/**
-	 * @param find
-	 * @return
-	 */
 	private List<ContractEntity> map(final FindIterable<Document> mongoIterable) {
 		return StreamSupport.stream(mongoIterable.spliterator(), true).map(this::map).collect(Collectors.toList());
 	}
+
+	
 
 }

@@ -22,7 +22,7 @@ public interface ContractService {
 
     Contract deleteContractById(String id);
 
-    Contract getContractByProposalNo(String proposalNo);
+    SearchResponse<Contract> getContractByProposalNo(String proposalNo);
 
     SearchResponse<Contract> getContractByAmcStartDateRange(Range<LocalDate> dateRange, int page);
 
