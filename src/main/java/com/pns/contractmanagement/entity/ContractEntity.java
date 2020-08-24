@@ -33,7 +33,8 @@ public class ContractEntity extends BaseMongoEntity {
     private ObjectId customerOid;
     private ObjectId equipmnetOid;
     private LocalDate contractDate;
-
     private String proposalNo;
+	private byte[] poFileContent;
+	private String poFileContentType;
 
 }

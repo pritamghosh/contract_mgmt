@@ -47,5 +47,10 @@ public interface Contract {
 
     @Nullable
     String getProposalNo();
+    
+    @Nullable
+    String getPoFileContentType();
+    @Nullable
+    byte[] getPoFileContent();
 
 }

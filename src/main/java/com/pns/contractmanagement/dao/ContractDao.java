@@ -8,7 +8,7 @@ import static com.mongodb.client.model.Updates.inc;
 import static com.mongodb.client.model.Updates.set;
 import static com.pns.contractmanagement.dao.DaoUtil.countPages;
 import static com.pns.contractmanagement.dao.DaoUtil.notDeletedFilter;
-
+import org.bson.types.Binary;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -43,6 +43,8 @@ import com.pns.contractmanagement.model.EquipmentItem;
  */
 @Repository
 public class ContractDao {
+	private static final String PO_FILE_CONTENT = "poFileContent";
+	private static final String PO_FILE_CONTENT_TYPE = "poFileContentType";
 	private static final String CONTRACT_DATE = "contractDate";
 	private static final String PROPOSAL_NO_SEQUENCEE = "proposal-no";
 	private static final String BILLING_CYCLE = "billingCycle";
@@ -124,7 +126,9 @@ public class ContractDao {
 				set("note", contract.getNote()), set(EQUIPMNET_OID, new ObjectId(contract.getCustomer().getId())),
 				set(CUSTOMER_OID, new ObjectId(contract.getEquipmentItem().getEquipment().getId())),
 				set(LAST_MODIFIED_BY, contract.getLastModifiedBy()),
-				set(LAST_MODIFIED_DATE, contract.getLastModifiedDate())
+				set(LAST_MODIFIED_DATE, contract.getLastModifiedDate()),
+				set(PO_FILE_CONTENT_TYPE, contract.getPoFileContentType()),
+				set(PO_FILE_CONTENT, contract.getPoFileContent())
 
 		// @formatter:on
 		);
@@ -233,6 +237,7 @@ public class ContractDao {
 					EquipmentItem.class);
 
 			// @formatter:off
+			final Binary poContentBinary = document.get(PO_FILE_CONTENT,Binary.class);
 			final ContractEntity entity = ContractEntity.builder()
 					.amcBasicAmount(document.getDouble(ContractDao.AMC_BASIC_AMOUNT))
 					.amcEndDate(Instant.ofEpochMilli(document.getDate(AMC_END_DATE).getTime())
@@ -245,6 +250,8 @@ public class ContractDao {
 					.contractDate(Instant.ofEpochMilli(document.getDate(CONTRACT_DATE).getTime())
 							.atZone(ZoneId.systemDefault()).toLocalDate())
 					.proposalNo(document.getString(PROPOSAL_NO)).amcTaxAmount(document.getDouble(AMC_TAX_AMOUNT))
+					.poFileContentType(document.getString(PO_FILE_CONTENT_TYPE))
+					.poFileContent(poContentBinary!=null?poContentBinary.getData():null)
 					.build();
 			// @formatter:on
 			entity.setOid(document.getObjectId("_id"));
