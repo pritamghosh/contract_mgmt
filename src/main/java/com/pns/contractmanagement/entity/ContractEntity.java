@@ -35,12 +35,11 @@ public class ContractEntity extends BaseMongoEntity {
     private ObjectId equipmnetOid;
     private LocalDate contractDate;
     private String proposalNo;
-	private byte[] poFileContent;
-	private String poFileContentType;
-	private String poFileName;
-	
-	private String approvedBy;
-	private LocalDateTime approvedDate;
-	
+    private byte[] poFileContent;
+    private String poFileContentType;
+    private String poFileName;
+    private String status;
+    private String approvedBy;
+    private LocalDateTime approvedDate;
 
 }

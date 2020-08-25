@@ -38,7 +38,6 @@ public interface Contract {
     Double getAmcTaxAmount();
 
     String getBillingCycle();
-    
 
     @Nullable
     String getNote();
@@ -48,12 +47,25 @@ public interface Contract {
 
     @Nullable
     String getProposalNo();
-    
+
     @Nullable
     String getPoFileContentType();
+
     @Nullable
     byte[] getPoFileContent();
+
     @Nullable
     String getPoFileName();
 
+    @Value.Default
+    default Status getStatus() {
+        return Status.PENDING;
+    };
+
+    /**
+     *
+     */
+    public enum Status {
+        PENDING, EXPIRED, APPROVED;
+    }
 }
