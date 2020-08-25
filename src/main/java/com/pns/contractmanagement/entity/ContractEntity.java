@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import org.bson.types.ObjectId;
 
+import com.pns.contractmanagement.model.Contract;
 import com.pns.contractmanagement.model.Customer;
 import com.pns.contractmanagement.model.EquipmentItem;
 
@@ -41,5 +42,7 @@ public class ContractEntity extends BaseMongoEntity {
     private String status;
     private String approvedBy;
     private LocalDateTime approvedDate;
+    
+    private Contract oldContract;
 
 }
