@@ -38,6 +38,7 @@ public interface Contract {
     Double getAmcTaxAmount();
 
     String getBillingCycle();
+    
 
     @Nullable
     String getNote();
@@ -52,5 +53,7 @@ public interface Contract {
     String getPoFileContentType();
     @Nullable
     byte[] getPoFileContent();
+    @Nullable
+    String getPoFileName();
 
 }

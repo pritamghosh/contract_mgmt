@@ -187,7 +187,7 @@ public class ContractServiceImpl implements ContractService {
 				.customer(entity.getCustomer()).equipmentItem(entity.getEquipmentItem()).note(entity.getNote())
 				.id(entity.getId()).contractDate(entity.getContractDate()).proposalNo(entity.getProposalNo())
 				.amcTaxAmount(entity.getAmcTaxAmount()).poFileContent(entity.getPoFileContent())
-				.poFileContentType(entity.getPoFileContentType()).build();
+				.poFileContentType(entity.getPoFileContentType()).poFileName(entity.getPoFileName()).build();
 		// @formatter:on
 
 	}
@@ -201,7 +201,8 @@ public class ContractServiceImpl implements ContractService {
 				.equipmentItem(contract.getEquipmentItem()).note(contract.getNote())
 				.contractDate(contract.getContractDate()).proposalNo(contract.getProposalNo())
 				.amcTaxAmount(contract.getAmcTaxAmount() != null ? contract.getAmcTaxAmount() : 0)
-				.poFileContentType(contract.getPoFileContentType()).poFileContent(contract.getPoFileContent()).build();
+				.poFileContentType(contract.getPoFileContentType()).poFileContent(contract.getPoFileContent())
+				.poFileName(contract.getPoFileName()).build();
 		// @formatter:on
 		entity.setId(contract.getId());
 		return entity;

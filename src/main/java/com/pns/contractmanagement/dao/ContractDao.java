@@ -43,6 +43,7 @@ import com.pns.contractmanagement.model.EquipmentItem;
  */
 @Repository
 public class ContractDao {
+	private static final String PO_FILE_NAME = "poFileName";
 	private static final String PO_FILE_CONTENT = "poFileContent";
 	private static final String PO_FILE_CONTENT_TYPE = "poFileContentType";
 	private static final String CONTRACT_DATE = "contractDate";
@@ -128,7 +129,7 @@ public class ContractDao {
 				set(LAST_MODIFIED_BY, contract.getLastModifiedBy()),
 				set(LAST_MODIFIED_DATE, contract.getLastModifiedDate()),
 				set(PO_FILE_CONTENT_TYPE, contract.getPoFileContentType()),
-				set(PO_FILE_CONTENT, contract.getPoFileContent())
+				set(PO_FILE_CONTENT, contract.getPoFileContent()), set(PO_FILE_NAME, contract.getPoFileName())
 
 		// @formatter:on
 		);
@@ -142,25 +143,25 @@ public class ContractDao {
 	}
 
 	public List<ContractEntity> findByCustomerId(final String customerId, final int page) {
-		return map(contractDocumentCollection.find(and(new Document(CUSTOMER_OID, new ObjectId(customerId)),notDeletedFilter()))
+		return map(contractDocumentCollection
+				.find(and(new Document(CUSTOMER_OID, new ObjectId(customerId)), notDeletedFilter()))
 				.skip((page - 1) * pageSize).limit(pageSize).limit(pageSize));
 	}
 
 	public long countDocumnetsByCustomerId(final String customerId) {
-		return countPages(
-				contractDocumentCollection.countDocuments(and(new Document(CUSTOMER_OID, new ObjectId(customerId)),notDeletedFilter())),
-				pageSize);
+		return countPages(contractDocumentCollection.countDocuments(
+				and(new Document(CUSTOMER_OID, new ObjectId(customerId)), notDeletedFilter())), pageSize);
 	}
 
 	public List<ContractEntity> findByEquipmentId(final String equipmentId, final int page) {
-		return map(contractDocumentCollection.find(and(new Document(EQUIPMNET_OID, new ObjectId(equipmentId)),notDeletedFilter()))
+		return map(contractDocumentCollection
+				.find(and(new Document(EQUIPMNET_OID, new ObjectId(equipmentId)), notDeletedFilter()))
 				.skip((page - 1) * pageSize).limit(pageSize));
 	}
 
 	public long countDocumnetsByEquipmentId(final String equipmentId) {
-		return countPages(
-				contractDocumentCollection.countDocuments(and(new Document(EQUIPMNET_OID, new ObjectId(equipmentId)),notDeletedFilter())),
-				pageSize);
+		return countPages(contractDocumentCollection.countDocuments(
+				and(new Document(EQUIPMNET_OID, new ObjectId(equipmentId)), notDeletedFilter())), pageSize);
 	}
 
 	public List<ContractEntity> findByEuipmentSerialNo(final String equipmentSerialNo) {
@@ -220,10 +221,11 @@ public class ContractDao {
 						new Document("$gte", dateRange.lowerEndpoint()).append("$lte", dateRange.upperEndpoint())))),
 				pageSize);
 	}
-	
+
 	public Optional<ContractEntity> findByProposalNo(String proposalNo) {
 		return Optional.ofNullable(map(contractDocumentCollection
-				.find(and(new Document("proposalNo", DaoUtil.buildCaseInsentiveQuery(proposalNo)), notDeletedFilter())).first()));
+				.find(and(new Document("proposalNo", DaoUtil.buildCaseInsentiveQuery(proposalNo)), notDeletedFilter()))
+				.first()));
 	}
 
 	private ContractEntity map(final Document document) {
@@ -236,8 +238,8 @@ public class ContractDao {
 			final EquipmentItem equipment = objectMapper.readValue(((Document) document.get("equipmentItem")).toJson(),
 					EquipmentItem.class);
 
+			final Binary poContentBinary = document.get(PO_FILE_CONTENT, Binary.class);
 			// @formatter:off
-			final Binary poContentBinary = document.get(PO_FILE_CONTENT,Binary.class);
 			final ContractEntity entity = ContractEntity.builder()
 					.amcBasicAmount(document.getDouble(ContractDao.AMC_BASIC_AMOUNT))
 					.amcEndDate(Instant.ofEpochMilli(document.getDate(AMC_END_DATE).getTime())
@@ -251,8 +253,8 @@ public class ContractDao {
 							.atZone(ZoneId.systemDefault()).toLocalDate())
 					.proposalNo(document.getString(PROPOSAL_NO)).amcTaxAmount(document.getDouble(AMC_TAX_AMOUNT))
 					.poFileContentType(document.getString(PO_FILE_CONTENT_TYPE))
-					.poFileContent(poContentBinary!=null?poContentBinary.getData():null)
-					.build();
+					.poFileContent(poContentBinary != null ? poContentBinary.getData() : null)
+					.poFileName(poContentBinary != null ? document.getString(PO_FILE_NAME) : null).build();
 			// @formatter:on
 			entity.setOid(document.getObjectId("_id"));
 			return entity;
@@ -265,7 +267,5 @@ public class ContractDao {
 	private List<ContractEntity> map(final FindIterable<Document> mongoIterable) {
 		return StreamSupport.stream(mongoIterable.spliterator(), true).map(this::map).collect(Collectors.toList());
 	}
-
-	
 
 }

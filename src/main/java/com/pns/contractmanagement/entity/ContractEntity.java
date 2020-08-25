@@ -1,6 +1,7 @@
 package com.pns.contractmanagement.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.bson.types.ObjectId;
 
@@ -36,5 +37,10 @@ public class ContractEntity extends BaseMongoEntity {
     private String proposalNo;
 	private byte[] poFileContent;
 	private String poFileContentType;
+	private String poFileName;
+	
+	private String approvedBy;
+	private LocalDateTime approvedDate;
+	
 
 }
