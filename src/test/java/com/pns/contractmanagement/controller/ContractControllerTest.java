@@ -97,16 +97,12 @@ class ContractControllerTest {
     
     @Test
     void addContractTest() {
-        final byte[] mockResp = new byte[] { 0, 1 };
-        final Report mockReport = ImmutableReport.builder().content(mockResp).contentType(MediaType.APPLICATION_PDF)
-            .fileName("filename").build();
-        when(service.addContract(any(Contract.class))).thenReturn(mockReport);
+        when(service.addContract(any(Contract.class))).thenReturn(mockContract);
         final Contract mock = mock(Contract.class);
-        final ResponseEntity<byte[]> contractResp = controller.addContract(mock);
+        final Contract contractResp = controller.addContract(mock);
         verify(service, only()).addContract(contractCaptor.capture());
         assertEquals(mock, contractCaptor.getValue());
-        assertArrayEquals(mockResp, contractResp.getBody());
-        assertEquals(MediaType.APPLICATION_PDF, contractResp.getHeaders().getContentType());
+        assertEquals(mockContract, contractResp);
     }
 
 

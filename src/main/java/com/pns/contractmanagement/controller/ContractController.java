@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,15 +33,8 @@ public class ContractController {
 
     @PutMapping
     @PreAuthorize("hasRole('create')")
-    public ResponseEntity<byte[]> addContract(@RequestBody final Contract contract) {
-
-        final Report contractReport = service.addContract(contract);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(contractReport.getContentType());
-        final String filename = contractReport.getFileName();
-        headers.setContentDispositionFormData(filename, filename);
-        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-        return ResponseEntity.ok().headers(headers).body(contractReport.getContent());
+    public Contract addContract(@RequestBody final Contract contract) {
+        return service.addContract(contract);
     }
 
     @PostMapping
@@ -127,4 +121,10 @@ public class ContractController {
         @RequestParam(value = "page", defaultValue = "1") final int page) {
         return service.getContractsForApproval(page);
     }
+    @PatchMapping("/approve/{id}")
+    @PreAuthorize("hasRole('contract_approver')")
+	public Contract approveContract(@PathVariable("id") final String id) {
+		return service.approveContract(id);
+	}
+    
 }

@@ -158,7 +158,7 @@ public class ContractDao {
 	public boolean approve(final String contractId) {
 		final Bson update = combine(
 				// @formatter:off
-				set(STATUS, Contract.Status.APPROVED), set(APPROVED_BY, DaoUtil.getUsernameFromContext()),
+				set(STATUS, Contract.Status.APPROVED.name()), set(APPROVED_BY, DaoUtil.getUsernameFromContext()),
 				set(APPROVED_DATE, LocalDateTime.now()), set(OLD_CONTRACT, null)
 
 		// @formatter:on

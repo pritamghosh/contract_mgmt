@@ -13,7 +13,7 @@ import com.pns.contractmanagement.model.SearchResponse;
  */
 public interface ContractService {
 
-    Report addContract(Contract contract);
+    Contract addContract(Contract contract);
 
     Report getContractReportById(String id);
 
@@ -38,5 +38,7 @@ public interface ContractService {
     SearchResponse<Contract> searchContractByQuery(String query, int page);
 
 	SearchResponse<List<Contract>> getContractsForApproval(int page);
+
+	Contract approveContract(String approveContract);
 
 }

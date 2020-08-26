@@ -26,13 +26,17 @@ import com.pns.contractmanagement.model.Customer;
 import com.pns.contractmanagement.model.Equipment;
 import com.pns.contractmanagement.model.EquipmentItem;
 import com.pns.contractmanagement.model.ImmutableContract;
+import com.pns.contractmanagement.model.ImmutableContract.Builder;
 import com.pns.contractmanagement.model.ImmutableEquipmentItem;
 import com.pns.contractmanagement.model.ImmutableSearchResponse;
 import com.pns.contractmanagement.model.Report;
 import com.pns.contractmanagement.model.SearchResponse;
 import com.pns.contractmanagement.service.ContractService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ContractServiceImpl implements ContractService {
 
 	@Value("${app.gst.value:18}")
@@ -52,7 +56,7 @@ public class ContractServiceImpl implements ContractService {
 
 	/** {@inheritDoc} */
 	@Override
-	public Report addContract(final Contract contract) {
+	public Contract addContract(final Contract contract) {
 		final Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
 		EquipmentItem equipmentItem = null;
 		if (contract.getEquipmentItem().getId() == null) {
@@ -80,14 +84,13 @@ public class ContractServiceImpl implements ContractService {
 			contractEntityToBeInserted.setApprovedBy(ServiceUtil.getUsernameFromContext());
 			contractEntityToBeInserted.setApprovedDate(LocalDateTime.now());
 		}
-		final Contract insertedContract = map(contractDao.insert(contractEntityToBeInserted));
-		return invoiceHelper.generateInvoice(insertedContract);
+		return  map(contractDao.insert(contractEntityToBeInserted));
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Report getContractReportById(final String id) {
-		final Contract contract = getContractById(id);
+		final Contract contract = map(getContractEntityById(id, true));;
 		if (Contract.Status.APPROVED == contract.getStatus()
 				|| ServiceUtil.isUserauthorized(RoleConstants.CONTRACT_APPROVER)) {
 			return invoiceHelper.generateInvoice(contract);
@@ -98,11 +101,15 @@ public class ContractServiceImpl implements ContractService {
 	/** {@inheritDoc} */
 	@Override
 	public Contract getContractById(final String id) {
-		return map(getContractEntityById(id));
+		return map(getContractEntityById(id, false),false);
 	}
 
-	private ContractEntity getContractEntityById(final String id) {
-		return contractDao.findById(id).orElseThrow(() -> new PnsException("Contract Not Found!!", PnsError.NOT_FOUND));
+	private ContractEntity getContractEntityById(final String id, boolean removePo) {
+		final ContractEntity contractEntity = contractDao.findById(id).orElseThrow(() -> new PnsException("Contract Not Found!!", PnsError.NOT_FOUND));
+		if(removePo) {
+			contractEntity.setPoFileContent(null);
+		}
+		return contractEntity;
 	}
 
 	/** {@inheritDoc} */
@@ -128,10 +135,10 @@ public class ContractServiceImpl implements ContractService {
 								: Contract.Status.PENDING)
 						.equipmentItem(equipmentItem).contractDate(LocalDate.now()).build());
 		if (Contract.Status.PENDING.name().equals(contractToBeUpdated.getStatus())) {
-			contractToBeUpdated.setOldContract(getContractEntityById(contract.getId()));
+			contractToBeUpdated.setOldContract(getContractEntityById(contract.getId(), false));
 		}
 		contractDao.update(contractToBeUpdated);
-		return getContractById(contract.getId());
+		return map(getContractEntityById(contract.getId(), true));
 	}
 
 	private double roundUp(final double amount) {
@@ -141,7 +148,7 @@ public class ContractServiceImpl implements ContractService {
 	/** {@inheritDoc} */
 	@Override
 	public Contract deleteContractById(final String id) {
-		final Contract deletedContract = getContractById(id);
+		final Contract deletedContract = map(getContractEntityById(id, true));
 		contractDao.deleteById(id);
 		return deletedContract;
 	}
@@ -209,19 +216,36 @@ public class ContractServiceImpl implements ContractService {
 				.pageCount(contractDao.contAllPendingContracts()).build();
 	}
 
+	@Override
+	public Contract approveContract(String contractId) {
+		if (contractDao.approve(contractId)) {
+			return  map(getContractEntityById(contractId,true));
+		}
+		log.error("Unable To Approve Contract for contract id : {} ", contractId);
+		throw new PnsException("Unable To Approve Contract");
+	}
+
+
 	private List<Contract> map(final List<ContractEntity> list) {
 		return list.stream().map(this::map).collect(Collectors.toList());
 	}
 
 	private Contract map(final ContractEntity entity) {
-		return ImmutableContract.builder().amcBasicAmount(entity.getAmcBasicAmount()).amcEndDate(entity.getAmcEndDate())
-				.amcStartDate(entity.getAmcStartDate()).amcTax(entity.getAmcTax())
+		return map(entity, true);
+	}
+
+	private Contract map(final ContractEntity entity, boolean removePo) {
+		final Builder builder = ImmutableContract.builder().amcBasicAmount(entity.getAmcBasicAmount())
+				.amcEndDate(entity.getAmcEndDate()).amcStartDate(entity.getAmcStartDate()).amcTax(entity.getAmcTax())
 				.amcTotalAmount(entity.getAmcTotalAmount()).billingCycle(entity.getBillingCycle())
 				.customer(entity.getCustomer()).equipmentItem(entity.getEquipmentItem()).note(entity.getNote())
 				.id(entity.getId()).contractDate(entity.getContractDate()).proposalNo(entity.getProposalNo())
-				.amcTaxAmount(entity.getAmcTaxAmount()).poFileContent(entity.getPoFileContent())
-				.poFileContentType(entity.getPoFileContentType()).poFileName(entity.getPoFileName())
-				.status(Contract.Status.valueOf(entity.getStatus() == null ? "PENDING" : entity.getStatus())).build();
+				.amcTaxAmount(entity.getAmcTaxAmount())
+				.status(Contract.Status.valueOf(entity.getStatus() == null ? "PENDING" : entity.getStatus())).poFileName(entity.getPoFileName());
+		if (!removePo) {
+			builder.poFileContent(entity.getPoFileContent()).poFileContentType(entity.getPoFileContentType());
+		}
+		return builder.build();
 
 	}
 
