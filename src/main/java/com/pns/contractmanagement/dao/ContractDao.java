@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Range;
 import com.mongodb.client.FindIterable;
@@ -38,6 +39,7 @@ import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.pns.contractmanagement.controller.ServiceUtil;
 import com.pns.contractmanagement.entity.ContractEntity;
+import com.pns.contractmanagement.entity.ContractEntity.ContractEntityBuilder;
 import com.pns.contractmanagement.entity.SequenceEntity;
 import com.pns.contractmanagement.model.Contract;
 import com.pns.contractmanagement.model.Contract.Status;
@@ -256,41 +258,61 @@ public class ContractDao {
 				.first()));
 	}
 
+	public List<ContractEntity> findAllPendingContracts(final int page) {
+		return map(
+				contractDocumentCollection.find(and(notDeletedFilter(), new Document("status", Status.PENDING.name())))
+						.skip((page - 1) * pageSize).limit(pageSize));
+
+	}
+
+	public long contAllPendingContracts() {
+		return countPages(contractDocumentCollection
+				.countDocuments(and(notDeletedFilter(), new Document("status", Status.PENDING.name()))), pageSize);
+	}
+
 	private ContractEntity map(final Document document) {
 		if (document == null) {
 			return null;
 		}
 		try {
-			final Customer customer = objectMapper.readValue(((Document) document.get("customer")).toJson(),
-					Customer.class);
-			final EquipmentItem equipment = objectMapper.readValue(((Document) document.get("equipmentItem")).toJson(),
-					EquipmentItem.class);
 
-			final Binary poContentBinary = document.get(PO_FILE_CONTENT, Binary.class);
-			// @formatter:off
-			final ContractEntity entity = ContractEntity.builder()
-					.amcBasicAmount(document.getDouble(ContractDao.AMC_BASIC_AMOUNT))
-					.amcEndDate(Instant.ofEpochMilli(document.getDate(AMC_END_DATE).getTime())
-							.atZone(ZoneId.systemDefault()).toLocalDate())
-					.amcStartDate(Instant.ofEpochMilli(document.getDate(AMC_START_DATE).getTime())
-							.atZone(ZoneId.systemDefault()).toLocalDate())
-					.amcTax(document.getDouble(AMC_TAX)).amcTotalAmount(document.getDouble(AMC_TOTAL_AMOUNT))
-					.billingCycle(document.getString(BILLING_CYCLE)).note(document.getString("note")).customer(customer)
-					.equipmentItem(equipment)
-					.contractDate(Instant.ofEpochMilli(document.getDate(CONTRACT_DATE).getTime())
-							.atZone(ZoneId.systemDefault()).toLocalDate())
-					.proposalNo(document.getString(PROPOSAL_NO)).amcTaxAmount(document.getDouble(AMC_TAX_AMOUNT))
-					.poFileContentType(document.getString(PO_FILE_CONTENT_TYPE))
-					.poFileContent(poContentBinary != null ? poContentBinary.getData() : null)
-					.poFileName(poContentBinary != null ? document.getString(PO_FILE_NAME) : null)
-					.status(document.getString(STATUS)).build();
-			// @formatter:on
+			final Document oldDoc = (Document) document.get(OLD_CONTRACT);
+			final ContractEntity oldContract = oldDoc != null ? basicEntityBuilder(oldDoc).build() : null;
+			if(oldContract!=null) {
+				oldContract.setOid(document.getObjectId("_id"));
+			}
+			final ContractEntity entity = basicEntityBuilder(document).oldContract(oldContract).build();
 			entity.setOid(document.getObjectId("_id"));
 			return entity;
 		} catch (final JsonProcessingException ex) {
 			LOGGER.error("JSON parsing exception", ex);
 			return null;
 		}
+	}
+
+	private ContractEntityBuilder basicEntityBuilder(final Document document)
+			throws JsonMappingException, JsonProcessingException {
+		final Customer customer = objectMapper.readValue(((Document) document.get("customer")).toJson(),
+				Customer.class);
+		final EquipmentItem equipment = objectMapper.readValue(((Document) document.get("equipmentItem")).toJson(),
+				EquipmentItem.class);
+
+		final Binary poContentBinary = document.get(PO_FILE_CONTENT, Binary.class);
+		return ContractEntity.builder().amcBasicAmount(document.getDouble(AMC_BASIC_AMOUNT))
+				.amcEndDate(Instant.ofEpochMilli(document.getDate(AMC_END_DATE).getTime())
+						.atZone(ZoneId.systemDefault()).toLocalDate())
+				.amcStartDate(Instant.ofEpochMilli(document.getDate(AMC_START_DATE).getTime())
+						.atZone(ZoneId.systemDefault()).toLocalDate())
+				.amcTax(document.getDouble(AMC_TAX)).amcTotalAmount(document.getDouble(AMC_TOTAL_AMOUNT))
+				.billingCycle(document.getString(BILLING_CYCLE)).note(document.getString("note")).customer(customer)
+				.equipmentItem(equipment)
+				.contractDate(Instant.ofEpochMilli(document.getDate(CONTRACT_DATE).getTime())
+						.atZone(ZoneId.systemDefault()).toLocalDate())
+				.proposalNo(document.getString(PROPOSAL_NO)).amcTaxAmount(document.getDouble(AMC_TAX_AMOUNT))
+				.poFileContentType(document.getString(PO_FILE_CONTENT_TYPE))
+				.poFileContent(poContentBinary != null ? poContentBinary.getData() : null)
+				.poFileName(poContentBinary != null ? document.getString(PO_FILE_NAME) : null)
+				.status(document.getString(STATUS));
 	}
 
 	private List<ContractEntity> map(final FindIterable<Document> mongoIterable) {

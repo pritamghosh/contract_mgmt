@@ -128,7 +128,7 @@ public class ContractServiceImpl implements ContractService {
 								: Contract.Status.PENDING)
 						.equipmentItem(equipmentItem).contractDate(LocalDate.now()).build());
 		if (Contract.Status.PENDING.name().equals(contractToBeUpdated.getStatus())) {
-			contractToBeUpdated.setOldContract(getContractById(contract.getId()));
+			contractToBeUpdated.setOldContract(getContractEntityById(contract.getId()));
 		}
 		contractDao.update(contractToBeUpdated);
 		return getContractById(contract.getId());
@@ -199,6 +199,16 @@ public class ContractServiceImpl implements ContractService {
 				.pageCount(contractDao.countDocumnetsByQuery(query)).build();
 	}
 
+	@Override
+	public SearchResponse<List<Contract>> getContractsForApproval(int page) {
+		final List<List<Contract>> results = contractDao.findAllPendingContracts(page).stream()
+				.map(entity -> entity.getOldContract() == null ? List.of(map(entity))
+						: List.of(map(entity), map(entity.getOldContract())))
+				.collect(Collectors.toList());
+		return ImmutableSearchResponse.<List<Contract>>builder().result(results)
+				.pageCount(contractDao.contAllPendingContracts()).build();
+	}
+
 	private List<Contract> map(final List<ContractEntity> list) {
 		return list.stream().map(this::map).collect(Collectors.toList());
 	}
@@ -225,9 +235,7 @@ public class ContractServiceImpl implements ContractService {
 				.contractDate(contract.getContractDate()).proposalNo(contract.getProposalNo())
 				.amcTaxAmount(contract.getAmcTaxAmount() != null ? contract.getAmcTaxAmount() : 0)
 				.poFileContentType(contract.getPoFileContentType()).poFileContent(contract.getPoFileContent())
-				.poFileName(contract.getPoFileName())
-				.status(contract.getStatus().name())
-				.build();
+				.poFileName(contract.getPoFileName()).status(contract.getStatus().name()).build();
 		// @formatter:on
 		entity.setId(contract.getId());
 		return entity;

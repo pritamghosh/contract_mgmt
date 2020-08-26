@@ -1,6 +1,7 @@
 package com.pns.contractmanagement.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -118,5 +119,12 @@ public class ContractController {
     public SearchResponse<Contract> searchContractByQuery(@RequestParam("query") final String query,
         @RequestParam(value = "page", defaultValue = "1") final int page) {
         return service.searchContractByQuery(query, page);
+    }
+    
+    @GetMapping("/approve")
+    @PreAuthorize("hasRole('contract_approver')")
+    public SearchResponse<List<Contract>> getContractsForApproval(
+        @RequestParam(value = "page", defaultValue = "1") final int page) {
+        return service.getContractsForApproval(page);
     }
 }
