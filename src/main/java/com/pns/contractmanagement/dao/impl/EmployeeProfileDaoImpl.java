@@ -3,20 +3,20 @@ package com.pns.contractmanagement.dao.impl;
 import java.util.Optional;
 
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertOneResult;
 import com.pns.contractmanagement.dao.EmployeeProfileDao;
-import com.pns.contractmanagement.entity.CustomerEntity;
 import com.pns.contractmanagement.entity.EmployeeProfileEntity;
 import com.pns.contractmanagement.util.DaoUtil;
 
 /**
  *Implementation of {@link EmployeeProfileDao} interface.
  */
+@Repository
 public class EmployeeProfileDaoImpl implements EmployeeProfileDao {
     
     private final MongoCollection<EmployeeProfileEntity> employProfileCollection;
