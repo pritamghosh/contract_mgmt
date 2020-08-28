@@ -13,7 +13,6 @@ keycloak:
 app:
     database.name:
        contract: userdb
-    database.name:
        userprofile: userprofile
     print.jasper:
       compiled: true
