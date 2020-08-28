@@ -1,13 +1,13 @@
-package com.pns.contractmanagement.dao;
+package com.pns.contractmanagement.dao.impl;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
-import static com.pns.contractmanagement.dao.DaoUtil.buildCaseInsentiveQuery;
-import static com.pns.contractmanagement.dao.DaoUtil.countPages;
-import static com.pns.contractmanagement.dao.DaoUtil.notDeletedFilter;
+import static com.pns.contractmanagement.util.DaoUtil.buildCaseInsentiveQuery;
+import static com.pns.contractmanagement.util.DaoUtil.countPages;
+import static com.pns.contractmanagement.util.DaoUtil.notDeletedFilter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,12 +28,13 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.pns.contractmanagement.entity.EquipmentEntity;
+import com.pns.contractmanagement.util.DaoUtil;
 
 /**
  *
  */
 @Repository
-public class EquipmentDao {
+public class EquipmentDaoImpl {
 	private static final String MODEL = "model";
 
 	@Value("${app.page.size.equipment}")
@@ -42,9 +43,9 @@ public class EquipmentDao {
 	private final MongoCollection<EquipmentEntity> equipmentCollection;
 
 	@Autowired
-	public EquipmentDao(final MongoCollectionUtil util,
+	public EquipmentDaoImpl(final MongoCollectionUtil util,
 			final @Value("${app.index.name.equipment:equipments}") String equipmentEntityIndexName) {
-		equipmentCollection = util.getCollection(equipmentEntityIndexName, EquipmentEntity.class);
+		equipmentCollection = util.getContractCollection(equipmentEntityIndexName, EquipmentEntity.class);
 	}
 
 	public EquipmentEntity insert(final EquipmentEntity equipmentEntity) {

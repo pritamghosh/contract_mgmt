@@ -1,4 +1,4 @@
-package com.pns.contractmanagement.dao;
+package com.pns.contractmanagement.dao.impl;
 
 import static com.mongodb.client.model.Accumulators.sum;
 import static com.mongodb.client.model.Aggregates.group;
@@ -28,22 +28,23 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.pns.contractmanagement.entity.EquipmentItemEntity;
+import com.pns.contractmanagement.util.DaoUtil;
 
 /**
  *
  */
 @Repository
-public class EquipmentItemDao {
+public class EquipmentItemDaoImpl {
 
     private final MongoCollection<EquipmentItemEntity> equipmentItemCollection;
 
     private final MongoCollection<Document> equipmentItemDocCollection;
 
     @Autowired
-    public EquipmentItemDao(final MongoCollectionUtil util,
+    public EquipmentItemDaoImpl(final MongoCollectionUtil util,
         final @Value("${app.index.name.equipmentItem:equipmentItems}") String equipmentIndexName) {
-        equipmentItemCollection = util.getCollection(equipmentIndexName, EquipmentItemEntity.class);
-        equipmentItemDocCollection = util.getDb().getCollection(equipmentIndexName);
+        equipmentItemCollection = util.getContractCollection(equipmentIndexName, EquipmentItemEntity.class);
+        equipmentItemDocCollection = util.getContractDatabase().getCollection(equipmentIndexName);
     }
 
     public EquipmentItemEntity insert(final EquipmentItemEntity equipmentItem) {

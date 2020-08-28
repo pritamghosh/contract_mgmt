@@ -11,7 +11,10 @@ keycloak:
     principal-attribute: preferred_username
     credentials:        secret: d1c07de3-8705-42e1-9169-b31934f353f2
 app:
-    database.name: userdb
+    database.name:
+       contract: userdb
+    database.name:
+       userprofile: userprofile
     print.jasper:
       compiled: true
       file.url: /pns/config/application/${spring.application.name}/PnsContractInvoice.jasper
@@ -21,6 +24,7 @@ app:
          contract: true
          equipment: true
          equipmentDetails: true
+         employee.profile: true
     page.size:
       customer: 4
       equipment: 6
@@ -31,3 +35,4 @@ app:
          contract: contracts
          equipment: equipments
          equipmentItem: equipmentItems
+         employee.profile: employeeProfiles

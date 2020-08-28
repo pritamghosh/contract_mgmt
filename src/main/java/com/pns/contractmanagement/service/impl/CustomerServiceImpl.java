@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pns.contractmanagement.dao.CustomerDao;
+import com.pns.contractmanagement.dao.impl.CustomerDaoImpl;
 import com.pns.contractmanagement.entity.CustomerEntity;
 import com.pns.contractmanagement.exceptions.PnsError;
 import com.pns.contractmanagement.exceptions.PnsException;
@@ -21,7 +21,7 @@ import com.pns.contractmanagement.model.SearchResponse;
 public class CustomerServiceImpl {
 
 	@Autowired
-	private CustomerDao dao;
+	private CustomerDaoImpl dao;
 
 	public Customer addCustomer(final Customer customer) {
 		return map(dao.insert(map(customer)));

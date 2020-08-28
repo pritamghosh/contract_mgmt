@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Range;
 import com.pns.contractmanagement.controller.RoleConstants;
-import com.pns.contractmanagement.controller.ServiceUtil;
-import com.pns.contractmanagement.dao.ContractDao;
+import com.pns.contractmanagement.dao.impl.ContractDaoImpl;
 import com.pns.contractmanagement.entity.ContractEntity;
 import com.pns.contractmanagement.entity.SequenceEntity;
 import com.pns.contractmanagement.exceptions.PnsError;
@@ -32,6 +31,7 @@ import com.pns.contractmanagement.model.ImmutableSearchResponse;
 import com.pns.contractmanagement.model.Report;
 import com.pns.contractmanagement.model.SearchResponse;
 import com.pns.contractmanagement.service.ContractService;
+import com.pns.contractmanagement.util.ServiceUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,7 +43,7 @@ public class ContractServiceImpl implements ContractService {
 	private double tax;
 
 	@Autowired
-	private ContractDao contractDao;
+	private ContractDaoImpl contractDao;
 
 	@Autowired
 	private CustomerServiceImpl customerService;
@@ -115,6 +115,10 @@ public class ContractServiceImpl implements ContractService {
 	/** {@inheritDoc} */
 	@Override
 	public Contract modifyContract(final Contract contract) {
+	    final ContractEntity existingContract = getContractEntityById(contract.getId(), false);
+	    if(Contract.Status.PENDING.name().equals(existingContract.getStatus())) {
+	        throw new PnsException("Unable to Update Contract as status is not Approved");
+	    }
 		final Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
 		EquipmentItem equipmentItem = null;
 		if (contract.getEquipmentItem().getId() == null) {
@@ -135,7 +139,7 @@ public class ContractServiceImpl implements ContractService {
 								: Contract.Status.PENDING)
 						.equipmentItem(equipmentItem).contractDate(LocalDate.now()).build());
 		if (Contract.Status.PENDING.name().equals(contractToBeUpdated.getStatus())) {
-			contractToBeUpdated.setOldContract(getContractEntityById(contract.getId(), false));
+            contractToBeUpdated.setOldContract(existingContract);
 		}
 		contractDao.update(contractToBeUpdated);
 		return map(getContractEntityById(contract.getId(), true));

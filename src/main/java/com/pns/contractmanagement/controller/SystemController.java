@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pns.contractmanagement.dao.SystemDao;
+import com.pns.contractmanagement.dao.impl.SystemDaoImpl;
 import com.pns.contractmanagement.helper.impl.ContractInvoiceHelperImpl;
 
 /**
@@ -18,7 +18,7 @@ import com.pns.contractmanagement.helper.impl.ContractInvoiceHelperImpl;
 public class SystemController {
 
 	@Autowired
-	private SystemDao dao;
+	private SystemDaoImpl dao;
 
 	@Autowired
 	private ContractInvoiceHelperImpl helper;

@@ -1,4 +1,4 @@
-package com.pns.contractmanagement.controller;
+package com.pns.contractmanagement.util;
 
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;

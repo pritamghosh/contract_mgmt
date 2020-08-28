@@ -16,11 +16,14 @@ public class CustomerEntity extends BaseMongoEntity {
     private String name;
 
     private String region;
-    
+
     private String address;
-    
+
     private String gstinNo;
-    
+
     private String pan;
+    private String getcontactPersonName;
+    private String getcontactPersonEmail;
+    private String getcontactPersonMobile;
 
 }

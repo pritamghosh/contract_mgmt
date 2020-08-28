@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pns.contractmanagement.dao.EquipmentDao;
-import com.pns.contractmanagement.dao.EquipmentItemDao;
+import com.pns.contractmanagement.dao.impl.EquipmentDaoImpl;
+import com.pns.contractmanagement.dao.impl.EquipmentItemDaoImpl;
 import com.pns.contractmanagement.entity.EquipmentEntity;
 import com.pns.contractmanagement.entity.EquipmentItemEntity;
 import com.pns.contractmanagement.exceptions.PnsError;
@@ -25,72 +25,72 @@ import com.pns.contractmanagement.model.SearchResponse;
 public class EquipmentServiceImpl {
 
 	@Autowired
-	EquipmentDao equipmentDao;
+	EquipmentDaoImpl equipmentDaoImpl;
 
 	@Autowired
-	EquipmentItemDao equipmentItemDao;
+	EquipmentItemDaoImpl equipmentItemDaoImpl;
 
 	public EquipmentItem addEquipmentItem(final EquipmentItem equipmentItem) {
-		final EquipmentItemEntity insertedEquipment = equipmentItemDao.insert(map(equipmentItem));
+		final EquipmentItemEntity insertedEquipment = equipmentItemDaoImpl.insert(map(equipmentItem));
 		return map(insertedEquipment, getEquipmentById(insertedEquipment.getEquipmentId()));
 	}
 
 	public EquipmentItem modifyEquipmentItem(final EquipmentItem equipmentItem) {
-		equipmentItemDao.update(map(equipmentItem));
+		equipmentItemDaoImpl.update(map(equipmentItem));
 		return getEquipmentItemById(equipmentItem.getId());
 	}
 
 	public Equipment deleteEquipmentById(final String id) {
 		final Equipment deletedEquipment = getEquipmentById(id);
-		equipmentDao.deleteById(id);
+		equipmentDaoImpl.deleteById(id);
 		return deletedEquipment;
 	}
 
 	public EquipmentItem getEquipmentItemById(final String id) {
-		final EquipmentItemEntity entity = equipmentItemDao.findById(id)
+		final EquipmentItemEntity entity = equipmentItemDaoImpl.findById(id)
 				.orElseThrow(() -> new PnsException("Equipment Not Found!!", PnsError.NOT_FOUND));
 		return map(entity, getEquipmentById(entity.getEquipmentId()));
 	}
 
 	public SearchResponse<Equipment> searchEquipmentbyQuery(final String query, final int page) {
 		return ImmutableSearchResponse.<Equipment>builder()
-				.result(mapEquipment(equipmentDao.searchByQuery(query, page)))
-				.pageCount(equipmentDao.countDocumnetsByQuery(query)).build();
+				.result(mapEquipment(equipmentDaoImpl.searchByQuery(query, page)))
+				.pageCount(equipmentDaoImpl.countDocumnetsByQuery(query)).build();
 	}
 
 	public List<EquipmentItem> getAllEquipmentItem() {
-		return map(equipmentItemDao.findAll());
+		return map(equipmentItemDaoImpl.findAll());
 	}
 
 	public Equipment modifyEquipment(final Equipment equipment) {
-		equipmentDao.update(map(equipment));
+		equipmentDaoImpl.update(map(equipment));
 		return getEquipmentById(equipment.getId());
 	}
 
 	public Equipment addEquipment(final Equipment equipments) {
-		return map(equipmentDao.insert(map(equipments)));
+		return map(equipmentDaoImpl.insert(map(equipments)));
 	}
 
 	public Equipment getEquipmentById(final String id) {
-		return map(equipmentDao.findById(id)
+		return map(equipmentDaoImpl.findById(id)
 				.orElseThrow(() -> new PnsException("Equipment Detail Not Found!!", PnsError.NOT_FOUND)));
 	}
 
 	public SearchResponse<Equipment> getAllEquipments(final int page) {
 		return ImmutableSearchResponse.<Equipment>builder()
-				.result(equipmentDao.findAll(page).stream().map(this::map).collect(Collectors.toList()))
-				.pageCount(equipmentDao.countAllDocumnets()).build();
+				.result(equipmentDaoImpl.findAll(page).stream().map(this::map).collect(Collectors.toList()))
+				.pageCount(equipmentDaoImpl.countAllDocumnets()).build();
 	}
 
 	public long getEquipmentCountById(final String id) {
-		return equipmentItemDao.getCountById(id);
+		return equipmentItemDaoImpl.getCountById(id);
 	}
 
 	public SearchResponse<Equipment> getEquipmentsByModel(final String model, final int page) {
-		final List<Equipment> collect = equipmentDao.findByModel(model, page).stream().map(this::map)
+		final List<Equipment> collect = equipmentDaoImpl.findByModel(model, page).stream().map(this::map)
 				.collect(Collectors.toList());
 		return ImmutableSearchResponse.<Equipment>builder().result(collect)
-				.pageCount(equipmentDao.countDocumnetsByModel(model)).build();
+				.pageCount(equipmentDaoImpl.countDocumnetsByModel(model)).build();
 	}
 
 	private EquipmentItemEntity map(final EquipmentItem equipment) {
@@ -129,7 +129,7 @@ public class EquipmentServiceImpl {
 	}
 
 	private List<EquipmentItem> map(final List<EquipmentItemEntity> list) {
-		return map(list, equipmentDao
+		return map(list, equipmentDaoImpl
 				.findByIds(list.stream().map(EquipmentItemEntity::getEquipmentId).collect(Collectors.toList())));
 	}
 

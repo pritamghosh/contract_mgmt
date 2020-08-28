@@ -1,4 +1,4 @@
-package com.pns.contractmanagement.dao;
+package com.pns.contractmanagement.dao.impl;
 
 import java.time.LocalDate;
 import java.util.stream.StreamSupport;
@@ -18,7 +18,7 @@ import com.pns.contractmanagement.entity.SequenceEntity;
  *
  */
 @Repository
-public class SystemDao {
+public class SystemDaoImpl {
 
 	private final MongoDatabase databese;
 
@@ -37,10 +37,10 @@ public class SystemDao {
 	private final MongoCollection<SequenceEntity> sequenceDocumentCollection;
 
 	@Autowired
-	public SystemDao(final MongoCollectionUtil util,
+	public SystemDaoImpl(final MongoCollectionUtil util,
 			final @Value("${app.index.name.sequence:sequences}") String sequenceIndexName) {
-		databese = util.getDb();
-		sequenceDocumentCollection = util.getCollection(sequenceIndexName, SequenceEntity.class);
+		databese = util.getContractDatabase();
+		sequenceDocumentCollection = util.getContractCollection(sequenceIndexName, SequenceEntity.class);
 	}
 
 	public void initIndexes() {

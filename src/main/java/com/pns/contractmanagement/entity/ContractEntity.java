@@ -41,7 +41,5 @@ public class ContractEntity extends BaseMongoEntity {
     private String status;
     private String approvedBy;
     private LocalDateTime approvedDate;
-    
     private ContractEntity oldContract;
-
 }

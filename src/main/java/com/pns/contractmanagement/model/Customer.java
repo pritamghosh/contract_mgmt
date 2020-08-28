@@ -9,20 +9,31 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
 @JsonDeserialize(builder = ImmutableCustomer.Builder.class)
-public interface Customer  {
+public interface Customer {
 
     @Nullable
     @JsonProperty("_id")
     String getId();
-    
+
     String getName();
 
     String getRegion();
-    
+
     String getAddress();
+
     @Nullable
     String getGstinNo();
+
     @Nullable
     String getPan();
+
+    @Nullable
+    String getcontactPersonName();
+
+    @Nullable
+    String getcontactPersonEmail();
+
+    @Nullable
+    String getcontactPersonMobile();
 
 }

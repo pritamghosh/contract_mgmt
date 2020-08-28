@@ -19,10 +19,13 @@
 		<java.version>11</java.version>
 		<artifact.name>contract-management</artifact.name>
 		<dependency.version.jasper>6.4.0</dependency.version.jasper>
-		<dependency.version.org.immutables>2.8.8</dependency.version.org.immutables>
+		<dependency.version.org.immutables>2.8.8
+		</dependency.version.org.immutables>
 		<dependency.version.keycloak>9.0.0</dependency.version.keycloak>
-		<dependency.version.spring-cloud-sleuth>2.2.2.RELEASE</dependency.version.spring-cloud-sleuth>
-		<dependency.version.springfox.swagger2>2.9.2</dependency.version.springfox.swagger2>
+		<dependency.version.spring-cloud-sleuth>2.2.2.RELEASE
+		</dependency.version.spring-cloud-sleuth>
+		<dependency.version.springfox.swagger2>2.9.2
+		</dependency.version.springfox.swagger2>
 		<spring-cloud.version>Hoxton.SR6</spring-cloud.version>
 	</properties>
 
@@ -104,6 +107,17 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-inline</artifactId>
+			<version>3.4.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>3.4.6</version>
 		</dependency>
 	</dependencies>
 
@@ -213,7 +227,8 @@
 							</execution>
 						</executions>
 						<configuration>
-							<mainClass>com.pns.contractmanagement.PnsContractManagementApplication</mainClass>
+							<mainClass>com.pns.contractmanagement.PnsContractManagementApplication
+							</mainClass>
 						</configuration>
 					</plugin>
 					<plugin>

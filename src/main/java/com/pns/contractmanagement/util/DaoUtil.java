@@ -1,4 +1,4 @@
-package com.pns.contractmanagement.dao;
+package com.pns.contractmanagement.util;
 
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;

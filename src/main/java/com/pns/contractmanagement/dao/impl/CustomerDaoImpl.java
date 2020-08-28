@@ -1,13 +1,13 @@
-package com.pns.contractmanagement.dao;
+package com.pns.contractmanagement.dao.impl;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
-import static com.pns.contractmanagement.dao.DaoUtil.buildCaseInsentiveQuery;
-import static com.pns.contractmanagement.dao.DaoUtil.countPages;
-import static com.pns.contractmanagement.dao.DaoUtil.notDeletedFilter;
+import static com.pns.contractmanagement.util.DaoUtil.buildCaseInsentiveQuery;
+import static com.pns.contractmanagement.util.DaoUtil.countPages;
+import static com.pns.contractmanagement.util.DaoUtil.notDeletedFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,12 +25,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.pns.contractmanagement.entity.CustomerEntity;
+import com.pns.contractmanagement.util.DaoUtil;
 
 /**
  *
  */
 @Repository
-public class CustomerDao {
+public class CustomerDaoImpl {
 
 	private static final String REGION = "region";
 
@@ -43,9 +44,9 @@ public class CustomerDao {
 	 *
 	 */
 	@Autowired
-	public CustomerDao(final MongoCollectionUtil util,
+	public CustomerDaoImpl(final MongoCollectionUtil util,
 			final @Value("${app.index.name.customer:customers}") String customerIndexName) {
-		customerCollection = util.getCollection(customerIndexName, CustomerEntity.class);
+		customerCollection = util.getContractCollection(customerIndexName, CustomerEntity.class);
 	}
 
 	public CustomerEntity insert(final CustomerEntity customer) {
