@@ -3,6 +3,7 @@ package com.pns.contractmanagement.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,11 +22,14 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.pns.contractmanagement.dao.EmployeeProfileDao;
 import com.pns.contractmanagement.entity.EmployeeProfileEntity;
 import com.pns.contractmanagement.entity.EmployeeProfileEntity.Status;
+import com.pns.contractmanagement.entity.SequenceEntity;
 import com.pns.contractmanagement.exceptions.PnsException;
+import com.pns.contractmanagement.helper.impl.UserRegisterHelperImpl;
 import com.pns.contractmanagement.model.EmployeeProfile;
 import com.pns.contractmanagement.model.ImmutableEmployeeProfile;
 import com.pns.contractmanagement.service.impl.EmployeeProfileServiceImpl;
@@ -47,13 +51,21 @@ class EmployeeProfileServiceImplTest {
 
     @Captor
     ArgumentCaptor<EmployeeProfileEntity> entityCaptor;
+    
+    @Captor
+    ArgumentCaptor<EmployeeProfile> profileCaptor;
+    
+    @Mock
+    private UserRegisterHelperImpl userRegisterHelper;
 
     @Captor
     ArgumentCaptor<String> stringCaptor;
+    
     MockedStatic<ServiceUtil> mockedServiceUtil;
 
     @BeforeEach
     void setup() {
+    	ReflectionTestUtils.setField(service, "employeeIdLength", 7);
         mockedServiceUtil = Mockito.mockStatic(ServiceUtil.class);
         mockedServiceUtil.when(ServiceUtil::getUsernameFromContext).thenReturn("employeMockUserId");
 
@@ -82,18 +94,24 @@ class EmployeeProfileServiceImplTest {
         when(employeeProfileDao.getEmployeeProfileByEmployeeId(Mockito.anyString()))
             .thenReturn(Optional.of(mockEmployeeProfileEntity));
         assertThrows(PnsException.class, () -> service.getEmployeeProfileEmployeeId());
-        ;
         verify(employeeProfileDao, only()).getEmployeeProfileByEmployeeId(stringCaptor.capture());
         assertEquals("employeMockUserId", stringCaptor.getValue());
     }
 
     @Test
     void insertTest() {
-        when(employeeProfileDao.insert(Mockito.any())).thenReturn(mockEmployeeProfileEntity());
+        final EmployeeProfileEntity mockEmployeeProfileEntity = mockEmployeeProfileEntity();
+		when(employeeProfileDao.insert(Mockito.any())).thenReturn(mockEmployeeProfileEntity);
+        when(employeeProfileDao.findAndUpdateSequece()).thenReturn(SequenceEntity.builder().sequence(134).build());
         final EmployeeProfile employeeProfile = service.createEmployeeProfile(mockEmployeeProfile());
-        verify(employeeProfileDao, only()).insert(entityCaptor.capture());
+        verify(employeeProfileDao, atLeastOnce()).findAndUpdateSequece();
+        verify(employeeProfileDao, atLeastOnce()).insert(entityCaptor.capture());
+        verify(userRegisterHelper, only()).registerUser(profileCaptor.capture());
+        assertEquals("P000134", entityCaptor.getValue().getEmployeeId());
+        assertEquals(mockEmployeeProfile(), profileCaptor.getValue());
         assertEquals(mockEmployeeProfile(), employeeProfile);
-        assertTrue(mockEmployeeProfileEntity().equals(entityCaptor.getValue()));
+        mockEmployeeProfileEntity.setEmployeeId("P000134");
+        assertTrue(mockEmployeeProfileEntity.equals(entityCaptor.getValue()));
     }
 
     private EmployeeProfileEntity mockEmployeeProfileEntity() {

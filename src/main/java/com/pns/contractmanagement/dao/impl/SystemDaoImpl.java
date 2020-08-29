@@ -74,10 +74,17 @@ public class SystemDaoImpl {
 				.forEach(d -> collection.dropIndex(d.getString("name")));
 	}
 
-	public boolean initSequece(final int seq) {
+	public boolean initProposalNoSequence(final int seq) {
 		sequenceDocumentCollection.deleteOne(new Document("squenceType", "proposal-no"));
 		final InsertOneResult insertOne = sequenceDocumentCollection.insertOne(
 				SequenceEntity.builder().date(LocalDate.now()).sequence(seq).squenceType("proposal-no").build());
+		return insertOne.getInsertedId() != null;
+	}
+	
+	public boolean initEmployeeNoSequence(final int seq) {
+		sequenceDocumentCollection.deleteOne(new Document("squenceType", "employee-no"));
+		final InsertOneResult insertOne = sequenceDocumentCollection.insertOne(
+				SequenceEntity.builder().sequence(seq).squenceType("employee-no").build());
 		return insertOne.getInsertedId() != null;
 	}
 }

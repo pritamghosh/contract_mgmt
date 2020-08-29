@@ -16,7 +16,7 @@ public interface EmployeeProfile {
     @Nullable
     @JsonProperty("_id")
     String getId();
-
+    @Nullable
     String getEmployeeId();
 
     String getFirstName();

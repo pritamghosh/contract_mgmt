@@ -23,6 +23,7 @@ public class SystemController {
 	@Autowired
 	private ContractInvoiceHelperImpl helper;
 
+
 	@GetMapping("db")
 	@PreAuthorize("hasRole('system')")
 	public boolean dbsetup() {
@@ -30,10 +31,16 @@ public class SystemController {
 		return true;
 	}
 
-	@GetMapping("init/sequence")
+	@GetMapping("init/sequence/proposal")
 	@PreAuthorize("hasRole('system')")
-	public boolean initSequece(@RequestParam(value = "seq", defaultValue = "0") final int seq) {
-		return dao.initSequece(seq);
+	public boolean initProposalNoSequence(@RequestParam(value = "seq", defaultValue = "0") final int seq) {
+		return dao.initProposalNoSequence(seq);
+	}
+	
+	@GetMapping("init/sequence/employee")
+	@PreAuthorize("hasRole('system')")
+	public boolean initEmployeeNoSequence(@RequestParam(value = "seq", defaultValue = "0") final int seq) {
+		return dao.initEmployeeNoSequence(seq);
 	}
 
 	@GetMapping("jasper/compile")
@@ -42,4 +49,5 @@ public class SystemController {
 		helper.compileJasper();
 		return true;
 	}
+	
 }

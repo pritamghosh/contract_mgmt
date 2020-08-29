@@ -11,6 +11,7 @@ keycloak:
     principal-attribute: preferred_username
     credentials:        secret: d1c07de3-8705-42e1-9169-b31934f353f2
 app:
+    employee.id.length : 7
     database.name:
        contract: userdb
        userprofile: userprofile
