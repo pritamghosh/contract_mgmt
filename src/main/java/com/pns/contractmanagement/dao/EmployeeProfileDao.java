@@ -18,4 +18,6 @@ public interface EmployeeProfileDao {
     
     Optional<EmployeeProfileEntity> findByEmail(String email);
 
+	boolean saveImage(String employeeId, byte[] image);
+
 }

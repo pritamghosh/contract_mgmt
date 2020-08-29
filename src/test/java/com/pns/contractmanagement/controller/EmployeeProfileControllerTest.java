@@ -37,7 +37,7 @@ class EmployeeProfileControllerTest {
     
     @Test
     void getEmployeeProfileTest() {
-        when(service.getEmployeeProfileEmployeeId()).thenReturn(mockProfile);
+        when(service.getEmployeeProfile()).thenReturn(mockProfile);
         final EmployeeProfile employee = controller.getEmployeeProfile();
         assertEquals(mockProfile, employee);
     }

@@ -3,8 +3,6 @@ package com.pns.contractmanagement.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -86,7 +84,7 @@ class EmployeeProfileServiceImplTest {
 	void getEmployeeProfileEmployeeIdTest() {
 		when(employeeProfileDao.findByEmployeeId(Mockito.anyString()))
 				.thenReturn(Optional.of(mockEmployeeProfileEntity()));
-		final EmployeeProfile employeeProfile = service.getEmployeeProfileEmployeeId();
+		final EmployeeProfile employeeProfile = service.getEmployeeProfile();
 		verify(employeeProfileDao, only()).findByEmployeeId(stringCaptor.capture());
 		assertEquals(mockEmployeeProfile(), employeeProfile);
 		assertEquals("employeMockUserId", stringCaptor.getValue());
@@ -98,7 +96,7 @@ class EmployeeProfileServiceImplTest {
 		mockEmployeeProfileEntity.setStatus(Status.INACTIVE);
 		when(employeeProfileDao.findByEmployeeId(Mockito.anyString()))
 				.thenReturn(Optional.of(mockEmployeeProfileEntity));
-		assertThrows(PnsException.class, () -> service.getEmployeeProfileEmployeeId());
+		assertThrows(PnsException.class, () -> service.getEmployeeProfile());
 		verify(employeeProfileDao, only()).findByEmployeeId(stringCaptor.capture());
 		assertEquals("employeMockUserId", stringCaptor.getValue());
 	}

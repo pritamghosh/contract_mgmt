@@ -64,8 +64,7 @@ public class ContractDaoImpl {
     private static final String PROPOSAL_NO_SEQUENCEE = "proposal-no";
     private static final String BILLING_CYCLE = "billingCycle";
     private static final String EQUIPMNET_OID = "equipmnetOid";
-    private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
-    private static final String LAST_MODIFIED_BY = "lastModifiedBy";
+    
     private static final String CUSTOMER_OID = "customerOid";
     private static final String AMC_TOTAL_AMOUNT = "amcTotalAmount";
     private static final String AMC_TAX_AMOUNT = "amcTaxAmount";
@@ -139,8 +138,8 @@ public class ContractDaoImpl {
             set(BILLING_CYCLE, contract.getBillingCycle()), set("note", contract.getNote()),
             set(EQUIPMNET_OID, new ObjectId(contract.getCustomer().getId())),
             set(CUSTOMER_OID, new ObjectId(contract.getEquipmentItem().getEquipment().getId())),
-            set(LAST_MODIFIED_BY, contract.getLastModifiedBy()),
-            set(LAST_MODIFIED_DATE, contract.getLastModifiedDate()),
+            set(DaoUtil.LAST_MODIFIED_BY, contract.getLastModifiedBy()),
+            set(DaoUtil.LAST_MODIFIED_DATE, contract.getLastModifiedDate()),
             set(PO_FILE_CONTENT_TYPE, contract.getPoFileContentType()),
             set(PO_FILE_CONTENT, contract.getPoFileContent()), set(PO_FILE_NAME, contract.getPoFileName()),
             set(STATUS, contract.getStatus()));

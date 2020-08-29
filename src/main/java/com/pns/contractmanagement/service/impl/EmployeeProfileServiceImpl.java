@@ -60,7 +60,7 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 
 	/** {@inheritDoc} */
 	@Override
-	public EmployeeProfile getEmployeeProfileEmployeeId() {
+	public EmployeeProfile getEmployeeProfile() {
 		final String username = ServiceUtil.getUsernameFromContext();
 		final Optional<EmployeeProfileEntity> employeeProfileByEmployeeId = employeeProfileDao
 				.findByEmployeeId(username);
@@ -68,6 +68,15 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 			return map(employeeProfileByEmployeeId.get());
 		}
 		throw new PnsException("No Active User Found");
+	}
+	
+	@Override
+	public EmployeeProfile uploadImage(byte[] image) {
+		final String employeeId = ServiceUtil.getUsernameFromContext();
+		if(employeeProfileDao.saveImage(employeeId,image)) {
+			return getEmployeeProfile();
+		};
+		throw new PnsException("Unable to save Profile Picture");
 	}
 
 	EmployeeProfileEntity map(final EmployeeProfile profile) {
@@ -98,4 +107,6 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 		return profile;
 
 	}
+
+	
 }

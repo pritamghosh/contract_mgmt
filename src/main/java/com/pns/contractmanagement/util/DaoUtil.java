@@ -16,7 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.pns.contractmanagement.entity.BaseMongoEntity;
 
 public final class DaoUtil {
-
+	public static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+    public static final String LAST_MODIFIED_BY = "lastModifiedBy";
 	private DaoUtil() {
 	}
 

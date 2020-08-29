@@ -1,16 +1,22 @@
 package com.pns.contractmanagement.dao.impl;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.inc;
+import static com.mongodb.client.model.Updates.set;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
 import com.pns.contractmanagement.dao.EmployeeProfileDao;
 import com.pns.contractmanagement.entity.EmployeeProfileEntity;
 import com.pns.contractmanagement.entity.SequenceEntity;
@@ -68,6 +74,14 @@ public class EmployeeProfileDaoImpl implements EmployeeProfileDao {
 	public Optional<EmployeeProfileEntity> findByEmail(String email) {
 		return Optional.ofNullable(employProfileCollection
 				.find(new Document("workEmail", DaoUtil.buildCaseInsentiveQuery(email))).first());
+	}
+
+	@Override
+	public boolean saveImage(String employeeId, byte[] image) {
+		final Bson update = combine(set("image", image), set(DaoUtil.LAST_MODIFIED_BY, employeeId),
+				set(DaoUtil.LAST_MODIFIED_DATE, LocalDateTime.now()));
+		final UpdateResult ur = employProfileCollection.updateOne(eq("employeeId", employeeId), update);
+		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
 
 }

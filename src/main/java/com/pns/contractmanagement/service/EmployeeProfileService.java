@@ -16,6 +16,8 @@ public interface EmployeeProfileService {
     /**
      * @return
      */
-    EmployeeProfile getEmployeeProfileEmployeeId();
+    EmployeeProfile getEmployeeProfile();
+
+	EmployeeProfile uploadImage(byte[] image);
 
 }
