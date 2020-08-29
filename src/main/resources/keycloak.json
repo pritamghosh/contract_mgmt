@@ -1,0 +1,10 @@
+{
+  "realm": "master",
+  "auth-server-url": "https://pns.southeastasia.cloudapp.azure.com/auth",
+  "ssl-required": "all",
+  "resource": "admin-cli",
+  "public-client": true,
+   "credentials" : {
+      "secret" : "NA"
+   }
+}

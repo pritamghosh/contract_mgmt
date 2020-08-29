@@ -12,8 +12,10 @@ public interface EmployeeProfileDao {
 
     EmployeeProfileEntity insert(EmployeeProfileEntity profile);
 
-    Optional<EmployeeProfileEntity> getEmployeeProfileByEmployeeId(String username);
+    Optional<EmployeeProfileEntity> findByEmployeeId(String username);
     
     SequenceEntity findAndUpdateSequece();
+    
+    Optional<EmployeeProfileEntity> findByEmail(String email);
 
 }

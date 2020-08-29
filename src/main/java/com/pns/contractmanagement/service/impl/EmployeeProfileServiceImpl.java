@@ -34,6 +34,12 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 	/** {@inheritDoc} */
 	@Override
 	public EmployeeProfile createEmployeeProfile(final EmployeeProfile employeeProfile) {
+		if (employeeProfileDao.findByEmail(employeeProfile.getWorkEmail()).isPresent()) {
+			throw new PnsException("Profile Exists with same Email Id");
+		}
+		if(!userRegisterHelper.getListOfGroups().contains(employeeProfile.getDesignation())) {
+			throw new PnsException("Desgnation is not Available");
+		}
 		final EmployeeProfileEntity profileToInsert = map(employeeProfile);
 		final SequenceEntity employeeSequence = employeeProfileDao.findAndUpdateSequece();
 		final String sequence = String.valueOf(employeeSequence.getSequence());
@@ -47,7 +53,7 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 		try {
 			userRegisterHelper.registerUser(newProfile);
 		} catch (PnsException ex) {
-			throw new PnsException("Unable to Register Eployee for Login", ex);
+			throw new PnsException("Unable to Register Employee for Login", ex);
 		}
 		return newProfile;
 	}
@@ -57,7 +63,7 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 	public EmployeeProfile getEmployeeProfileEmployeeId() {
 		final String username = ServiceUtil.getUsernameFromContext();
 		final Optional<EmployeeProfileEntity> employeeProfileByEmployeeId = employeeProfileDao
-				.getEmployeeProfileByEmployeeId(username);
+				.findByEmployeeId(username);
 		if (employeeProfileByEmployeeId.isPresent() && Status.ACTIVE == employeeProfileByEmployeeId.get().getStatus()) {
 			return map(employeeProfileByEmployeeId.get());
 		}

@@ -1,38 +1,40 @@
 package com.pns.contractmanagement.helper.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.model.EmployeeProfile;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
 @Component
 public class UserRegisterHelperImpl {
 
-	private static final String ACCESS_CODE_URI = "https://pns.southeastasia.cloudapp.azure.com/auth/realms/master/protocol/openid-connect/token";
-
-	private static final String CREATE_USER_URI = "https://pns.southeastasia.cloudapp.azure.com/auth/admin/realms/PNS_REALM/users";
+	
+	
+	private  final String adminRealmUri = "https://pns.southeastasia.cloudapp.azure.com/auth/admin/realms/PNS_REALM";
 
 	@Bean
 	public RestTemplate restTemplate(final RestTemplateBuilder builder) {
@@ -45,24 +47,44 @@ public class UserRegisterHelperImpl {
 
 	public void registerUser(final EmployeeProfile profile) {
 		try {
+			final String accessToken = getAccessToken();
 			final HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-			final MultiValueMap<String, String> map = buildRequestForAccessToken();
-
-			final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
-					headers);
-			final AuthRespone authResp = template.postForObject(ACCESS_CODE_URI, request, AuthRespone.class);
 			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("Authorization", "Bearer " + authResp.getAccess_token());
-			// @formatter:off
+			headers.set("Authorization", "Bearer " + accessToken);
 			final UserRepresentation user = buildUserRepresentation(profile);
-			// @formatter:on
 			final HttpEntity<UserRepresentation> createUserRequest = new HttpEntity<UserRepresentation>(user, headers);
-			template.postForObject(CREATE_USER_URI, createUserRequest, Object.class);
+			template.postForObject(adminRealmUri+"/users", createUserRequest, Object.class);
 		} catch (RestClientException ex) {
 			throw new PnsException(ex);
 		}
 		
+	}
+	
+	public List<String> getListOfGroups() {
+		try {
+			final String accessToken = getAccessToken();
+			final HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.set("Authorization", "Bearer " + accessToken);
+			try {
+				final ParameterizedTypeReference<List<GroupRepresentation>> parameterizedTypeReference = new ParameterizedTypeReference<List<GroupRepresentation>>() {};
+				final RequestEntity<Void> entity = RequestEntity.get(new URI(adminRealmUri+"/groups")).headers(headers).build();
+				ResponseEntity<List<GroupRepresentation>> exchange = 	template.exchange(entity, parameterizedTypeReference);
+				return exchange.getBody().stream().map(GroupRepresentation::getName).collect(Collectors.toList());
+			} catch (URISyntaxException ex) {
+				throw new PnsException(ex);
+			}
+		} catch (RestClientException ex) {
+			throw new PnsException(ex);
+		}
+		
+	}
+	
+	
+	
+
+	private String getAccessToken() {
+		return AuthzClient.create().obtainAccessToken("pnsadmin", "pnsadmin@321").getToken();
 	}
 
 	private UserRepresentation buildUserRepresentation(final EmployeeProfile profile) {
@@ -71,7 +93,6 @@ public class UserRegisterHelperImpl {
 		final Map<String, List<String>> attributes = new HashMap<String, List<String>>();
 		attributes.put("mobile", List.of(profile.getMobileNo()));
 		attributes.put("designation", List.of(profile.getDesignation()));
-
 		attributes.put("dateOfJoining", List.of(profile.getDateOfJoining().format(DateTimeFormatter.ISO_LOCAL_DATE)));
 		attributes.put("dateOfBirth", List.of(profile.getDateOfBirth().format(DateTimeFormatter.ISO_LOCAL_DATE)));
 		user.setAttributes(attributes);
@@ -87,38 +108,5 @@ public class UserRegisterHelperImpl {
 		cred.setTemporary(true);
 		user.setCredentials(List.of(cred));
 		return user;
-	}
-
-	private MultiValueMap<String, String> buildRequestForAccessToken() {
-		final MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-		map.add("client_id", "admin-cli");
-		map.add("username", "pnsadmin");
-		map.add("password", "pnsadmin@321");
-		map.add("grant_type", "password");
-		return map;
-	}
-
-	@Setter
-	@Getter
-	static class AuthRespone {
-		private String access_token;
-		private int expires_in;
-		private String refresh_token;
-		private int refresh_expires_in;
-		private String bearer;
-		private String snotsession_state;
-		private String scope;
-	}
-
-	@Setter
-	@Getter
-	@Builder
-	static class KeyCloakUser {
-		private String firstName;
-		private String lastName;
-		private String email;
-		private String username;
-		@Builder.Default
-		private boolean enabled = true;
 	}
 }

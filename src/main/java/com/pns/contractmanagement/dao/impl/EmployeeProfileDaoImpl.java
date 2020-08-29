@@ -46,7 +46,7 @@ public class EmployeeProfileDaoImpl implements EmployeeProfileDao {
 
 	/** {@inheritDoc} */
 	@Override
-	public Optional<EmployeeProfileEntity> getEmployeeProfileByEmployeeId(String username) {
+	public Optional<EmployeeProfileEntity> findByEmployeeId(String username) {
 		return Optional.ofNullable(employProfileCollection.find(new Document("employeeId", username)).first());
 	}
 
@@ -62,6 +62,12 @@ public class EmployeeProfileDaoImpl implements EmployeeProfileDao {
 		}
 		return sequence;
 
+	}
+
+	@Override
+	public Optional<EmployeeProfileEntity> findByEmail(String email) {
+		return Optional.ofNullable(employProfileCollection
+				.find(new Document("workEmail", DaoUtil.buildCaseInsentiveQuery(email))).first());
 	}
 
 }
