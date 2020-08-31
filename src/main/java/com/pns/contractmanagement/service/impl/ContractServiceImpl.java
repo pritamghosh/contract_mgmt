@@ -15,10 +15,13 @@ import com.google.common.collect.Range;
 import com.pns.contractmanagement.controller.RoleConstants;
 import com.pns.contractmanagement.dao.impl.ContractDaoImpl;
 import com.pns.contractmanagement.entity.ContractEntity;
+import com.pns.contractmanagement.entity.ContractEntity.ApproverComment;
+import com.pns.contractmanagement.entity.ContractEntity.ContractEntityBuilder;
 import com.pns.contractmanagement.entity.SequenceEntity;
 import com.pns.contractmanagement.exceptions.PnsError;
 import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.helper.impl.ContractInvoiceHelperImpl;
+import com.pns.contractmanagement.model.ApproveRequest;
 import com.pns.contractmanagement.model.Contract;
 import com.pns.contractmanagement.model.Contract.Status;
 import com.pns.contractmanagement.model.Customer;
@@ -84,13 +87,14 @@ public class ContractServiceImpl implements ContractService {
 			contractEntityToBeInserted.setApprovedBy(ServiceUtil.getUsernameFromContext());
 			contractEntityToBeInserted.setApprovedDate(LocalDateTime.now());
 		}
-		return  map(contractDao.insert(contractEntityToBeInserted));
+		return map(contractDao.insert(contractEntityToBeInserted));
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Report getContractReportById(final String id) {
-		final Contract contract = map(getContractEntityById(id, true));;
+		final Contract contract = map(getContractEntityById(id, true));
+		;
 		if (Contract.Status.APPROVED == contract.getStatus()
 				|| ServiceUtil.isUserauthorized(RoleConstants.CONTRACT_APPROVER)) {
 			return invoiceHelper.generateInvoice(contract);
@@ -101,12 +105,13 @@ public class ContractServiceImpl implements ContractService {
 	/** {@inheritDoc} */
 	@Override
 	public Contract getContractById(final String id) {
-		return map(getContractEntityById(id, false),false);
+		return map(getContractEntityById(id, false), false);
 	}
 
 	private ContractEntity getContractEntityById(final String id, boolean removePo) {
-		final ContractEntity contractEntity = contractDao.findById(id).orElseThrow(() -> new PnsException("Contract Not Found!!", PnsError.NOT_FOUND));
-		if(removePo) {
+		final ContractEntity contractEntity = contractDao.findById(id)
+				.orElseThrow(() -> new PnsException("Contract Not Found!!", PnsError.NOT_FOUND));
+		if (removePo) {
 			contractEntity.setPoFileContent(null);
 		}
 		return contractEntity;
@@ -115,10 +120,10 @@ public class ContractServiceImpl implements ContractService {
 	/** {@inheritDoc} */
 	@Override
 	public Contract modifyContract(final Contract contract) {
-	    final ContractEntity existingContract = getContractEntityById(contract.getId(), false);
-	    if(Contract.Status.PENDING.name().equals(existingContract.getStatus())) {
-	        throw new PnsException("Unable to Update Contract as status is not Approved");
-	    }
+		final ContractEntity existingContract = getContractEntityById(contract.getId(), false);
+		if (Contract.Status.PENDING.name().equals(existingContract.getStatus())) {
+			throw new PnsException("Unable to Update Contract as status is not Approved");
+		}
 		final Customer customerbyid = customerService.getCustomerbyid(contract.getCustomer().getId());
 		EquipmentItem equipmentItem = null;
 		if (contract.getEquipmentItem().getId() == null) {
@@ -132,14 +137,19 @@ public class ContractServiceImpl implements ContractService {
 		final double amcBasicAmount = roundUp(contract.getAmcBasicAmount());
 		final double amcTaxAmount = roundUp(amcBasicAmount * tax / 100);
 		final double amcTotalAmount = roundUp(amcBasicAmount + amcTaxAmount);
+		Status status = Contract.Status.PENDING;
+		if (ServiceUtil.isUserauthorized(RoleConstants.CONTRACT_L2_APPROVER)) {
+			status = Contract.Status.APPROVED;
+		} else if (ServiceUtil.isUserauthorized(RoleConstants.CONTRACT_L1_APPROVER)) {
+			status = Contract.Status.L1_APPROVED;
+		}
+
 		final ContractEntity contractToBeUpdated = map(
 				ImmutableContract.builder().from(contract).amcTax(tax).amcTaxAmount(amcTaxAmount)
 						.amcTotalAmount(amcTotalAmount).customer(customerbyid).amcBasicAmount(amcBasicAmount)
-						.status(ServiceUtil.isUserauthorized(RoleConstants.CONTRACT_APPROVER) ? Contract.Status.APPROVED
-								: Contract.Status.PENDING)
-						.equipmentItem(equipmentItem).contractDate(LocalDate.now()).build());
-		if (Contract.Status.PENDING.name().equals(contractToBeUpdated.getStatus())) {
-            contractToBeUpdated.setOldContract(existingContract);
+						.status(status).equipmentItem(equipmentItem).contractDate(LocalDate.now()).build());
+		if (!Contract.Status.APPROVED.name().equals(contractToBeUpdated.getStatus())) {
+			contractToBeUpdated.setOldContract(existingContract);
 		}
 		contractDao.update(contractToBeUpdated);
 		return map(getContractEntityById(contract.getId(), true));
@@ -212,23 +222,51 @@ public class ContractServiceImpl implements ContractService {
 
 	@Override
 	public SearchResponse<List<Contract>> getContractsForApproval(int page) {
-		final List<List<Contract>> results = contractDao.findAllPendingContracts(page).stream()
+		List<ContractEntity> pendingContracts = null;
+		long count = 0;
+		if (ServiceUtil.isUserauthorized(RoleConstants.CONTRACT_L2_APPROVER)) {
+			pendingContracts = contractDao.findAllL2ApprovalPendingContracts(page);
+			count = contractDao.countAllL2ApprovalPendingContracts();
+		} else if (ServiceUtil.isUserauthorized(RoleConstants.CONTRACT_L1_APPROVER)) {
+			pendingContracts = contractDao.findAllL1ApprovalPendingContracts(page);
+			count = contractDao.countAllL1ApprovalPendingContracts();
+		} else {
+			throw new PnsException(PnsError.UNAUTHORIZED);
+		}
+		final List<List<Contract>> results = pendingContracts.stream()
 				.map(entity -> entity.getOldContract() == null ? List.of(map(entity))
 						: List.of(map(entity), map(entity.getOldContract())))
 				.collect(Collectors.toList());
-		return ImmutableSearchResponse.<List<Contract>>builder().result(results)
-				.pageCount(contractDao.contAllPendingContracts()).build();
+
+		return ImmutableSearchResponse.<List<Contract>>builder().result(results).pageCount(count).build();
 	}
 
 	@Override
-	public Contract approveContract(String contractId) {
-		if (contractDao.approve(contractId)) {
-			return  map(getContractEntityById(contractId,true));
+	public Contract approveContract(ApproveRequest approveReqquest) {
+		final String approverId = ServiceUtil.getUsernameFromContext();
+		final LocalDateTime currentTime = LocalDateTime.now();
+		final ApproverComment comment = ApproverComment.builder()
+				.action(approveReqquest.getAction() ? "APPROVED" : "DECLINED").comment(approveReqquest.getComment())
+				.commentDateTime(currentTime).userId(approverId).build();
+		final ContractEntityBuilder builder = ContractEntity.builder().approverComments(List.of(comment));
+		if (!approveReqquest.getAction()) {
+			builder.status(Status.MODIFICATION_REQUIRED.name());
+		} else if (ServiceUtil.isUserauthorized(RoleConstants.CONTRACT_L2_APPROVER)) {
+			builder.status(Status.APPROVED.name()).approvedBy(approverId).approvedDate(currentTime);
+		} else if (ServiceUtil.isUserauthorized(RoleConstants.CONTRACT_L1_APPROVER)) {
+			builder.status(Status.L1_APPROVED.name());
+		} else {
+			throw new PnsException(PnsError.UNAUTHORIZED);
 		}
-		log.error("Unable To Approve Contract for contract id : {} ", contractId);
+
+		final ContractEntity contract = builder.build();
+		contract.setId(approveReqquest.getId());
+		if (contractDao.approve(contract)) {
+			return map(getContractEntityById(approveReqquest.getId(), true));
+		}
+		log.error("Unable To Approve Contract for contract id : {} ", approveReqquest.getId());
 		throw new PnsException("Unable To Approve Contract");
 	}
-
 
 	private List<Contract> map(final List<ContractEntity> list) {
 		return list.stream().map(this::map).collect(Collectors.toList());
@@ -245,7 +283,8 @@ public class ContractServiceImpl implements ContractService {
 				.customer(entity.getCustomer()).equipmentItem(entity.getEquipmentItem()).note(entity.getNote())
 				.id(entity.getId()).contractDate(entity.getContractDate()).proposalNo(entity.getProposalNo())
 				.amcTaxAmount(entity.getAmcTaxAmount())
-				.status(Contract.Status.valueOf(entity.getStatus() == null ? "PENDING" : entity.getStatus())).poFileName(entity.getPoFileName());
+				.status(Contract.Status.valueOf(entity.getStatus() == null ? "PENDING" : entity.getStatus()))
+				.poFileName(entity.getPoFileName());
 		if (!removePo) {
 			builder.poFileContent(entity.getPoFileContent()).poFileContentType(entity.getPoFileContentType());
 		}

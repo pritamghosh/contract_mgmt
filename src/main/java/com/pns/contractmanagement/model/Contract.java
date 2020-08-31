@@ -16,56 +16,56 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(builder = ImmutableContract.Builder.class)
 public interface Contract {
 
-    @Nullable
-    @JsonProperty("_id")
-    String getId();
+	@Nullable
+	@JsonProperty("_id")
+	String getId();
 
-    LocalDate getAmcStartDate();
+	LocalDate getAmcStartDate();
 
-    LocalDate getAmcEndDate();
+	LocalDate getAmcEndDate();
 
-    Customer getCustomer();
+	Customer getCustomer();
 
-    EquipmentItem getEquipmentItem();
+	EquipmentItem getEquipmentItem();
 
-    double getAmcTotalAmount();
+	double getAmcTotalAmount();
 
-    double getAmcBasicAmount();
+	double getAmcBasicAmount();
 
-    double getAmcTax();
+	double getAmcTax();
 
-    @Nullable
-    Double getAmcTaxAmount();
+	@Nullable
+	Double getAmcTaxAmount();
 
-    String getBillingCycle();
+	String getBillingCycle();
 
-    @Nullable
-    String getNote();
+	@Nullable
+	String getNote();
 
-    @Nullable
-    LocalDate getContractDate();
+	@Nullable
+	LocalDate getContractDate();
 
-    @Nullable
-    String getProposalNo();
+	@Nullable
+	String getProposalNo();
 
-    @Nullable
-    String getPoFileContentType();
+	@Nullable
+	String getPoFileContentType();
 
-    @Nullable
-    byte[] getPoFileContent();
+	@Nullable
+	byte[] getPoFileContent();
 
-    @Nullable
-    String getPoFileName();
+	@Nullable
+	String getPoFileName();
 
-    @Value.Default
-    default Status getStatus() {
-        return Status.PENDING;
-    };
+	@Value.Default
+	default Status getStatus() {
+		return Status.PENDING;
+	};
 
-    /**
-     *
-     */
-    public enum Status {
-        PENDING, EXPIRED, APPROVED;
-    }
+	/**
+	 *
+	 */
+	public enum Status {
+		PENDING, EXPIRED, L1_APPROVED, APPROVED, MODIFICATION_REQUIRED;
+	}
 }

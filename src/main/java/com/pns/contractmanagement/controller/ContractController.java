@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.Range;
+import com.pns.contractmanagement.model.ApproveRequest;
 import com.pns.contractmanagement.model.Contract;
 import com.pns.contractmanagement.model.Report;
 import com.pns.contractmanagement.model.SearchResponse;
@@ -121,10 +122,10 @@ public class ContractController {
         @RequestParam(value = "page", defaultValue = "1") final int page) {
         return service.getContractsForApproval(page);
     }
-    @PatchMapping("/approve/{id}")
+    @PatchMapping("/approve")
     @PreAuthorize("hasRole('contract_approver')")
-	public Contract approveContract(@PathVariable("id") final String id) {
-		return service.approveContract(id);
+	public Contract approveContract(@RequestBody final ApproveRequest approveRequest) {
+		return service.approveContract(approveRequest);
 	}
     
 }

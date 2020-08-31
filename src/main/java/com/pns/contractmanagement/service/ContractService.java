@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.google.common.collect.Range;
+import com.pns.contractmanagement.model.ApproveRequest;
 import com.pns.contractmanagement.model.Contract;
 import com.pns.contractmanagement.model.Report;
 import com.pns.contractmanagement.model.SearchResponse;
@@ -39,6 +40,6 @@ public interface ContractService {
 
 	SearchResponse<List<Contract>> getContractsForApproval(int page);
 
-	Contract approveContract(String approveContract);
+	Contract approveContract(ApproveRequest approveRequest);
 
 }
