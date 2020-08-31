@@ -148,7 +148,8 @@ public class ContractServiceImpl implements ContractService {
 				ImmutableContract.builder().from(contract).amcTax(tax).amcTaxAmount(amcTaxAmount)
 						.amcTotalAmount(amcTotalAmount).customer(customerbyid).amcBasicAmount(amcBasicAmount)
 						.status(status).equipmentItem(equipmentItem).contractDate(LocalDate.now()).build());
-		if (!Contract.Status.APPROVED.name().equals(contractToBeUpdated.getStatus())) {
+		if (!existingContract.getStatus().equals(Contract.Status.MODIFICATION_REQUIRED.name())
+				&& !Contract.Status.APPROVED.name().equals(contractToBeUpdated.getStatus())) {
 			contractToBeUpdated.setOldContract(existingContract);
 		}
 		contractDao.update(contractToBeUpdated);
