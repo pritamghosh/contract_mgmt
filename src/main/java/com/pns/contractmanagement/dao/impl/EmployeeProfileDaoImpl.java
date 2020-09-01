@@ -1,11 +1,15 @@
 package com.pns.contractmanagement.dao.impl;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.inc;
 import static com.mongodb.client.model.Updates.set;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.bson.Document;
@@ -19,6 +23,7 @@ import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.pns.contractmanagement.dao.EmployeeProfileDao;
 import com.pns.contractmanagement.entity.EmployeeProfileEntity;
+import com.pns.contractmanagement.entity.EmployeeProfileEntity.Status;
 import com.pns.contractmanagement.entity.SequenceEntity;
 import com.pns.contractmanagement.util.DaoUtil;
 
@@ -83,5 +88,12 @@ public class EmployeeProfileDaoImpl implements EmployeeProfileDao {
 		final UpdateResult ur = employProfileCollection.updateOne(eq("employeeId", employeeId), update);
 		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
+	@Override
+	public List<EmployeeProfileEntity> searchByQuery(final String query) {
+        final List<EmployeeProfileEntity> employeeProfiles = new ArrayList<>();
+        employProfileCollection.find(and(text(query),  new Document("status", Status.ACTIVE.name())))
+                .iterator().forEachRemaining(employeeProfiles::add);
+        return employeeProfiles;
+    }
 
 }

@@ -1,6 +1,8 @@
 package com.pns.contractmanagement.service;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.only;
@@ -63,6 +65,9 @@ class EmployeeProfileServiceImplTest {
 
 	@Captor
 	ArgumentCaptor<String> stringCaptor;
+	
+	@Captor
+    ArgumentCaptor<byte[]> imageCaptor;
 
 	MockedStatic<ServiceUtil> mockedServiceUtil;
 
@@ -89,6 +94,40 @@ class EmployeeProfileServiceImplTest {
 		assertEquals(mockEmployeeProfile(), employeeProfile);
 		assertEquals("employeMockUserId", stringCaptor.getValue());
 	}
+	
+	@Test
+    void findProfileByIdTest() {
+        when(employeeProfileDao.findByEmployeeId(Mockito.anyString()))
+                .thenReturn(Optional.of(mockEmployeeProfileEntity()));
+        final EmployeeProfile employeeProfile = service.findProfileById("sampleId");
+        verify(employeeProfileDao, only()).findByEmployeeId(stringCaptor.capture());
+        assertEquals(mockEmployeeProfile(), employeeProfile);
+        assertEquals("sampleId", stringCaptor.getValue());
+    }
+	
+	@Test
+    void searchEmployeeTest() {
+        when(employeeProfileDao.searchByQuery(Mockito.anyString()))
+                .thenReturn(List.of(mockEmployeeProfileEntity()));
+        final List<EmployeeProfile> employeeProfile = service.searchEmployee("mockQuery");
+        verify(employeeProfileDao, only()).searchByQuery(stringCaptor.capture());
+        assertIterableEquals(List.of(ImmutableEmployeeProfile.copyOf(mockEmployeeProfile()).withImage(null)), employeeProfile);
+        assertEquals("mockQuery", stringCaptor.getValue());
+    }
+	
+	@Test
+    void uploadImageTest() {
+        when(employeeProfileDao.saveImage(Mockito.anyString(),Mockito.any()))
+                .thenReturn(true);
+        when(employeeProfileDao.findByEmployeeId(Mockito.anyString()))
+        .thenReturn(Optional.of(mockEmployeeProfileEntity()));
+        final EmployeeProfile employeeProfile = service.uploadImage(new byte[] {1});
+        verify(employeeProfileDao, times(1)).saveImage(stringCaptor.capture(),imageCaptor.capture());
+        verify(employeeProfileDao, times(1)).findByEmployeeId(stringCaptor.capture());
+        assertEquals(mockEmployeeProfile(), employeeProfile);
+        assertEquals("employeMockUserId", stringCaptor.getValue());
+        assertArrayEquals(new byte[] {1}, imageCaptor.getValue());
+    }
 
 	@Test
 	void getEmployeeProfileEmployeeIdNotActiveTest() {
@@ -104,10 +143,12 @@ class EmployeeProfileServiceImplTest {
 	@Test
 	void insertTest() {
 		final EmployeeProfileEntity mockEmployeeProfileEntity = mockEmployeeProfileEntity();
+		mockEmployeeProfileEntity.setImage(null);
 		when(userRegisterHelper.getListOfGroups()).thenReturn(List.of("designation"));
 		when(employeeProfileDao.insert(Mockito.any())).thenReturn(mockEmployeeProfileEntity);
 		when(employeeProfileDao.findAndUpdateSequece()).thenReturn(SequenceEntity.builder().sequence(134).build());
-		final EmployeeProfile employeeProfile = service.createEmployeeProfile(mockEmployeeProfile());
+		final EmployeeProfile mockEmployeeProfile = ImmutableEmployeeProfile.copyOf(mockEmployeeProfile()).withImage(null);
+        final EmployeeProfile employeeProfile = service.createEmployeeProfile(mockEmployeeProfile);
 		verify(userRegisterHelper, times(1)).getListOfGroups();
 		verify(employeeProfileDao, times(1)).findByEmail(stringCaptor.capture());
 		verify(employeeProfileDao, times(1)).findAndUpdateSequece();
@@ -115,9 +156,9 @@ class EmployeeProfileServiceImplTest {
 		verify(userRegisterHelper, times(1)).registerUser(profileCaptor.capture());
 		verifyNoMoreInteractions(employeeProfileDao, employeeProfileDao);
 		assertEquals("P000134", entityCaptor.getValue().getEmployeeId());
-		assertEquals(mockEmployeeProfile(), profileCaptor.getValue());
+		assertEquals(mockEmployeeProfile, profileCaptor.getValue());
 		assertEquals("work.mail@pns.com", stringCaptor.getValue());
-		assertEquals(mockEmployeeProfile(), employeeProfile);
+		assertEquals(mockEmployeeProfile, employeeProfile);
 		mockEmployeeProfileEntity.setEmployeeId("P000134");
 		assertTrue(mockEmployeeProfileEntity.equals(entityCaptor.getValue()));
 	}

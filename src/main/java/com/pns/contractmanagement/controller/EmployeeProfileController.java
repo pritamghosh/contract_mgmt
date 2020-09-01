@@ -1,10 +1,12 @@
 package com.pns.contractmanagement.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,4 +40,14 @@ public class EmployeeProfileController {
 	public EmployeeProfile uploadImage(@RequestParam("image") MultipartFile image) throws IOException {
 		return service.uploadImage(image.getBytes());
 	}
+	
+	@GetMapping("/{id}")
+    public EmployeeProfile findProfileById(@PathVariable("id") String id) {
+        return service.findProfileById(id);
+    }
+	
+	@GetMapping("/search")
+    public List<EmployeeProfile> searchEmployee(@RequestParam("query") String query) {
+        return service.searchEmployee(query);
+    }
 }

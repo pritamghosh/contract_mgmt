@@ -53,6 +53,10 @@ public class MongoCollectionUtil {
 	public MongoDatabase getContractDatabase() {
 		return contractDatabase;
 	}
+	
+	public MongoDatabase getUserProfileDatabase() {
+        return userProfileDatabase;
+    }
 
 
 }

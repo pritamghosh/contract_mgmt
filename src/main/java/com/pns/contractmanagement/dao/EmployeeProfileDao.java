@@ -1,5 +1,6 @@
 package com.pns.contractmanagement.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.pns.contractmanagement.entity.EmployeeProfileEntity;
@@ -19,5 +20,11 @@ public interface EmployeeProfileDao {
     Optional<EmployeeProfileEntity> findByEmail(String email);
 
 	boolean saveImage(String employeeId, byte[] image);
+
+    /**
+     * @param query
+     * @return
+     */
+    List<EmployeeProfileEntity> searchByQuery(String query);
 
 }
