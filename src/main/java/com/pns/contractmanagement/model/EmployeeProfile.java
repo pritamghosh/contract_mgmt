@@ -50,5 +50,13 @@ public interface EmployeeProfile {
     String getBloodGroup();
     
     @Nullable byte[] getImage();
+    
+
+    @Nullable
+    Manager getReportingManager();
+    
+    @Nullable
+    Manager getHrManager();
+    
 
 }

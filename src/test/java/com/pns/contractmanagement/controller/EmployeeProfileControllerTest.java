@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pns.contractmanagement.model.EmployeeProfile;
+import com.pns.contractmanagement.model.Manager;
 import com.pns.contractmanagement.service.EmployeeProfileService;
 
 /**
@@ -47,6 +48,9 @@ class EmployeeProfileControllerTest {
     
     @Mock
     EmployeeProfile mockProfile;
+    
+    @Mock
+    Manager mockMangerSearchResult;
     
     @Test
     void getEmployeeProfileTest() {
@@ -88,11 +92,11 @@ class EmployeeProfileControllerTest {
     
     @Test
     void searchEmployeeTest() throws IOException {
-        when(service.searchEmployee(Mockito.any())).thenReturn(List.of(mockProfile));
-        final List<EmployeeProfile> employee = controller.searchEmployee("mockQuery");
-        verify(service,times(1)).searchEmployee(stringCaptor.capture());
+        when(service.searchManager(Mockito.any())).thenReturn(List.of(mockMangerSearchResult));
+        final List<Manager> mangerSearchResult = controller.searchManager("mockQuery");
+        verify(service,times(1)).searchManager(stringCaptor.capture());
         assertEquals("mockQuery", stringCaptor.getValue());
-        assertIterableEquals(List.of(mockProfile), employee);
+        assertIterableEquals(List.of(mockMangerSearchResult), mangerSearchResult);
     }
 
 }

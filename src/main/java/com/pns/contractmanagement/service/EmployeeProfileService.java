@@ -3,6 +3,7 @@ package com.pns.contractmanagement.service;
 import java.util.List;
 
 import com.pns.contractmanagement.model.EmployeeProfile;
+import com.pns.contractmanagement.model.Manager;
 
 /**
  *
@@ -32,6 +33,6 @@ public interface EmployeeProfileService {
      * @param query
      * @return
      */
-    List<EmployeeProfile> searchEmployee(String query);
+    List<Manager> searchManager(String query);
 
 }

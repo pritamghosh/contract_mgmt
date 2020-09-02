@@ -37,6 +37,8 @@ import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.helper.impl.UserRegisterHelperImpl;
 import com.pns.contractmanagement.model.EmployeeProfile;
 import com.pns.contractmanagement.model.ImmutableEmployeeProfile;
+import com.pns.contractmanagement.model.ImmutableManager;
+import com.pns.contractmanagement.model.Manager;
 import com.pns.contractmanagement.service.impl.EmployeeProfileServiceImpl;
 import com.pns.contractmanagement.util.ServiceUtil;
 
@@ -46,7 +48,6 @@ import com.pns.contractmanagement.util.ServiceUtil;
 @ExtendWith(MockitoExtension.class)
 class EmployeeProfileServiceImplTest {
 
-	/** LOCAL_DATE. */
 
 	@Mock
 	private EmployeeProfileDao employeeProfileDao;
@@ -106,14 +107,15 @@ class EmployeeProfileServiceImplTest {
     }
 	
 	@Test
-    void searchEmployeeTest() {
-        when(employeeProfileDao.searchByQuery(Mockito.anyString()))
-                .thenReturn(List.of(mockEmployeeProfileEntity()));
-        final List<EmployeeProfile> employeeProfile = service.searchEmployee("mockQuery");
-        verify(employeeProfileDao, only()).searchByQuery(stringCaptor.capture());
-        assertIterableEquals(List.of(ImmutableEmployeeProfile.copyOf(mockEmployeeProfile()).withImage(null)), employeeProfile);
-        assertEquals("mockQuery", stringCaptor.getValue());
-    }
+	void searchManagerTest() {
+		when(employeeProfileDao.searchByQuery(Mockito.anyString())).thenReturn(List.of(mockEmployeeProfileEntity()));
+		final List<Manager> searchResult = service.searchManager("mockQuery");
+		verify(employeeProfileDao, only()).searchByQuery(stringCaptor.capture());
+		assertIterableEquals(List.of(ImmutableManager.builder()
+				.name("firstname middlename familyname(empid)").id("5f2ea7b9ae64c10bd8383933").employeeId("empid").build()),
+				searchResult);
+		assertEquals("mockQuery", stringCaptor.getValue());
+	}
 	
 	@Test
     void uploadImageTest() {

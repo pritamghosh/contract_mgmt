@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pns.contractmanagement.model.EmployeeProfile;
+import com.pns.contractmanagement.model.Manager;
 import com.pns.contractmanagement.service.EmployeeProfileService;
 
 /**
@@ -46,8 +47,8 @@ public class EmployeeProfileController {
         return service.findProfileById(id);
     }
 	
-	@GetMapping("/search")
-    public List<EmployeeProfile> searchEmployee(@RequestParam("query") String query) {
-        return service.searchEmployee(query);
+	@GetMapping("/search/manager")
+    public List<Manager> searchManager(@RequestParam("query") String query) {
+        return service.searchManager(query);
     }
 }
