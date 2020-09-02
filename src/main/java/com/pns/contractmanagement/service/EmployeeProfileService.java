@@ -1,5 +1,6 @@
 package com.pns.contractmanagement.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.pns.contractmanagement.model.EmployeeProfile;
@@ -21,7 +22,7 @@ public interface EmployeeProfileService {
      */
     EmployeeProfile getEmployeeProfile();
 
-	EmployeeProfile uploadImage(byte[] image);
+	EmployeeProfile uploadImage(byte[] image) throws IOException;
 
     /**
      * @param id

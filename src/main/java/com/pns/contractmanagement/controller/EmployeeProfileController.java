@@ -36,19 +36,19 @@ public class EmployeeProfileController {
 	public EmployeeProfile getEmployeeProfile() {
 		return service.getEmployeeProfile();
 	}
-	
+
 	@PatchMapping("image")
 	public EmployeeProfile uploadImage(@RequestParam("image") MultipartFile image) throws IOException {
 		return service.uploadImage(image.getBytes());
 	}
-	
+
 	@GetMapping("/{id}")
-    public EmployeeProfile findProfileById(@PathVariable("id") String id) {
-        return service.findProfileById(id);
-    }
-	
+	public EmployeeProfile findProfileById(@PathVariable("id") String id) {
+		return service.findProfileById(id);
+	}
+
 	@GetMapping("/search/manager")
-    public List<Manager> searchManager(@RequestParam("query") String query) {
-        return service.searchManager(query);
-    }
+	public List<Manager> searchManager(@RequestParam("query") String query) {
+		return service.searchManager(query);
+	}
 }

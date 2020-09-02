@@ -1,10 +1,20 @@
 package com.pns.contractmanagement.service.impl;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -75,13 +85,39 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 	}
 
 	@Override
-	public EmployeeProfile uploadImage(byte[] image) {
+	public EmployeeProfile uploadImage(byte[] image) throws IOException {
 		final String employeeId = ServiceUtil.getUsernameFromContext();
-		if (employeeProfileDao.saveImage(employeeId, image)) {
+		if (employeeProfileDao.saveImage(employeeId, processImage(image))) {
 			return getEmployeeProfile();
 		}
 		;
 		throw new PnsException("Unable to save Profile Picture");
+	}
+
+	private byte[] processImage(byte[] image) throws IOException {
+		if(image.length<=500000) {
+			return image;
+		}
+		final float quality = 500000f/image.length;
+		BufferedImage bi = ImageIO.read(new ByteArrayInputStream(image));
+		ImageWriter writer = ImageIO.getImageWritersByMIMEType("image/jpeg").next();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+		writer.setOutput(ios);
+		try(out;ios;) {
+
+			ImageWriteParam param = writer.getDefaultWriteParam();
+			if (param.canWriteCompressed()) {
+				param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+				param.setCompressionQuality(quality);
+			}
+
+			writer.write(null, new IIOImage(bi, null, null), param);
+			byte[] imageByte = out.toByteArray();
+			return imageByte;
+		} finally {
+			writer.dispose();
+		}
 	}
 
 	/** {@inheritDoc} */

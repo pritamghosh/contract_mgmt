@@ -11,6 +11,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.pns.contractmanagement.dao.EmployeeProfileDao;
@@ -118,7 +122,7 @@ class EmployeeProfileServiceImplTest {
 	}
 	
 	@Test
-    void uploadImageTest() {
+    void uploadImageTest() throws IOException {
         when(employeeProfileDao.saveImage(Mockito.anyString(),Mockito.any()))
                 .thenReturn(true);
         when(employeeProfileDao.findByEmployeeId(Mockito.anyString()))
@@ -129,6 +133,22 @@ class EmployeeProfileServiceImplTest {
         assertEquals(mockEmployeeProfile(), employeeProfile);
         assertEquals("employeMockUserId", stringCaptor.getValue());
         assertArrayEquals(new byte[] {1}, imageCaptor.getValue());
+    }
+	
+	@Test
+    void uploadImageSizeTest() throws IOException {
+        when(employeeProfileDao.saveImage(Mockito.anyString(),Mockito.any()))
+                .thenReturn(true);
+        when(employeeProfileDao.findByEmployeeId(Mockito.anyString()))
+        .thenReturn(Optional.of(mockEmployeeProfileEntity()));
+        File myObj = new ClassPathResource("test.jpg").getFile();
+        final byte[] image = Files.readAllBytes(myObj.toPath());
+		final EmployeeProfile employeeProfile = service.uploadImage(image);
+        verify(employeeProfileDao, times(1)).saveImage(stringCaptor.capture(),imageCaptor.capture());
+        verify(employeeProfileDao, times(1)).findByEmployeeId(stringCaptor.capture());
+        assertEquals(mockEmployeeProfile(), employeeProfile);
+        assertEquals("employeMockUserId", stringCaptor.getValue());
+        assertTrue(image.length> imageCaptor.getValue().length);
     }
 
 	@Test
