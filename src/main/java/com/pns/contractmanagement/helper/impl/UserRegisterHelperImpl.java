@@ -104,7 +104,7 @@ public class UserRegisterHelperImpl {
 		user.setGroups(List.of(profile.getDesignation()));
 		final CredentialRepresentation cred = new CredentialRepresentation();
 		cred.setType(CredentialRepresentation.PASSWORD);
-		cred.setValue("pass");
+		cred.setValue("Pns@12345");
 		cred.setTemporary(true);
 		user.setCredentials(List.of(cred));
 		return user;

@@ -28,8 +28,9 @@ public class LeaveRequestEntity {
     private LocalDate from;
     private LocalDate to;
     private String approvedBy;
-    private LocalDateTime approvalTime;
+    private LocalDateTime approvalDateTime;
     private String approvarNote;
     private Status status;
+    private LocalDateTime requestDateTime;
 
 }
