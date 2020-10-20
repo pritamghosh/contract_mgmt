@@ -33,10 +33,13 @@ import com.pns.contractmanagement.model.Manager;
 import com.pns.contractmanagement.service.EmployeeProfileService;
 import com.pns.contractmanagement.util.ServiceUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Service Implementation of {@link EmployeeProfileService}.
  */
 @Service
+@Slf4j
 public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 
 	@Value("${employee.id.length:7}")
@@ -77,10 +80,12 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 	/** {@inheritDoc} */
 	@Override
 	public EmployeeProfile getEmployeeProfile() {
-		final EmployeeProfile findProfileById = findProfileById(ServiceUtil.getUsernameFromContext());
+		final String username = ServiceUtil.getUsernameFromContext();
+		final EmployeeProfile findProfileById = findProfileById(username);
 		if (findProfileById != null) {
 			return findProfileById;
 		}
+		log.error("No Active User Found for {} ", username);
 		throw new PnsException("No Active User Found");
 	}
 
