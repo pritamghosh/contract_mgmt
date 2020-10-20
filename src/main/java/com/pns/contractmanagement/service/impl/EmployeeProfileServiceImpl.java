@@ -62,7 +62,7 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 		final EmployeeProfileEntity profileToInsert = map(employeeProfile);
 		final SequenceEntity employeeSequence = employeeProfileDao.findAndUpdateSequece();
 		final String sequence = String.valueOf(employeeSequence.getSequence());
-		StringBuilder idBuilder = new StringBuilder("P");
+		StringBuilder idBuilder = new StringBuilder("p");
 		while (idBuilder.length() + sequence.length() < employeeIdLength) {
 			idBuilder.append(0);
 		}
