@@ -33,6 +33,7 @@ app:
       customer: 4
       equipment: 6
       contract: 3
+      employee.profile: 10
     index:
       name:
          customer: customers

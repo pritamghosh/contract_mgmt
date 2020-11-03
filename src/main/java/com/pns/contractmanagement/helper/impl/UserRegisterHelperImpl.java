@@ -100,7 +100,7 @@ public class UserRegisterHelperImpl {
 		user.setEmail(profile.getWorkEmail());
 		user.setEmailVerified(true);
 		user.setEnabled(true);
-		user.setUsername(profile.getEmployeeId());
+		user.setUsername(profile.getEmployeeId().toUpperCase());
 		user.setGroups(List.of(profile.getDesignation()));
 		final CredentialRepresentation cred = new CredentialRepresentation();
 		cred.setType(CredentialRepresentation.PASSWORD);

@@ -27,4 +27,12 @@ public interface EmployeeProfileDao {
      */
     List<EmployeeProfileEntity> searchByQuery(String query);
 
+    List<EmployeeProfileEntity> findAll(final int page);
+
+	List<EmployeeProfileEntity> searchByQuery(String query, int page);
+
+	long countAllDocumnets();
+
+	long countAllDocumnets(String query);
+
 }

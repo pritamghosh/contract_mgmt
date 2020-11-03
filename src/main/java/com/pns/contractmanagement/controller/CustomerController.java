@@ -16,6 +16,9 @@ import com.pns.contractmanagement.model.Customer;
 import com.pns.contractmanagement.model.SearchResponse;
 import com.pns.contractmanagement.service.impl.CustomerServiceImpl;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
+
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
@@ -48,6 +51,7 @@ public class CustomerController {
 	}
 
 	@GetMapping(params = { "region", "!name" })
+	@ApiOperation(authorizations = { @Authorization(value = "Bearer") }, value = "getCustomerbyRegion")
 	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Customer> getCustomerbyRegion(@RequestParam("region") final String region,
 			@RequestParam(value = "page", defaultValue = "1") final int page) {
@@ -55,6 +59,7 @@ public class CustomerController {
 	}
 
 	@GetMapping(params = { "name", "!region" })
+	@ApiOperation(authorizations = { @Authorization(value = "Bearer") }, value = "getCustomerbyName")
 	@PreAuthorize("hasRole('read')")
 	public SearchResponse<Customer> getCustomerbyName(@RequestParam("name") final String name,
 			@RequestParam(value = "page", defaultValue = "1") final int page) {
@@ -70,6 +75,7 @@ public class CustomerController {
 
 	@GetMapping(params = { "!region", "!name" })
 	@PreAuthorize("hasRole('read')")
+	@ApiOperation(authorizations = { @Authorization(value = "Bearer") }, value = "getAllCustomer")
 	public SearchResponse<Customer> getAllCustomer(@RequestParam(value = "page", defaultValue = "1") final int page) {
 		return service.getAllCustomer(page);
 	}

@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.pns.contractmanagement.model.EmployeeProfile;
 import com.pns.contractmanagement.model.Manager;
+import com.pns.contractmanagement.model.SearchResponse;
 import com.pns.contractmanagement.service.EmployeeProfileService;
 
 /**
@@ -50,5 +51,15 @@ public class EmployeeProfileController {
 	@GetMapping("/search/manager")
 	public List<Manager> searchManager(@RequestParam("query") String query) {
 		return service.searchManager(query);
+	}
+
+	@GetMapping("/search")
+	public SearchResponse<EmployeeProfile> searchProfile(@RequestParam("query") String query,@RequestParam(value = "page", defaultValue = "1") final int page) {
+		return service.searchProfile(query,page);
+	}
+
+	@GetMapping("/all")
+	public SearchResponse<EmployeeProfile> getAllProfiles(@RequestParam(value = "page", defaultValue = "1") final int page) {
+		return service.getAllProfiles(page);
 	}
 }

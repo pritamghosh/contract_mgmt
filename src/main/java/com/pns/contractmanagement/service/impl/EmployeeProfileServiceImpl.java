@@ -29,7 +29,9 @@ import com.pns.contractmanagement.helper.impl.UserRegisterHelperImpl;
 import com.pns.contractmanagement.model.EmployeeProfile;
 import com.pns.contractmanagement.model.ImmutableEmployeeProfile;
 import com.pns.contractmanagement.model.ImmutableManager;
+import com.pns.contractmanagement.model.ImmutableSearchResponse;
 import com.pns.contractmanagement.model.Manager;
+import com.pns.contractmanagement.model.SearchResponse;
 import com.pns.contractmanagement.service.EmployeeProfileService;
 import com.pns.contractmanagement.util.ServiceUtil;
 
@@ -100,16 +102,16 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 	}
 
 	private byte[] processImage(byte[] image) throws IOException {
-		if(image.length<=500000) {
+		if (image.length <= 500000) {
 			return image;
 		}
-		final float quality = 500000f/image.length;
+		final float quality = 500000f / image.length;
 		BufferedImage bi = ImageIO.read(new ByteArrayInputStream(image));
 		ImageWriter writer = ImageIO.getImageWritersByMIMEType("image/jpeg").next();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ImageOutputStream ios = ImageIO.createImageOutputStream(out);
 		writer.setOutput(ios);
-		try(out;ios;) {
+		try (out; ios;) {
 
 			ImageWriteParam param = writer.getDefaultWriteParam();
 			if (param.canWriteCompressed()) {
@@ -139,6 +141,23 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 	@Override
 	public List<Manager> searchManager(String query) {
 		return employeeProfileDao.searchByQuery(query).stream().map(this::mapManger).collect(Collectors.toList());
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public SearchResponse<EmployeeProfile> searchProfile(String query, int page) {
+		final List<EmployeeProfile> result = employeeProfileDao.searchByQuery(query, page == 0 ? 1 : page).stream()
+				.map(e -> map(e, true)).collect(Collectors.toList());
+		return ImmutableSearchResponse.<EmployeeProfile>builder().result(result)
+				.pageCount(employeeProfileDao.countAllDocumnets(query)).build();
+	}
+
+	@Override
+	public SearchResponse<EmployeeProfile> getAllProfiles(int page) {
+		final List<EmployeeProfile> result = employeeProfileDao.findAll(page == 0 ? 1 : page).stream()
+				.map(e -> map(e, true)).collect(Collectors.toList());
+		return ImmutableSearchResponse.<EmployeeProfile>builder().result(result)
+				.pageCount(employeeProfileDao.countAllDocumnets()).build();
 	}
 
 	private EmployeeProfileEntity map(final EmployeeProfile profile) {

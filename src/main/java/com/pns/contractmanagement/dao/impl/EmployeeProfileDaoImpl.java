@@ -6,6 +6,7 @@ import static com.mongodb.client.model.Filters.text;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.inc;
 import static com.mongodb.client.model.Updates.set;
+import static com.pns.contractmanagement.util.DaoUtil.countPages;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,8 +36,13 @@ public class EmployeeProfileDaoImpl implements EmployeeProfileDao {
 
 	private static final String SQUENCE_TYPE = "squenceType";
 	private static final String EMPLOYEE_NO = "employee-no";
+
+	@Value("${app.page.size.employee.profile:20}")
+	private int pageSize;
 	private final MongoCollection<EmployeeProfileEntity> employProfileCollection;
 	private final MongoCollection<SequenceEntity> sequenceDocumentCollection;
+
+	private final Document activeFilter = new Document("status", Status.ACTIVE.name());
 
 	@Autowired
 	public EmployeeProfileDaoImpl(final MongoCollectionUtil util,
@@ -53,6 +59,15 @@ public class EmployeeProfileDaoImpl implements EmployeeProfileDao {
 		final InsertOneResult insertOne = employProfileCollection.insertOne(profile);
 		profile.setOid(insertOne.getInsertedId().asObjectId().getValue());
 		return profile;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public List<EmployeeProfileEntity> findAll(final int page) {
+		final List<EmployeeProfileEntity> employeeProfiles = new ArrayList<>();
+		employProfileCollection.find(activeFilter).skip((page - 1) * pageSize).limit(pageSize).iterator()
+				.forEachRemaining(employeeProfiles::add);
+		return employeeProfiles;
 	}
 
 	/** {@inheritDoc} */
@@ -88,12 +103,30 @@ public class EmployeeProfileDaoImpl implements EmployeeProfileDao {
 		final UpdateResult ur = employProfileCollection.updateOne(eq("employeeId", employeeId), update);
 		return ur.getMatchedCount() > 0 && ur.getModifiedCount() > 0;
 	}
+
 	@Override
 	public List<EmployeeProfileEntity> searchByQuery(final String query) {
-        final List<EmployeeProfileEntity> employeeProfiles = new ArrayList<>();
-        employProfileCollection.find(and(text(query),  new Document("status", Status.ACTIVE.name())))
-                .iterator().forEachRemaining(employeeProfiles::add);
-        return employeeProfiles;
-    }
+		final List<EmployeeProfileEntity> employeeProfiles = new ArrayList<>();
+		employProfileCollection.find(and(text(query), activeFilter)).iterator().forEachRemaining(employeeProfiles::add);
+		return employeeProfiles;
+	}
+
+	@Override
+	public List<EmployeeProfileEntity> searchByQuery(final String query, final int page) {
+		final List<EmployeeProfileEntity> employeeProfiles = new ArrayList<>();
+		employProfileCollection.find(and(text(query), activeFilter)).skip((page - 1) * pageSize).limit(pageSize)
+				.iterator().forEachRemaining(employeeProfiles::add);
+		return employeeProfiles;
+	}
+
+	@Override
+	public long countAllDocumnets() {
+		return countPages(employProfileCollection.countDocuments(and(activeFilter)), pageSize);
+	}
+
+	@Override
+	public long countAllDocumnets(String query) {
+		return countPages(employProfileCollection.countDocuments(and(activeFilter, text(query))), pageSize);
+	}
 
 }
