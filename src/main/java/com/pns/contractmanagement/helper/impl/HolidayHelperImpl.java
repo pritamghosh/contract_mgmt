@@ -3,7 +3,6 @@ package com.pns.contractmanagement.helper.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -31,13 +30,13 @@ public class HolidayHelperImpl {
 
 	private final String fileUrl;
 
-	public HolidayHelperImpl(@Value("${app.holiday.file.url:/holiday.xlsx}") String fileUrl) {
+	public HolidayHelperImpl(@Value("${app.holiday.file.url:holiday.xlsx}") String fileUrl) {
 		this.fileUrl = fileUrl;
 		loadHoliday();
 	}
 
 	public void loadHoliday() {
-		try (FileInputStream file = new FileInputStream(new File(this.getClass().getResource(fileUrl).toURI()))) {
+		try (FileInputStream file = new FileInputStream(new File(fileUrl))) {
 			XSSFWorkbook workbook = new XSSFWorkbook(file);
 			// Get first/desired sheet from the workbook
 			final int numberOfSheets = workbook.getNumberOfSheets();
@@ -63,7 +62,7 @@ public class HolidayHelperImpl {
 				}
 			}
 
-		} catch (IOException | URISyntaxException ex) {
+		} catch (IOException ex) {
 			LOGGER.error("Exception occured", ex);
 		}
 	}
