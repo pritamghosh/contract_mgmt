@@ -16,7 +16,7 @@ import com.pns.contractmanagement.service.LeaveService;
 public class LeaveServiceImpl implements LeaveService {
 
 	@Autowired
-	private HolidayHelperImpl holidayHelper = new HolidayHelperImpl("/holiday.xlsx");
+	private HolidayHelperImpl holidayHelper;
 
 	@Override
 	public boolean initializeLeaveQuota(EmployeeProfile profile) {
