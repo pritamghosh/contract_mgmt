@@ -22,6 +22,7 @@ app:
     print.jasper:
       compiled: true
       file.url: /pns/config/application/${spring.application.name}/PnsContractInvoice.jasper
+    holiday.file.url: /pns/config/application/${spring.application.name}/holiday.xlsx
     switch:
       index.update:
          customer: true

@@ -203,6 +203,12 @@
 												<include name="PnsContractInvoice.jasper" />
 											</fileset>
 										</copy>
+										<copy todir="/pns/config/application/${artifact.name}"
+											overwrite="true" flatten="true">
+											<fileset dir="${basedir}/src/main/resources">
+												<include name="holiday.xlsx" />
+											</fileset>
+										</copy>
 									</target>
 								</configuration>
 								<goals>
