@@ -40,6 +40,18 @@
 			<artifactId>jasperreports-fonts</artifactId>
 			<version>6.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.immutables/value -->
 		<dependency>
 			<groupId>org.immutables</groupId>
@@ -276,6 +288,7 @@
 											<fileset dir="${basedir}/src/main/resources">
 												<include name="application.yml" />
 												<include name="PnsContractInvoice.jasper" />
+												<include name="holiday.xlsx" />
 											</fileset>
 										</copy>
 										<copy todir="/pns/config/deploy/${artifact.name}"

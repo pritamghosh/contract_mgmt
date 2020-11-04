@@ -12,4 +12,6 @@ public interface LeaveService {
     LeaveRequest applyLeave(LeaveRequest request);
     
     LeaveRequest approve(LeaveRequest request);
+
+	long countNoOfHolidays(String start, String end);
 }
