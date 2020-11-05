@@ -17,28 +17,34 @@ keycloak:
 app:
     employee.id.length : 7
     database.name:
-       contract: userdb
-       userprofile: userprofile
+    contract: userdb
+    userprofile: userprofile
     print.jasper:
-      compiled: true
-      file.url: /pns/config/application/${spring.application.name}/PnsContractInvoice.jasper
+        compiled: true
+        file.url: /pns/config/application/${spring.application.name}/PnsContractInvoice.jasper
     holiday.file.url: /pns/config/application/${spring.application.name}/holiday.xlsx
     switch:
-      index.update:
-         customer: true
-         contract: true
-         equipment: true
-         equipmentDetails: true
-         employee.profile: true
+        index.update:
+            customer: true
+            contract: true
+            equipment: true
+            equipmentDetails: true
+            employee.profile: true
     page.size:
-      customer: 4
-      equipment: 6
-      contract: 3
-      employee.profile: 10
+        customer: 4
+        equipment: 6
+        contract: 3
+        employee.profile: 10
     index:
-      name:
-         customer: customers
-         contract: contracts
-         equipment: equipments
-         equipmentItem: equipmentItems
-         employee.profile: employeeProfiles
+        name:
+        customer: customers
+        contract: contracts
+        equipment: equipments
+        equipmentItem: equipmentItems
+        employee:
+            profile: employeeProfiles
+            leaveQuota: leaveQuota
+    leave.quota.total:
+        cl: 20
+        pl: 20    
+        sl: 30

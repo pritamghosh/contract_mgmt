@@ -50,6 +50,9 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 	private EmployeeProfileDao employeeProfileDao;
 
 	@Autowired
+	private LeaveServiceImpl leaveService;
+
+	@Autowired
 	private UserRegisterHelperImpl userRegisterHelper;
 
 	/** {@inheritDoc} */
@@ -75,6 +78,11 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 			userRegisterHelper.registerUser(newProfile);
 		} catch (PnsException ex) {
 			throw new PnsException("Unable to Register Employee for Login", ex);
+		}
+		try {
+			leaveService.initializeLeaveQuota(idBuilder.toString(), 0);
+		} catch (PnsException ex) {
+			throw new PnsException("Unable to Initialize Leave Quota", ex);
 		}
 		return newProfile;
 	}

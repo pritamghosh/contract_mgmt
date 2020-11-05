@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pns.contractmanagement.model.HolidayCalendar;
+import com.pns.contractmanagement.model.LeaveQuotaDetails;
 import com.pns.contractmanagement.service.LeaveService;
 
 @RestController
@@ -25,5 +26,15 @@ public class LeaveController {
 	@GetMapping("calendar")
 	public List<HolidayCalendar> getCustomerbyid() {
 		return service.getHolidayCalendar();
+	}
+	
+	@GetMapping("initialize")
+	public boolean initialize(@RequestParam("employeeID") final String employeeID,@RequestParam(value = "year", defaultValue = "0") final int year) {
+		return service.initializeLeaveQuota(employeeID, year);
+	}
+	
+	@GetMapping("quota")
+	public LeaveQuotaDetails getQuota(@RequestParam(required=false) final String employeeID,@RequestParam(value = "year", defaultValue = "0") final int year) {
+		return service.getQuota(employeeID, year);
 	}
 }
