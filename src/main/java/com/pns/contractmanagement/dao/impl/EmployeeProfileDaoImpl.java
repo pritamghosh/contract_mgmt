@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Projections;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.pns.contractmanagement.dao.EmployeeProfileDao;
@@ -127,6 +128,13 @@ public class EmployeeProfileDaoImpl implements EmployeeProfileDao {
 	@Override
 	public long countAllDocumnets(String query) {
 		return countPages(employProfileCollection.countDocuments(and(activeFilter, text(query))), pageSize);
+	}
+
+	@Override
+	public Optional<String> findEmployeeRegion(String username) {
+		final EmployeeProfileEntity employee = employProfileCollection.find(new Document("employeeId", username))
+				.projection(Projections.include("baseLocation")).first();
+		return employee != null ? Optional.ofNullable(employee.getBaseLocation()) : Optional.empty();
 	}
 
 }

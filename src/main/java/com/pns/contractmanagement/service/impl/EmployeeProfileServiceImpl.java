@@ -219,4 +219,13 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 
 	}
 
+	@Override
+	public String getEmployeeRegion() {
+		final Optional<String> region = employeeProfileDao.findEmployeeRegion(ServiceUtil.getUsernameFromContext());
+		if (region.isPresent()) {
+			return region.get();
+		}
+		throw new PnsException("Invalid Employee ID");
+	}
+
 }

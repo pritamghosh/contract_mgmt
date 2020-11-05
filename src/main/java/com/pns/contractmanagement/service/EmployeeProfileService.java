@@ -41,4 +41,6 @@ public interface EmployeeProfileService {
 
 	SearchResponse<EmployeeProfile> getAllProfiles(int page);
 
+	String getEmployeeRegion();
+
 }

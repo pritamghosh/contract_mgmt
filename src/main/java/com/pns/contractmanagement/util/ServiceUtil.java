@@ -12,14 +12,15 @@ public final class ServiceUtil {
 	}
 
 	public static String getUsernameFromContext() {
-		final KeycloakPrincipal<KeycloakSecurityContext> pricipal = getPrincipal();
-		return pricipal.getName();
+		final KeycloakPrincipal<KeycloakSecurityContext> principal = getPrincipal();
+		return principal.getName();
 	}
 
 	public static boolean isUserauthorized(final String role) {
 		final KeycloakPrincipal<KeycloakSecurityContext> principal = getPrincipal();
 		return principal.getKeycloakSecurityContext().getToken().getRealmAccess().getRoles().contains(role);
 	}
+	
 
 	private static KeycloakPrincipal<KeycloakSecurityContext> getPrincipal() {
 		final KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken) SecurityContextHolder
@@ -29,5 +30,6 @@ public final class ServiceUtil {
 				.getPrincipal();
 		return pricipal;
 	}
+	
 
 }

@@ -34,5 +34,7 @@ public interface EmployeeProfileDao {
 	long countAllDocumnets();
 
 	long countAllDocumnets(String query);
+	
+	Optional<String> findEmployeeRegion(String username);
 
 }

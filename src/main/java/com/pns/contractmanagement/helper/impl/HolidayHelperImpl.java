@@ -6,10 +6,17 @@ import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.TextStyle;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -21,12 +28,17 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Range;
 
+import com.pns.contractmanagement.model.HolidayCalendar.Holiday;
+import com.pns.contractmanagement.model.ImmutableHolidayCalendar;
+import com.pns.contractmanagement.model.HolidayCalendar;
+import com.pns.contractmanagement.model.ImmutableHoliday;
+
 @Component
 public class HolidayHelperImpl {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HolidayHelperImpl.class);
 
-	private Map<String, Map<LocalDate, String>> holidayMap = new HashMap<>();
+	private Map<String, Map<LocalDate, String>> holidayMap = new LinkedHashMap<>();
 
 	private final String fileUrl;
 
@@ -38,7 +50,6 @@ public class HolidayHelperImpl {
 	public void loadHoliday() {
 		try (FileInputStream file = new FileInputStream(new File(fileUrl))) {
 			XSSFWorkbook workbook = new XSSFWorkbook(file);
-			// Get first/desired sheet from the workbook
 			final int numberOfSheets = workbook.getNumberOfSheets();
 
 			for (int i = 0; i < numberOfSheets; i++) {
@@ -80,5 +91,22 @@ public class HolidayHelperImpl {
 		}
 		return count;
 
+	}
+
+	public List<HolidayCalendar> getHolidayCalendar() {
+		List<HolidayCalendar> list = new ArrayList<HolidayCalendar>();
+		for (Entry<String, Map<LocalDate, String>> calByRegion : holidayMap.entrySet()) {
+			final List<Holiday> holdays = calByRegion.getValue().entrySet().stream().map(this::mapHoliday)
+					.sorted((h1, h2) -> h1.getDate().compareTo(h2.getDate())).collect(Collectors.toList());
+			list.add(ImmutableHolidayCalendar.builder().region(calByRegion.getKey()).details(holdays).build());
+		}
+		return list;
+
+	}
+
+	private Holiday mapHoliday(Entry<LocalDate, String> entry) {
+		return ImmutableHoliday.builder().date(entry.getKey())
+				.day(entry.getKey().getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("en")))
+				.occasion(entry.getValue()).build();
 	}
 }
