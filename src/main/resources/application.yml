@@ -44,7 +44,13 @@ app:
         employee:
             profile: employeeProfiles
             leaveQuota: leaveQuota
+            leaveHistory: leaveHistory
     leave.quota.total:
         cl: 20
         pl: 20    
         sl: 30
+    smtp:
+        username: "smtp.pritam@gmail.com"
+        password: Pass@M10340791
+        port: "587"
+        host: "smtp.gmail.com"

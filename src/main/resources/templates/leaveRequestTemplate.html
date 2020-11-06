@@ -1,0 +1,32 @@
+<html>
+<body>
+<p>Dear ${name},<br/><br/>
+Please find the below leave request of   ${employee.fname} ${employee.lname}(${employee.id}).<br/><br/>
+<table style=' border-collapse: collapse;'>
+  <tr>
+    <th style= "border: 2px solid;text-align: left;padding: 5px;">Employee Id</th>
+    <th style= "border: 2px solid;text-align: left;padding: 5px;">Employee Name</th>
+    <th style= "border: 2px solid;text-align: left;padding: 5px;">From Date</th>
+    <th style= "border: 2px solid;text-align: left;padding: 5px;">To Date</th>
+    <th style= "border: 2px solid;text-align: left;padding: 5px;">No of Days</th>
+    <th style= "border: 2px solid;text-align: left;padding: 5px;">Leave Type</th>	
+    <th style= "border: 2px solid;text-align: left;padding: 5px;">Note for Approver</th>
+  </tr>
+  <tr>
+    <td style= "border: 2px solid;text-align: left;padding: 5px;">${employee.id}</td>
+    <td style= "border: 2px solid;text-align: left;padding: 5px;">${employee.fname} ${employee.lname}</td>
+    <td style= "border: 2px solid;text-align: left;padding: 5px;">${form}</td>
+	<td style= "border: 2px solid;text-align: left;padding: 5px;">${to}</td>
+	<td style= "border: 2px solid;text-align: left;padding: 5px;">${noOfDays}</td>
+	<td style= "border: 2px solid;text-align: left;padding: 5px;">${type}</td>
+	<td style= "border: 2px solid;text-align: left;padding: 5px;">${note}</td>
+  </tr>
+  </table>
+  <br/><br/>
+Kindly click the below link to Approve/Reject the request.<br/><br/>
+${actionlink}<br/><br/>
+(This is an auto-generated mail. Please do not reply)<br/><br/>
+Regards,<br/>
+Leave Admin</p>
+<body>
+</html>
