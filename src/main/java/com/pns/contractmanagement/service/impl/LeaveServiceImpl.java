@@ -11,6 +11,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,9 @@ import com.pns.contractmanagement.vo.MailVo;
 
 @Service
 public class LeaveServiceImpl implements LeaveService {
+	
+
+	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
 	private final String leavetemplateText;
 
@@ -111,7 +116,7 @@ public class LeaveServiceImpl implements LeaveService {
 				.type(request.getType()).build();
 		leaveQuotaDao.updateLeaveQuota(entity, year);
 		final LeaveRequestEntity inserted = leaveHistoryDao.insert(entity);
-		sendMailToApprover(inserted);
+		threadPool.submit(()->sendMailToApprover(inserted));
 		return map(inserted);
 	}
 
