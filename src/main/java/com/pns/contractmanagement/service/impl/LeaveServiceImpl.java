@@ -1,22 +1,33 @@
 package com.pns.contractmanagement.service.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Range;
@@ -45,7 +56,6 @@ import com.pns.contractmanagement.vo.MailVo;
 
 @Service
 public class LeaveServiceImpl implements LeaveService {
-	
 
 	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
@@ -75,9 +85,10 @@ public class LeaveServiceImpl implements LeaveService {
 	@Autowired
 	private MailServiceHelperImpl mailServiceHelper;
 
-	public LeaveServiceImpl() throws IOException, URISyntaxException {
-		leavetemplateText = Files
-				.readString(Paths.get(getClass().getResource("/templates/leaveRequestTemplate.html").toURI()));
+	public LeaveServiceImpl() {
+		final InputStream stream = this.getClass().getClassLoader()
+				.getResourceAsStream("/templates/leaveRequestTemplate.html");
+		leavetemplateText = IOUtils.toString(stream, Charset.defaultCharset());
 	}
 
 	@Override
@@ -116,7 +127,7 @@ public class LeaveServiceImpl implements LeaveService {
 				.type(request.getType()).build();
 		leaveQuotaDao.updateLeaveQuota(entity, year);
 		final LeaveRequestEntity inserted = leaveHistoryDao.insert(entity);
-		threadPool.submit(()->sendMailToApprover(inserted));
+		threadPool.submit(() -> sendMailToApprover(inserted));
 		return map(inserted);
 	}
 
