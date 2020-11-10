@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pns.contractmanagement.model.ApproveRequest;
 import com.pns.contractmanagement.model.HolidayCalendar;
 import com.pns.contractmanagement.model.LeaveQuotaDetails;
 import com.pns.contractmanagement.model.LeaveRequest;
@@ -45,13 +48,33 @@ public class LeaveController {
 	}
 
 	@GetMapping("history")
-	public List<LeaveRequestDetails> getHistory(@RequestParam(required = false) final String employeeID,
+	public List<LeaveRequestDetails> getHistory(@RequestParam(value = "year", defaultValue = "0") final int year) {
+		return service.getHistory(null, year);
+	}
+
+	@GetMapping("history/{employeeID}")
+	public List<LeaveRequestDetails> getHistorybByEmployeeId(@PathVariable final String employeeID,
 			@RequestParam(value = "year", defaultValue = "0") final int year) {
 		return service.getHistory(employeeID, year);
 	}
 
+	@GetMapping("approve")
+	public List<LeaveRequestDetails> geApprovalPendingList() {
+		return service.geApprovalPendingList(null);
+	}
+
+	@PutMapping("approve")
+	public LeaveRequestDetails geApprovalPendingList(@RequestBody ApproveRequest request) {
+		return service.approve(request);
+	}
+
+	@GetMapping("approve/{employeeID}")
+	public List<LeaveRequestDetails> geApprovalPendingListByEmployeeId(@PathVariable final String employeeID) {
+		return service.geApprovalPendingList(employeeID);
+	}
+
 	@PostMapping("apply")
-	public LeaveRequestDetails applyLeave(@RequestBody final LeaveRequest leaveRequest) {
-		return service.applyLeave(leaveRequest);
+	public LeaveRequestDetails applyLeave(@RequestBody final LeaveRequest request) {
+		return service.applyLeave(request);
 	}
 }

@@ -11,6 +11,11 @@ public interface LeaveQuotaDao {
 
 	LeaveDetailsEntity insert(LeaveDetailsEntity entity);
 	
-	LeaveDetailsEntity updateLeaveQuota(LeaveRequestEntity entity, int year);
+	LeaveDetailsEntity updateLeaveQuotaForApplyingLeave(LeaveRequestEntity entity, int year);
+	
+
+	LeaveDetailsEntity updateLeaveQuotaForApprovingLeave(LeaveRequestEntity entity, int year);
+	
+	LeaveDetailsEntity updateLeaveQuotaForCancellingLeave(LeaveRequestEntity entity, int year);
 
 }

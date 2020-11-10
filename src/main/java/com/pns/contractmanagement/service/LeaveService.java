@@ -2,6 +2,7 @@ package com.pns.contractmanagement.service;
 
 import java.util.List;
 
+import com.pns.contractmanagement.model.ApproveRequest;
 import com.pns.contractmanagement.model.HolidayCalendar;
 import com.pns.contractmanagement.model.LeaveQuotaDetails;
 import com.pns.contractmanagement.model.LeaveRequest;
@@ -17,7 +18,7 @@ public interface LeaveService {
     
     
     
-    LeaveRequest approve(LeaveRequest request);
+    LeaveRequestDetails approve(ApproveRequest request);
 
 	long countNoOfHolidays(String start, String end);
 
@@ -26,4 +27,6 @@ public interface LeaveService {
 	LeaveQuotaDetails getQuota(String employeeID, int year);
 	
 	List<LeaveRequestDetails> getHistory(String employeeID, int year);
+
+	List<LeaveRequestDetails> geApprovalPendingList(String employeeID);
 }

@@ -25,11 +25,12 @@ public class LeaveRequestEntity extends AbstractMongoEntity{
 	private float noOfDays;
 	private String employeeId;
 	private String primaryApprover;
+	private String employeeName;
 	private String note;
 	private LocalDate from;
 	private LocalDate to;
-	private String approvedBy;
-	private LocalDateTime approvalDateTime;
+	private String approvedOrRejectedBy;
+	private LocalDateTime approvalOrRejectionDateTime;
 	private String approvarNote;
 	private LeaveStatus status;
 	private LocalDateTime dateTimeOfApply;

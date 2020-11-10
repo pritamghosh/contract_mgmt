@@ -45,7 +45,7 @@ public class LeaveQuotaDaoImpl implements LeaveQuotaDao {
 	}
 
 	@Override
-	public LeaveDetailsEntity updateLeaveQuota(LeaveRequestEntity entity, int year) {
+	public LeaveDetailsEntity updateLeaveQuotaForApplyingLeave(final LeaveRequestEntity entity, final int year) {
 		final LeaveDetailsEntity findOneAndUpdate = leaveQuotaCollection.findOneAndUpdate(
 				and(eq("employeeId", entity.getEmployeeId()), eq("year", year),
 						eq("leaveQuota.type", entity.getType().name())),
@@ -66,6 +66,35 @@ public class LeaveQuotaDaoImpl implements LeaveQuotaDao {
 							inc("leaveQuota.$.reameningLeaves", entity.getNoOfDays())));
 			throw new PnsException("Insufficient Leaves!");
 		}
+		return findOneAndUpdate;
+	}
+
+	@Override
+	public LeaveDetailsEntity updateLeaveQuotaForApprovingLeave(final LeaveRequestEntity entity, final int year) {
+		final LeaveDetailsEntity findOneAndUpdate = leaveQuotaCollection.findOneAndUpdate(
+				and(eq("employeeId", entity.getEmployeeId()), eq("year", year),
+						eq("leaveQuota.type", entity.getType().name())),
+				inc("leaveQuota.$.approvalPendingLeaves", -1 * entity.getNoOfDays()));
+		final LeaveQuotaEntity leaveQuotaEntity = findOneAndUpdate.getLeaveQuota().stream()
+				.filter(e -> e.getType() == entity.getType()).findFirst().get();
+
+		leaveQuotaEntity.setApprovalPendingLeaves(leaveQuotaEntity.getApprovalPendingLeaves() - entity.getNoOfDays());
+		return findOneAndUpdate;
+	}
+
+	@Override
+	public LeaveDetailsEntity updateLeaveQuotaForCancellingLeave(final LeaveRequestEntity entity, final int year) {
+		final LeaveDetailsEntity findOneAndUpdate = leaveQuotaCollection.findOneAndUpdate(
+				and(eq("employeeId", entity.getEmployeeId()), eq("year", year),
+						eq("leaveQuota.type", entity.getType().name())),
+				combine(inc("leaveQuota.$.usedLeaves", -1 * entity.getNoOfDays()),
+						inc("leaveQuota.$.approvalPendingLeaves", -1 * entity.getNoOfDays()),
+						inc("leaveQuota.$.reameningLeaves", entity.getNoOfDays())));
+		final LeaveQuotaEntity leaveQuotaEntity = findOneAndUpdate.getLeaveQuota().stream()
+				.filter(e -> e.getType() == entity.getType()).findFirst().get();
+		leaveQuotaEntity.setReameningLeaves(leaveQuotaEntity.getReameningLeaves() + entity.getNoOfDays());
+		leaveQuotaEntity.setApprovalPendingLeaves(leaveQuotaEntity.getApprovalPendingLeaves() - entity.getNoOfDays());
+		leaveQuotaEntity.setUsedLeaves(leaveQuotaEntity.getUsedLeaves() - entity.getNoOfDays());
 		return findOneAndUpdate;
 	}
 

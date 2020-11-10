@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 import org.immutables.value.Value;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.mongodb.lang.Nullable;
 
@@ -17,6 +18,7 @@ import com.mongodb.lang.Nullable;
 @Value.Immutable
 @JsonDeserialize(builder = ImmutableLeaveRequestDetails.Builder.class)
 public interface LeaveRequestDetails {
+	@JsonProperty("_id")
 	String getId();
 
 	LeaveType getType();
@@ -24,6 +26,8 @@ public interface LeaveRequestDetails {
 	float getNoOfDays();
 
 	String getEmployeeId();
+
+	String getEmployeeName();
 
 	String getPrimaryApprover();
 
@@ -34,10 +38,10 @@ public interface LeaveRequestDetails {
 	LocalDate getTo();
 
 	@Nullable
-	String getApprovedBy();
+	String getApprovedOrRejectedBy();
 
 	@Nullable
-	LocalDateTime getApprovalDateTime();
+	LocalDateTime getApprovalOrRejectionDateTime();
 
 	@Nullable
 	String getApprovarNote();
@@ -45,7 +49,7 @@ public interface LeaveRequestDetails {
 	LeaveStatus getStatus();
 
 	LocalDateTime getDateTimeOfApply();
-	
+
 	default boolean isCancelPossible() {
 		return getStatus() == LeaveStatus.APPROVED && getTo().plusDays(30).isBefore(LocalDate.now());
 	}

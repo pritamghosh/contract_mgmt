@@ -45,10 +45,12 @@ app:
             profile: employeeProfiles
             leaveQuota: leaveQuota
             leaveHistory: leaveHistory
-    leave.quota.total:
-        cl: 20
-        pl: 20    
-        sl: 30
+    leave:
+        quota.total:
+                cl: 20
+                pl: 20    
+                sl: 30
+        approve.url: "https://pns.southeastasia.cloudapp.azure.com/portal/employee/leave/approve"
     smtp:
         username: "smtp.pritam@gmail.com"
         password: Pass@M10340791

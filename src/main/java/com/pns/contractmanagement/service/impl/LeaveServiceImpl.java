@@ -8,7 +8,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +21,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.concurrent.DelegatingSecurityContextRunnable;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Range;
@@ -28,6 +33,7 @@ import com.pns.contractmanagement.entity.LeaveRequestEntity;
 import com.pns.contractmanagement.exceptions.PnsException;
 import com.pns.contractmanagement.helper.impl.HolidayHelperImpl;
 import com.pns.contractmanagement.helper.impl.MailServiceHelperImpl;
+import com.pns.contractmanagement.model.ApproveRequest;
 import com.pns.contractmanagement.model.EmployeeProfile;
 import com.pns.contractmanagement.model.HolidayCalendar;
 import com.pns.contractmanagement.model.ImmutableLeaveQuota;
@@ -48,8 +54,13 @@ public class LeaveServiceImpl implements LeaveService {
 
 	private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
-	private final String leavetemplateText;
+	private final String leaveRequestTemplateText;
 
+	private final String leaveRequestApproveTemplateText;
+
+	@Value("${app.leave.approve.url}")
+	private String approveUrl;
+	
 	@Value("${app.leave.quota.total.cl}")
 	private int totalCL;
 
@@ -75,9 +86,11 @@ public class LeaveServiceImpl implements LeaveService {
 	private MailServiceHelperImpl mailServiceHelper;
 
 	public LeaveServiceImpl() throws IOException {
-		final InputStream stream = this.getClass().getClassLoader()
-				.getResourceAsStream("/templates/leaveRequestTemplate.html");
-		leavetemplateText = IOUtils.toString(stream, Charset.defaultCharset());
+		final InputStream stream = this.getClass().getResourceAsStream("/templates/leaveRequestTemplate.html");
+		leaveRequestTemplateText = IOUtils.toString(stream, Charset.defaultCharset());
+		leaveRequestApproveTemplateText = IOUtils.toString(
+				this.getClass().getResourceAsStream("/templates/leaveRequestActionedTemplate.html"),
+				Charset.defaultCharset());
 	}
 
 	@Override
@@ -109,51 +122,70 @@ public class LeaveServiceImpl implements LeaveService {
 			throw new PnsException("Invalid Date Range!");
 		}
 		final String employeeID = ServiceUtil.getUsernameFromContext();
+		final EmployeeProfile employeeProfile = employeeService.getEmployeeProfile();
+		final String employeeName = new StringBuilder().append(employeeProfile.getFirstName()).append(" ")
+				.append(employeeProfile.getFamilyName()).toString();
 		final int year = LocalDate.now().getYear();
 		final LeaveRequestEntity entity = LeaveRequestEntity.builder().dateTimeOfApply(LocalDateTime.now())
 				.employeeId(employeeID).from(request.getFrom()).to(request.getTo()).noOfDays(noOfHolidays)
 				.note(request.getNote()).primaryApprover(request.getPrimaryApprover()).status(LeaveStatus.PENDING)
-				.type(request.getType()).build();
-		leaveQuotaDao.updateLeaveQuota(entity, year);
+				.employeeName(employeeName).type(request.getType()).build();
+		leaveQuotaDao.updateLeaveQuotaForApplyingLeave(entity, year);
 		final LeaveRequestEntity inserted = leaveHistoryDao.insert(entity);
-		threadPool.submit(() -> sendMailToApprover(inserted));
+		final DelegatingSecurityContextRunnable runnableMailSender = new DelegatingSecurityContextRunnable(
+				() -> sendMailToApprover(inserted, employeeProfile));
+		threadPool.submit(runnableMailSender);
 		return map(inserted);
 	}
 
 	private LeaveRequestDetails map(final LeaveRequestEntity entity) {
-		return ImmutableLeaveRequestDetails.builder().approvalDateTime(entity.getApprovalDateTime())
-				.approvarNote(entity.getApprovarNote()).approvedBy(entity.getApprovedBy())
+		return ImmutableLeaveRequestDetails.builder()
+				.approvalOrRejectionDateTime(entity.getApprovalOrRejectionDateTime())
+				.approvarNote(entity.getApprovarNote()).approvedOrRejectedBy(entity.getApprovedOrRejectedBy())
 				.dateTimeOfApply(entity.getDateTimeOfApply()).employeeId(entity.getEmployeeId()).from(entity.getFrom())
 				.to(entity.getTo()).noOfDays(entity.getNoOfDays()).note(entity.getNote())
 				.primaryApprover(entity.getPrimaryApprover()).status(entity.getStatus()).type(entity.getType())
-				.id(entity.getId()).build();
+				.employeeName(entity.getEmployeeName()).id(entity.getId()).build();
 	}
 
-	private void sendMailToApprover(final LeaveRequestEntity entity) {
-		final EmployeeProfile employeeProfile = employeeService.getEmployeeProfile();
-		final EmployeeProfile rmProfile = employeeService
-				.findProfileById(employeeProfile.getReportingManager().getEmployeeId());
+	private void sendMailToApprover(final LeaveRequestEntity entity, final EmployeeProfile employeeProfile) {
 
-		final String htmlText = leavetemplateText.replace("${name}", employeeProfile.getReportingManager().getName())
-				.replace("${employee.lname}", employeeProfile.getFamilyName())
-				.replace("${employee.fname}", employeeProfile.getFirstName())
-				.replace("${employee.id}", employeeProfile.getEmployeeId())
-				.replace("${form}", entity.getFrom().format(DateTimeFormatter.ISO_LOCAL_DATE))
-				.replace("${to}", entity.getTo().format(DateTimeFormatter.ISO_LOCAL_DATE))
-				.replace("${noOfDays}", String.valueOf(entity.getNoOfDays()))
-				.replace("${type}", entity.getType().getValue()).replace("${note}", entity.getNote())
-
-		;
-
-		mailServiceHelper.sendMail(MailVo.builder().toList(List.of(rmProfile.getWorkEmail()))
-				.ccList(List.of(employeeProfile.getWorkEmail())).subject("Leave Request").htmlText(htmlText)
-				.form("Leave.System@pnsservices.com").build());
+		final EmployeeProfile rmProfile = employeeService.findProfileById(entity.getPrimaryApprover());
+		final Map<CharSequence, CharSequence> keyReplacementMap = populateLKeyReplacementMap(entity, employeeProfile);
+		final MailVo mailVO = MailVo.builder().toList(List.of(rmProfile.getWorkEmail()))
+				.ccList(List.of(employeeProfile.getWorkEmail())).subject("Leave Request")
+				.htmlText(populateHtmlString(leaveRequestTemplateText, keyReplacementMap))
+				.form("Leave.System@pnsservices.com").build();
+		mailServiceHelper.sendMail(mailVO);
 	}
 
-	@Override
-	public LeaveRequest approve(final LeaveRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+	private Map<CharSequence, CharSequence> populateLKeyReplacementMap(final LeaveRequestEntity entity,
+			final EmployeeProfile employeeProfile) {
+		final Map<CharSequence, CharSequence> keyReplacementMap = new HashMap<>();
+		keyReplacementMap.put("${employee.rm}", employeeProfile.getReportingManager().getName());
+		keyReplacementMap.put("${employee.lname}", employeeProfile.getFamilyName());
+		keyReplacementMap.put("${employee.fname}", employeeProfile.getFirstName());
+		keyReplacementMap.put("${employee.id}", employeeProfile.getEmployeeId());
+		keyReplacementMap.put("${from}", entity.getFrom().format(DateTimeFormatter.ISO_LOCAL_DATE));
+		keyReplacementMap.put("${to}", entity.getTo().format(DateTimeFormatter.ISO_LOCAL_DATE));
+		keyReplacementMap.put("${noOfDays}", String.valueOf(entity.getNoOfDays()));
+		keyReplacementMap.put("${type}", entity.getType().getValue());
+		keyReplacementMap.put("${noOfDays}", employeeProfile.getReportingManager().getName());
+		keyReplacementMap.put("${note}", entity.getNote());
+		keyReplacementMap.put("${approverNote}", entity.getApprovarNote());
+		keyReplacementMap.put("${action}", entity.getStatus().getAction());
+		keyReplacementMap.put("${actionlink}", approveUrl);
+		return keyReplacementMap;
+	}
+
+	private String populateHtmlString(final String template, final Map<CharSequence, CharSequence> keyReplacementMap) {
+		final Iterator<Entry<CharSequence, CharSequence>> keyMapIterator = keyReplacementMap.entrySet().iterator();
+		String htmlString = template;
+		while (keyMapIterator.hasNext()) {
+			final Entry<CharSequence, CharSequence> next = keyMapIterator.next();
+			htmlString = htmlString.replace(next.getKey(), next.getValue() != null ? next.getValue() : "");
+		}
+		return htmlString;
 	}
 
 	@Override
@@ -214,6 +246,63 @@ public class LeaveServiceImpl implements LeaveService {
 		return responseFromDB.stream().map(this::map)
 				.sorted((e1, e2) -> e2.getDateTimeOfApply().compareTo(e1.getDateTimeOfApply()))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<LeaveRequestDetails> geApprovalPendingList(final String employeeID) {
+		return leaveHistoryDao
+				.geApprovalPendingList(employeeID != null ? employeeID : ServiceUtil.getUsernameFromContext()).stream()
+				.map(this::map).sorted((e1, e2) -> e1.getDateTimeOfApply().compareTo(e2.getDateTimeOfApply()))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public LeaveRequestDetails approve(final ApproveRequest request) {
+		final Optional<LeaveRequestEntity> existingLRResp = leaveHistoryDao.findLeaveRequestById(request.getId());
+		if (existingLRResp.isEmpty()) {
+			throw new PnsException("Unbale to fine any Leave Request");
+		}
+		final LeaveRequestEntity leaveRequest = existingLRResp.get();
+		if (!ServiceUtil.getUsernameFromContext().equalsIgnoreCase(leaveRequest.getPrimaryApprover())) {
+			throw new PnsException("Invalid Approver");
+		}
+		if (LeaveStatus.PENDING == leaveRequest.getStatus()) {
+			if (request.getAction()) {
+				leaveRequest.setStatus(LeaveStatus.APPROVED);
+				leaveQuotaDao.updateLeaveQuotaForApprovingLeave(leaveRequest, leaveRequest.getFrom().getYear());
+			} else {
+				leaveRequest.setStatus(LeaveStatus.REJECTED);
+			}
+		} else if (LeaveStatus.CANCEL_PENDING == leaveRequest.getStatus()) {
+			if (request.getAction()) {
+				leaveRequest.setStatus(LeaveStatus.CANCELLED);
+				leaveQuotaDao.updateLeaveQuotaForCancellingLeave(leaveRequest, leaveRequest.getFrom().getYear());
+			} else {
+				leaveRequest.setStatus(LeaveStatus.CANCEL_REJECTED);
+			}
+		} else {
+			throw new PnsException("Unable to Approve/Reject Leave Request");
+		}
+
+		leaveRequest.setApprovalOrRejectionDateTime(LocalDateTime.now());
+		leaveRequest.setApprovarNote(request.getComment());
+		leaveRequest.setApprovedOrRejectedBy(ServiceUtil.getUsernameFromContext());
+		leaveHistoryDao.approveOrRejectLeaveRequest(leaveRequest);
+		final DelegatingSecurityContextRunnable runnableMailSender = new DelegatingSecurityContextRunnable(
+				() -> sendMailOnLeaveRequestAction(leaveRequest));
+		threadPool.submit(runnableMailSender);
+		return map(leaveRequest);
+	}
+
+	private void sendMailOnLeaveRequestAction(final LeaveRequestEntity entity) {
+		final EmployeeProfile employeeProfile = employeeService.findProfileById(entity.getEmployeeId());
+		final EmployeeProfile rmProfile = employeeService.getEmployeeProfile();
+		final Map<CharSequence, CharSequence> keyReplacementMap = populateLKeyReplacementMap(entity, employeeProfile);
+		final MailVo mailVO = MailVo.builder().toList(List.of(employeeProfile.getWorkEmail()))
+				.ccList(List.of(rmProfile.getWorkEmail())).subject("Leave Request " + entity.getStatus().getAction())
+				.htmlText(populateHtmlString(leaveRequestApproveTemplateText, keyReplacementMap))
+				.form("Leave.System@pnsservices.com").build();
+		mailServiceHelper.sendMail(mailVO);
 	}
 
 }
