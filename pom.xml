@@ -18,7 +18,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<artifact.name>contract-management</artifact.name>
-		<dependency.version.apache.commons.io>2.5</dependency.version.apache.commons.io>
+		<dependency.version.apache.commons.io>2.7</dependency.version.apache.commons.io>
 		<dependency.version.javax.mail>1.4.7</dependency.version.javax.mail>
 		<dependency.version.jasper>6.4.0</dependency.version.jasper>
 		<dependency.version.org.immutables>2.8.8
